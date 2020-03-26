@@ -137,13 +137,13 @@ if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
     $c4eb261e96f50c6cac5c08c60d657d9c = mktime($Ed62709841469f20fe0f7a17a4268692, $minutes, 0, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb, $Ee43d9ecc9cbf5787673058445cfac70);
 } else {
     $fd08711a26bab44719872c7fff1f2dfb *= 24;
-    $Ba78aa94423804e042a0eb27ba2e39a4 = array_values(array_filter(explode('
+    $files = array_values(array_filter(explode('
 ', shell_exec('ls -tr ' . TV_ARCHIVE . $stream_id . ' | sed -e \'s/\\s\\+/\\n/g\''))));
     $f9214002d8ab6575c8e959794518358d = $Be553c1662ffa5054ccb6c5ce822974b * 24;
-    if (count($Ba78aa94423804e042a0eb27ba2e39a4) >= $f9214002d8ab6575c8e959794518358d) {
-        $f9214002d8ab6575c8e959794518358d = $Ba78aa94423804e042a0eb27ba2e39a4[count($Ba78aa94423804e042a0eb27ba2e39a4) - $f9214002d8ab6575c8e959794518358d];
+    if (count($files) >= $f9214002d8ab6575c8e959794518358d) {
+        $f9214002d8ab6575c8e959794518358d = $files[count($files) - $f9214002d8ab6575c8e959794518358d];
     } else {
-        $f9214002d8ab6575c8e959794518358d = $Ba78aa94423804e042a0eb27ba2e39a4[0];
+        $f9214002d8ab6575c8e959794518358d = $files[0];
     }
     if (preg_match('/(.*)-(.*)-(.*):(.*)\\./', $f9214002d8ab6575c8e959794518358d, $ae37877cee3bc97c8cfa6ec5843993ed)) {
         $c4eb261e96f50c6cac5c08c60d657d9c = mktime($ae37877cee3bc97c8cfa6ec5843993ed[4], 0, 0, $ae37877cee3bc97c8cfa6ec5843993ed[2], $ae37877cee3bc97c8cfa6ec5843993ed[3], $ae37877cee3bc97c8cfa6ec5843993ed[1]);
@@ -152,12 +152,12 @@ if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
     }
 }
 $Df55b74833e9468cafb620fe446225a1 = array();
-$Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c) . '.ts';
+$file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c) . '.ts';
 if (empty($stream_id) || empty($c4eb261e96f50c6cac5c08c60d657d9c) || empty($fd08711a26bab44719872c7fff1f2dfb)) {
     header('HTTP/1.1 400 Bad Request');
     die;
 }
-if (!file_exists($Ca434bcc380e9dbd2a3a588f6c32d84f) || !is_readable($Ca434bcc380e9dbd2a3a588f6c32d84f)) {
+if (!file_exists($file) || !is_readable($file)) {
     header('HTTP/1.1 404 Not Found');
     die;
 }
@@ -165,9 +165,9 @@ $Df55b74833e9468cafb620fe446225a1 = array();
 $index = 0;
 //D5fcf2a72e99ec35092bea70c6000d54:
 while ($index < $fd08711a26bab44719872c7fff1f2dfb) {
-    $Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c + $index * 60) . '.ts';
-    if (file_exists($Ca434bcc380e9dbd2a3a588f6c32d84f)) {
-        $Df55b74833e9468cafb620fe446225a1[] = array('filename' => $Ca434bcc380e9dbd2a3a588f6c32d84f, 'filesize' => filesize($Ca434bcc380e9dbd2a3a588f6c32d84f));
+    $file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c + $index * 60) . '.ts';
+    if (file_exists($file)) {
+        $Df55b74833e9468cafb620fe446225a1[] = array('filename' => $file, 'filesize' => filesize($file));
     }
     $index++;
 }
@@ -245,43 +245,43 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
                 $connection_speed_file = TMP_DIR . $activity_id . '.con';
                 $ipTV_db->close_mysql();
             }
-            $length = $Ff876e96994aa5b09ce92e771efe2038 = D86041F168a5452E8fDEACFbFd659E19($Df55b74833e9468cafb620fe446225a1);
-            $bitrate = $Ff876e96994aa5b09ce92e771efe2038 * 0.008 / ($fd08711a26bab44719872c7fff1f2dfb * 60);
+            $length = $filename_size = D86041F168a5452E8fDEACFbFd659E19($Df55b74833e9468cafb620fe446225a1);
+            $bitrate = $filename_size * 0.008 / ($fd08711a26bab44719872c7fff1f2dfb * 60);
             header("Accept-Ranges: 0-{$length}");
             $start = 0;
-            $end = $Ff876e96994aa5b09ce92e771efe2038 - 1;
+            $end = $filename_size - 1;
             if (isset($_SERVER['HTTP_RANGE'])) {
-                $dccf2f0f292208ba833261a4da87860d = $start;
-                $A34771e85be87aded632236239e94d98 = $end;
-                list(, $cabafd9509f1a525c1d85143a5372ed8) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-                if (strpos($cabafd9509f1a525c1d85143a5372ed8, ',') !== false) {
+                $c_start = $start;
+                $c_end = $end;
+                list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+                if (strpos($range, ',') !== false) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
                     die;
                 }
-                if ($cabafd9509f1a525c1d85143a5372ed8 == '-') {
-                    $dccf2f0f292208ba833261a4da87860d = $Ff876e96994aa5b09ce92e771efe2038 - substr($cabafd9509f1a525c1d85143a5372ed8, 1);
+                if ($range == '-') {
+                    $c_start = $filename_size - substr($range, 1);
                 } else {
-                    $cabafd9509f1a525c1d85143a5372ed8 = explode('-', $cabafd9509f1a525c1d85143a5372ed8);
-                    $dccf2f0f292208ba833261a4da87860d = $cabafd9509f1a525c1d85143a5372ed8[0];
-                    $A34771e85be87aded632236239e94d98 = isset($cabafd9509f1a525c1d85143a5372ed8[1]) && is_numeric($cabafd9509f1a525c1d85143a5372ed8[1]) ? $cabafd9509f1a525c1d85143a5372ed8[1] : $Ff876e96994aa5b09ce92e771efe2038;
+                    $range = explode('-', $range);
+                    $c_start = $range[0];
+                    $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
                 }
-                $A34771e85be87aded632236239e94d98 = $A34771e85be87aded632236239e94d98 > $end ? $end : $A34771e85be87aded632236239e94d98;
-                if ($dccf2f0f292208ba833261a4da87860d > $A34771e85be87aded632236239e94d98 || $dccf2f0f292208ba833261a4da87860d > $Ff876e96994aa5b09ce92e771efe2038 - 1 || $A34771e85be87aded632236239e94d98 >= $Ff876e96994aa5b09ce92e771efe2038) {
+                $c_end = $c_end > $end ? $end : $c_end;
+                if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
                     die;
                 }
-                $start = $dccf2f0f292208ba833261a4da87860d;
-                $end = $A34771e85be87aded632236239e94d98;
+                $start = $c_start;
+                $end = $c_end;
                 $length = $end - $start + 1;
                 header('HTTP/1.1 206 Partial Content');
             }
-            header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+            header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
             header('Content-Length: ' . $length);
             $b3fcd87510baa9521882b459861dcb64 = 0;
             if ($start > 0) {
-                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($Ff876e96994aa5b09ce92e771efe2038 / count($Df55b74833e9468cafb620fe446225a1)));
+                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($filename_size / count($Df55b74833e9468cafb620fe446225a1)));
             }
             $c77e7ff2c5d6b14d931b3344c54e0cc5 = false;
             $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
@@ -294,9 +294,9 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
             $index = 0;
             $b0cd8de619914d3df89e9fc24acad4e6 = 0;
             if (ipTV_lib::$settings['vod_limit_at'] > 0) {
-                $F6295a8bab3aa6bb5b9c4a70c99ec761 = intval($Ff876e96994aa5b09ce92e771efe2038 * ipTV_lib::$settings['vod_limit_at'] / 100);
+                $F6295a8bab3aa6bb5b9c4a70c99ec761 = intval($filename_size * ipTV_lib::$settings['vod_limit_at'] / 100);
             } else {
-                $F6295a8bab3aa6bb5b9c4a70c99ec761 = $Ff876e96994aa5b09ce92e771efe2038;
+                $F6295a8bab3aa6bb5b9c4a70c99ec761 = $filename_size;
             }
             $A8e591a80910b24673b1a94b8219ab96 = false;
             foreach ($Df55b74833e9468cafb620fe446225a1 as $k => $B5d14e09bc25553da9030273f23468aa) {

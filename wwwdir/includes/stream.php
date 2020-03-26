@@ -70,9 +70,9 @@ class ipTV_stream
     {
         $C359d5e5ab36c7a88fca0754166e7996 = abs(intval(ipTV_lib::$settings['stream_max_analyze']));
         $E1be7e0ba659254273dc1475ae9679e0 = abs(intval(ipTV_lib::$settings['probesize']));
-        $E2862eaf3f4716fdadef0a008a343507 = intval($C359d5e5ab36c7a88fca0754166e7996 / 1000000) + 5;
-        $command = "{$A7da0ef4553f5ea253d3907a7c9ef7f0}/usr/bin/timeout {$E2862eaf3f4716fdadef0a008a343507}s " . FFPROBE_PATH . " -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} " . implode(' ', $f84c1c6145bb73410b3ea7c0f8b4a9f3) . " -i \"{$C0379dd6700deb6b1021ed6026f648b9}\" -v quiet -print_format json -show_streams -show_format";
-        $result = ipTV_servers::RunCommandServer($Aa894918d6f628c53ace2682189e44d5, $command, 'raw', $E2862eaf3f4716fdadef0a008a343507 * 2, $E2862eaf3f4716fdadef0a008a343507 * 2);
+        $timeout = intval($C359d5e5ab36c7a88fca0754166e7996 / 1000000) + 5;
+        $command = "{$A7da0ef4553f5ea253d3907a7c9ef7f0}/usr/bin/timeout {$timeout}s " . FFPROBE_PATH . " -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} " . implode(' ', $f84c1c6145bb73410b3ea7c0f8b4a9f3) . " -i \"{$C0379dd6700deb6b1021ed6026f648b9}\" -v quiet -print_format json -show_streams -show_format";
+        $result = ipTV_servers::RunCommandServer($Aa894918d6f628c53ace2682189e44d5, $command, 'raw', $timeout * 2, $timeout * 2);
         return self::cCBD051C8a19a02Dc5B6dB256Ae31c07(json_decode($result[$Aa894918d6f628c53ace2682189e44d5], true));
     }
     public static function CcBd051c8a19a02dc5B6dB256AE31c07($d8c887d4a07ddc3992dca7f1d440e7de)
@@ -103,7 +103,7 @@ class ipTV_stream
         }
         return false;
     }
-    static function C27C26b9eD331706a4c3f0292142fB52($stream_id, $a10d30316266ccc4dd75c9b1ce4dd026 = false)
+    static function stopStream($stream_id, $a10d30316266ccc4dd75c9b1ce4dd026 = false)
     {
         if (file_exists("/home/xtreamcodes/iptv_xtream_codes/streams/{$stream_id}.monitor")) {
             $e9d30118d498945b35ee33aa90ed9822 = intval(file_get_contents("/home/xtreamcodes/iptv_xtream_codes/streams/{$stream_id}.monitor"));
@@ -133,7 +133,7 @@ class ipTV_stream
         }
         return false;
     }
-    static function E79092731573697C16A932C339d0A101($stream_id, $c6a482793047d2f533b0b69299b7d24d = 0)
+    static function startStream($stream_id, $c6a482793047d2f533b0b69299b7d24d = 0)
     {
         $d0ecfdcd1b9396ba72538b60109bf719 = STREAMS_PATH . $stream_id . '.lock';
         $fp = fopen($d0ecfdcd1b9396ba72538b60109bf719, 'a+');
@@ -145,7 +145,7 @@ class ipTV_stream
         }
         fclose($fp);
     }
-    static function b533E0f5f988919d1c3b076a87f9b0E3($stream_id)
+    static function stopVODstream($stream_id)
     {
         if (file_exists(MOVIES_PATH . $stream_id . '_.pid')) {
             $pid = (int) file_get_contents(MOVIES_PATH . $stream_id . '_.pid');
@@ -154,7 +154,7 @@ class ipTV_stream
         shell_exec('rm -f ' . MOVIES_PATH . $stream_id . '.*');
         self::$ipTV_db->query('UPDATE `streams_sys` SET `bitrate` = NULL,`current_source` = NULL,`to_analyze` = 0,`pid` = NULL,`stream_started` = NULL,`stream_info` = NULL,`stream_status` = 0 WHERE `stream_id` = \'%d\' AND `server_id` = \'%d\'', $stream_id, SERVER_ID);
     }
-    static function f8aB00514d4DB9462A088927b8D3a8E6($stream_id)
+    static function startVODstream($stream_id)
     {
         $stream = array();
         self::$ipTV_db->query('SELECT * FROM `streams` t1 
@@ -440,13 +440,13 @@ class ipTV_stream
                     } else {
                         $ccac9556cf5f7f83df650c022d673042 = 0;
                         if (file_exists(DELAY_STREAM . $stream_id . '_.m3u8')) {
-                            $Ca434bcc380e9dbd2a3a588f6c32d84f = file(DELAY_STREAM . $stream_id . '_.m3u8');
-                            if (stristr($Ca434bcc380e9dbd2a3a588f6c32d84f[count($Ca434bcc380e9dbd2a3a588f6c32d84f) - 1], $stream_id . '_')) {
-                                if (preg_match('/\\_(.*?)\\.ts/', $Ca434bcc380e9dbd2a3a588f6c32d84f[count($Ca434bcc380e9dbd2a3a588f6c32d84f) - 1], $ae37877cee3bc97c8cfa6ec5843993ed)) {
+                            $file = file(DELAY_STREAM . $stream_id . '_.m3u8');
+                            if (stristr($file[count($file) - 1], $stream_id . '_')) {
+                                if (preg_match('/\\_(.*?)\\.ts/', $file[count($file) - 1], $ae37877cee3bc97c8cfa6ec5843993ed)) {
                                     $ccac9556cf5f7f83df650c022d673042 = intval($ae37877cee3bc97c8cfa6ec5843993ed[1]) + 1;
                                 }
                             } else {
-                                if (preg_match('/\\_(.*?)\\.ts/', $Ca434bcc380e9dbd2a3a588f6c32d84f[count($Ca434bcc380e9dbd2a3a588f6c32d84f) - 2], $ae37877cee3bc97c8cfa6ec5843993ed)) {
+                                if (preg_match('/\\_(.*?)\\.ts/', $file[count($file) - 2], $ae37877cee3bc97c8cfa6ec5843993ed)) {
                                     $ccac9556cf5f7f83df650c022d673042 = intval($ae37877cee3bc97c8cfa6ec5843993ed[1]) + 1;
                                 }
                             }

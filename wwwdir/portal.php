@@ -16,14 +16,14 @@ $mac = !empty($_REQUEST['mac']) ? $_REQUEST['mac'] : $_COOKIE['mac'];
 $fca2439385f041f384419649ca2471d6 = !empty($_REQUEST['ver']) ? $_REQUEST['ver'] : null;
 $user_agent = !empty($_SERVER['HTTP_X_USER_AGENT']) ? $_SERVER['HTTP_X_USER_AGENT'] : null;
 $be29ac67a4314fc9435deb1462cae967 = !empty($_REQUEST['image_version']) ? $_REQUEST['image_version'] : null;
-$a0bdfe2058b3579da2b71ebf929871e2 = !empty($_REQUEST['device_id']) ? $_REQUEST['device_id'] : null;
+$device_id = !empty($_REQUEST['device_id']) ? $_REQUEST['device_id'] : null;
 $Ba644b1066f7c673215de30d5ce5e62c = !empty($_REQUEST['device_id2']) ? $_REQUEST['device_id2'] : null;
 $B71eec623f2edcac610184525828cc2d = !empty($_REQUEST['hw_version']) ? $_REQUEST['hw_version'] : null;
 $be4275c3d5887706bcf4db19dc01637e = !empty($_REQUEST['gmode']) ? intval($_REQUEST['gmode']) : null;
 $F7af965c868ad940b4c181abc987875f = false;
 $A6dde9bd7afc06231a1481ec56fd5768 = ipTV_lib::$settings['enable_debug_stalker'] == 1 ? true : false;
 $E4e8dc642ae3bbc84730dc5ef74fd8d6 = array();
-if ($E4e8dc642ae3bbc84730dc5ef74fd8d6 = b9361cDf8f8f200F06F546758512060C($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $a0bdfe2058b3579da2b71ebf929871e2, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $A60fc3238902ec8f309d806e5a28e0f7)) {
+if ($E4e8dc642ae3bbc84730dc5ef74fd8d6 = b9361cDf8f8f200F06F546758512060C($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $device_id, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $A60fc3238902ec8f309d806e5a28e0f7)) {
     $F7af965c868ad940b4c181abc987875f = true;
     ini_set('memory_limit', -1);
 }

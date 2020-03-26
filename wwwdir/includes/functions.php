@@ -12,42 +12,42 @@ function decrypt_config($data, $key)
 }
 function D6E530a9573198395bDB5822b82478E2()
 {
-    $D8dbdb2118a7a93a0eeb04fc548f2af4 = array();
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu'] = intval(A072E3167C4fD73Eb67540546C961B7E());
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_cores'] = intval(shell_exec('cat /proc/cpuinfo | grep "^processor" | wc -l'));
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_avg'] = intval(sys_getloadavg()[0] * 100 / $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_cores']);
-    if ($D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_avg'] > 100) {
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_avg'] = 100;
+    $json = array();
+    $json['cpu'] = intval(GetTotalCPUsage());
+    $json['cpu_cores'] = intval(shell_exec('cat /proc/cpuinfo | grep "^processor" | wc -l'));
+    $json['cpu_avg'] = intval(sys_getloadavg()[0] * 100 / $json['cpu_cores']);
+    if ($json['cpu_avg'] > 100) {
+        $json['cpu_avg'] = 100;
     }
     $b05334022f117f99e07e10e7120b3707 = (int) trim(shell_exec('free | grep -c available'));
     if ($b05334022f117f99e07e10e7120b3707 == 0) {
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $2}\''));
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_free'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $4+$6+$7}\''));
+        $json['total_mem'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $2}\''));
+        $json['total_mem_free'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $4+$6+$7}\''));
     } else {
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $2}\''));
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_free'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $7}\''));
+        $json['total_mem'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $2}\''));
+        $json['total_mem_free'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $7}\''));
     }
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used'] = $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] - $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_free'];
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used_percent'] = (int) $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used'] / $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] * 100;
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['total_disk_space'] = disk_total_space(IPTV_PANEL_DIR);
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['uptime'] = get_boottime();
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['total_running_streams'] = shell_exec('ps ax | grep -v grep | grep ffmpeg | grep -c ' . FFMPEG_PATH);
-    $d0d324f3dbb8bbc5fff56e8a848beb7a = ipTV_lib::$StreamingServers[SERVER_ID]['network_interface'];
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['bytes_sent'] = 0;
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['bytes_received'] = 0;
-    if (file_exists("/sys/class/net/{$d0d324f3dbb8bbc5fff56e8a848beb7a}/statistics/tx_bytes")) {
-        $b10021b298f7d4ce2f8e80315325fa1a = trim(file_get_contents("/sys/class/net/{$d0d324f3dbb8bbc5fff56e8a848beb7a}/statistics/tx_bytes"));
-        $C5b51b10f98c22fb985e90c23eade263 = trim(file_get_contents("/sys/class/net/{$d0d324f3dbb8bbc5fff56e8a848beb7a}/statistics/rx_bytes"));
+    $json['total_mem_used'] = $json['total_mem'] - $json['total_mem_free'];
+    $json['total_mem_used_percent'] = (int) $json['total_mem_used'] / $json['total_mem'] * 100;
+    $json['total_disk_space'] = disk_total_space(IPTV_PANEL_DIR);
+    $json['uptime'] = get_boottime();
+    $json['total_running_streams'] = shell_exec('ps ax | grep -v grep | grep ffmpeg | grep -c ' . FFMPEG_PATH);
+    $int = ipTV_lib::$StreamingServers[SERVER_ID]['network_interface'];
+    $json['bytes_sent'] = 0;
+    $json['bytes_received'] = 0;
+    if (file_exists("/sys/class/net/{$int}/statistics/tx_bytes")) {
+        $bytes_sent_old = trim(file_get_contents("/sys/class/net/{$int}/statistics/tx_bytes"));
+        $bytes_received_old = trim(file_get_contents("/sys/class/net/{$int}/statistics/rx_bytes"));
         sleep(1);
-        $e54a6ff3afc52767cdd38f62ab4c38d1 = trim(file_get_contents("/sys/class/net/{$d0d324f3dbb8bbc5fff56e8a848beb7a}/statistics/tx_bytes"));
-        $d1a978924624c41845605404ded7e846 = trim(file_get_contents("/sys/class/net/{$d0d324f3dbb8bbc5fff56e8a848beb7a}/statistics/rx_bytes"));
-        $c01d5077f34dc0ef046a6efa9e8e24f4 = round(($e54a6ff3afc52767cdd38f62ab4c38d1 - $b10021b298f7d4ce2f8e80315325fa1a) / 1024 * 0.0078125, 2);
-        $B5490c2f61c894c091e04441954a0f09 = round(($d1a978924624c41845605404ded7e846 - $C5b51b10f98c22fb985e90c23eade263) / 1024 * 0.0078125, 2);
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['bytes_sent'] = $c01d5077f34dc0ef046a6efa9e8e24f4;
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['bytes_received'] = $B5490c2f61c894c091e04441954a0f09;
+        $bytes_sent_new = trim(file_get_contents("/sys/class/net/{$int}/statistics/tx_bytes"));
+        $bytes_received_new = trim(file_get_contents("/sys/class/net/{$int}/statistics/rx_bytes"));
+        $total_bytes_sent = round(($bytes_sent_new - $bytes_sent_old) / 1024 * 0.0078125, 2);
+        $total_bytes_received = round(($bytes_received_new - $bytes_received_old) / 1024 * 0.0078125, 2);
+        $json['bytes_sent'] = $total_bytes_sent;
+        $json['bytes_received'] = $total_bytes_received;
     }
-    $D8dbdb2118a7a93a0eeb04fc548f2af4['cpu_load_average'] = sys_getloadavg()[0];
-    return $D8dbdb2118a7a93a0eeb04fc548f2af4;
+    $json['cpu_load_average'] = sys_getloadavg()[0];
+    return $json;
 }
 function e6A2B39B5861D06ca4034887864A5Fb5()
 {
@@ -149,18 +149,18 @@ function GetEPGStream($stream_id, $from_now = false)
     }
     return array();
 }
-function a072E3167c4Fd73EB67540546C961B7e()
+function GetTotalCPUsage()
 {
-    $A00fdf3e17773cc697a9e9760a752e67 = intval(shell_exec('ps aux|awk \'NR > 0 { s +=$3 }; END {print s}\''));
-    $Beead58eb65f6a16b84a5d7f85a2dbd0 = intval(shell_exec('grep --count processor /proc/cpuinfo'));
-    return intval($A00fdf3e17773cc697a9e9760a752e67 / $Beead58eb65f6a16b84a5d7f85a2dbd0);
+    $total_cpu = intval(shell_exec('ps aux|awk \'NR > 0 { s +=$3 }; END {print s}\''));
+    $cores = intval(shell_exec('grep --count processor /proc/cpuinfo'));
+    return intval($total_cpu / $cores);
 }
-function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $a0bdfe2058b3579da2b71ebf929871e2, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $A60fc3238902ec8f309d806e5a28e0f7)
+function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $device_id, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $A60fc3238902ec8f309d806e5a28e0f7)
 {
     global $ipTV_db;
     $mac = base64_encode(strtoupper(urldecode($mac)));
     $cfc7b4c8f12f119c2180693d0fa61648 = false;
-    if (!$A6dde9bd7afc06231a1481ec56fd5768 && (!empty($fca2439385f041f384419649ca2471d6) || !empty($d8ba920e2a1ba9839322c2bca0a7a741) || !empty($be29ac67a4314fc9435deb1462cae967) || !empty($a0bdfe2058b3579da2b71ebf929871e2) || !empty($Ba644b1066f7c673215de30d5ce5e62c) || !empty($B71eec623f2edcac610184525828cc2d))) {
+    if (!$A6dde9bd7afc06231a1481ec56fd5768 && (!empty($fca2439385f041f384419649ca2471d6) || !empty($d8ba920e2a1ba9839322c2bca0a7a741) || !empty($be29ac67a4314fc9435deb1462cae967) || !empty($device_id) || !empty($Ba644b1066f7c673215de30d5ce5e62c) || !empty($B71eec623f2edcac610184525828cc2d))) {
         $cfc7b4c8f12f119c2180693d0fa61648 = true;
     }
     if (!$A6dde9bd7afc06231a1481ec56fd5768 && !$cfc7b4c8f12f119c2180693d0fa61648 && $f34a0094f9db3be3b99dd1eb1e9a3b6d != 'stb' && $A60fc3238902ec8f309d806e5a28e0f7 != 'set_fav' && file_exists(TMP_DIR . 'stalker_' . md5($mac))) {
@@ -191,7 +191,7 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
             if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['sn']) && $E574ed349c1c464172b5a4221afe809e['sn'] !== $b25b89525a979cf56e2fd295b28327b8) {
                 return false;
             }
-            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id']) && $E574ed349c1c464172b5a4221afe809e['device_id'] !== $a0bdfe2058b3579da2b71ebf929871e2) {
+            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id']) && $E574ed349c1c464172b5a4221afe809e['device_id'] !== $device_id) {
                 return false;
             }
             if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id2']) && $E574ed349c1c464172b5a4221afe809e['device_id2'] !== $Ba644b1066f7c673215de30d5ce5e62c) {
@@ -212,7 +212,7 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
                     return false;
                 }
             }
-            $ipTV_db->query('UPDATE `mag_devices` SET `ip` = \'%s\',`stb_type` = \'%s\',`sn` = \'%s\',`ver` = \'%s\',`image_version` = \'%s\',`device_id` = \'%s\',`device_id2` = \'%s\',`hw_version` = \'%s\' WHERE `mag_id` = \'%d\'', $f429d0e47085017e3f1e415952e44cba, htmlentities($d8ba920e2a1ba9839322c2bca0a7a741), htmlentities($b25b89525a979cf56e2fd295b28327b8), htmlentities($fca2439385f041f384419649ca2471d6), htmlentities($be29ac67a4314fc9435deb1462cae967), htmlentities($a0bdfe2058b3579da2b71ebf929871e2), htmlentities($Ba644b1066f7c673215de30d5ce5e62c), htmlentities($B71eec623f2edcac610184525828cc2d), $E574ed349c1c464172b5a4221afe809e['mag_id']);
+            $ipTV_db->query('UPDATE `mag_devices` SET `ip` = \'%s\',`stb_type` = \'%s\',`sn` = \'%s\',`ver` = \'%s\',`image_version` = \'%s\',`device_id` = \'%s\',`device_id2` = \'%s\',`hw_version` = \'%s\' WHERE `mag_id` = \'%d\'', $f429d0e47085017e3f1e415952e44cba, htmlentities($d8ba920e2a1ba9839322c2bca0a7a741), htmlentities($b25b89525a979cf56e2fd295b28327b8), htmlentities($fca2439385f041f384419649ca2471d6), htmlentities($be29ac67a4314fc9435deb1462cae967), htmlentities($device_id), htmlentities($Ba644b1066f7c673215de30d5ce5e62c), htmlentities($B71eec623f2edcac610184525828cc2d), $E574ed349c1c464172b5a4221afe809e['mag_id']);
         }
         $E574ed349c1c464172b5a4221afe809e['fav_channels'] = !empty($E574ed349c1c464172b5a4221afe809e['fav_channels']) ? json_decode($E574ed349c1c464172b5a4221afe809e['fav_channels'], true) : array();
         if (empty($E574ed349c1c464172b5a4221afe809e['fav_channels']['live'])) {

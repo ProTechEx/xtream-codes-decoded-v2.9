@@ -64,44 +64,44 @@ if ($ipTV_db->num_rows() > 0) {
                 header('Content-Type: application/octet-stream');
         }
         $fp = @fopen($E6dd23f358d554b9a74e3ae676bc8c9b, 'rb');
-        $Ff876e96994aa5b09ce92e771efe2038 = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
-        $length = $Ff876e96994aa5b09ce92e771efe2038;
+        $filename_size = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
+        $length = $filename_size;
         $start = 0;
-        $end = $Ff876e96994aa5b09ce92e771efe2038 - 1;
+        $end = $filename_size - 1;
         header("Accept-Ranges: 0-{$length}");
         if (isset($_SERVER['HTTP_RANGE'])) {
-            $dccf2f0f292208ba833261a4da87860d = $start;
-            $A34771e85be87aded632236239e94d98 = $end;
-            list(, $cabafd9509f1a525c1d85143a5372ed8) = explode('=', $_SERVER['HTTP_RANGE'], 2);
-            if (strpos($cabafd9509f1a525c1d85143a5372ed8, ',') !== false) {
+            $c_start = $start;
+            $c_end = $end;
+            list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+            if (strpos($range, ',') !== false) {
                 header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
                 die;
             }
-            if ($cabafd9509f1a525c1d85143a5372ed8 == '-') {
-                $dccf2f0f292208ba833261a4da87860d = $Ff876e96994aa5b09ce92e771efe2038 - substr($cabafd9509f1a525c1d85143a5372ed8, 1);
+            if ($range == '-') {
+                $c_start = $filename_size - substr($range, 1);
             } else {
-                $cabafd9509f1a525c1d85143a5372ed8 = explode('-', $cabafd9509f1a525c1d85143a5372ed8);
-                $dccf2f0f292208ba833261a4da87860d = $cabafd9509f1a525c1d85143a5372ed8[0];
-                $A34771e85be87aded632236239e94d98 = isset($cabafd9509f1a525c1d85143a5372ed8[1]) && is_numeric($cabafd9509f1a525c1d85143a5372ed8[1]) ? $cabafd9509f1a525c1d85143a5372ed8[1] : $Ff876e96994aa5b09ce92e771efe2038;
+                $range = explode('-', $range);
+                $c_start = $range[0];
+                $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
             }
-            $A34771e85be87aded632236239e94d98 = $A34771e85be87aded632236239e94d98 > $end ? $end : $A34771e85be87aded632236239e94d98;
-            if ($dccf2f0f292208ba833261a4da87860d > $A34771e85be87aded632236239e94d98 || $dccf2f0f292208ba833261a4da87860d > $Ff876e96994aa5b09ce92e771efe2038 - 1 || $A34771e85be87aded632236239e94d98 >= $Ff876e96994aa5b09ce92e771efe2038) {
+            $c_end = $c_end > $end ? $end : $c_end;
+            if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
                 header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
                 die;
             }
-            $start = $dccf2f0f292208ba833261a4da87860d;
-            $end = $A34771e85be87aded632236239e94d98;
+            $start = $c_start;
+            $end = $c_end;
             $length = $end - $start + 1;
             fseek($fp, $start);
             header('HTTP/1.1 206 Partial Content');
         }
-        header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
+        header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
         header('Content-Length: ' . $length);
         $C7558f823ac28009bfd4730a82f1f01b = 1024 * 8;
         //a28124da1815e0b87ed638f4cd963820:
-        while (!feof($fp) && ($f11bd4ac0a2baf9850141d4517561cff = ftell($fp)) <= $end) {
+        while (!feof($fp) && ($p = ftell($fp)) <= $end) {
             $response = stream_get_line($fp, $C7558f823ac28009bfd4730a82f1f01b);
             echo $response;
         }

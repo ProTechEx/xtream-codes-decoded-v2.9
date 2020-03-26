@@ -31,7 +31,7 @@ if ($ipTV_db->num_rows() > 0) {
     if (!ipTV_streaming::bCaa9B8A7b46eb36Cd507A218fa64474($channel_info['pid'], $stream_id)) {
         if ($channel_info['on_demand'] == 1) {
             if (!ipTV_streaming::CDa72Bc41975C364BC559dB25648a5B2($channel_info['monitor_pid'], $stream_id)) {
-                ipTV_stream::e79092731573697C16a932C339d0a101($stream_id);
+                ipTV_stream::startStream($stream_id);
             }
         } else {
             http_response_code(403);

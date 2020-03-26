@@ -3,18 +3,18 @@
 
 class ipTV_servers
 {
-    static function dEfD75fAA43Cb772D0e9A6D9506178B6($serverIDS, $B065e352842444ddce37346f0c648660 = array(), $ffmpeg_path)
+    static function dEfD75fAA43Cb772D0e9A6D9506178B6($serverIDS, $pids = array(), $ffmpeg_path)
     {
         if (!is_array($serverIDS)) {
             $serverIDS = array(intval($serverIDS));
         }
-        $B065e352842444ddce37346f0c648660 = array_map('intval', $B065e352842444ddce37346f0c648660);
+        $pids = array_map('intval', $pids);
         $output = array();
         foreach ($serverIDS as $server_id) {
             if (!array_key_exists($server_id, ipTV_lib::$StreamingServers)) {
                 continue;
             }
-            $response = self::ServerSideRequest($server_id, ipTV_lib::$StreamingServers[$server_id]['api_url_ip'] . '&action=pidsAreRunning', array('program' => $ffmpeg_path, 'pids' => $B065e352842444ddce37346f0c648660));
+            $response = self::ServerSideRequest($server_id, ipTV_lib::$StreamingServers[$server_id]['api_url_ip'] . '&action=pidsAreRunning', array('program' => $ffmpeg_path, 'pids' => $pids));
             if ($response) {
                 $output[$server_id] = array_map('trim', json_decode($response, true));
             } else {
@@ -34,7 +34,7 @@ class ipTV_servers
         }
         return false;
     }
-    static function B95e6892fb5B229151AAFF96d4D172e3($serverIDS, $ffmpeg_path)
+    static function getPidFromProcessName($serverIDS, $ffmpeg_path)
     {
         $command = 'ps ax | grep \'' . basename($ffmpeg_path) . '\' | awk \'{print $1}\'';
         return self::RunCommandServer($serverIDS, $command);

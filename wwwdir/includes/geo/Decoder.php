@@ -37,29 +37,29 @@ class dD866CD266d22904Db08ceDe9C891eEb
             $type = $this->types[$f43977a2711522ef243cc57b97d2da1e];
             $Edcf28ccdc0122ea787e348c040427ed++;
         }
-        list($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed) = $this->C0e9A2980ec8447CbfB3c876fdF04D00($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed);
-        return $this->a88dDC37a3f221DB252f2Dd11D32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $Ff876e96994aa5b09ce92e771efe2038);
+        list($filename_size, $Edcf28ccdc0122ea787e348c040427ed) = $this->C0e9A2980ec8447CbfB3c876fdF04D00($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed);
+        return $this->a88dDC37a3f221DB252f2Dd11D32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $filename_size);
     }
-    private function a88Ddc37a3F221dB252f2DD11d32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $Ff876e96994aa5b09ce92e771efe2038)
+    private function a88Ddc37a3F221dB252f2DD11d32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $filename_size)
     {
         switch ($type) {
             case 'map':
-                return $this->a52605CBF8680a519EF750C64BcDD859($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed);
+                return $this->a52605CBF8680a519EF750C64BcDD859($filename_size, $Edcf28ccdc0122ea787e348c040427ed);
             case 'array':
-                return $this->E4b3204157994d7695Ad6CC62487E431($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed);
+                return $this->E4b3204157994d7695Ad6CC62487E431($filename_size, $Edcf28ccdc0122ea787e348c040427ed);
             case 'boolean':
-                return array($this->F9c7A22db968d2E96a93B6B59d77fE91($Ff876e96994aa5b09ce92e771efe2038), $Edcf28ccdc0122ea787e348c040427ed);
+                return array($this->F9c7A22db968d2E96a93B6B59d77fE91($filename_size), $Edcf28ccdc0122ea787e348c040427ed);
         }
-        $Ac8c5b61e3afc6a785826ad3f5c2fa60 = $Edcf28ccdc0122ea787e348c040427ed + $Ff876e96994aa5b09ce92e771efe2038;
-        $e13ac89e162bcc9913e553b949f755b6 = c71f9a0aa9539E5BbB23f465b5B8A992::aD87a931CDe9286d705b4954d6b159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $Ff876e96994aa5b09ce92e771efe2038);
+        $Ac8c5b61e3afc6a785826ad3f5c2fa60 = $Edcf28ccdc0122ea787e348c040427ed + $filename_size;
+        $e13ac89e162bcc9913e553b949f755b6 = c71f9a0aa9539E5BbB23f465b5B8A992::aD87a931CDe9286d705b4954d6b159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $filename_size);
         switch ($type) {
             case 'utf8_string':
                 return array($this->c75187FbCaf407721D54B95Aa5293fb7($e13ac89e162bcc9913e553b949f755b6), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
             case 'double':
-                $this->B6D66e5bE7Cb732ca480f552786d9653(8, $Ff876e96994aa5b09ce92e771efe2038);
+                $this->B6D66e5bE7Cb732ca480f552786d9653(8, $filename_size);
                 return array($this->bB27064A625bE50Ef39f419923eE6F3f($e13ac89e162bcc9913e553b949f755b6), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
             case 'float':
-                $this->b6D66E5be7CB732ca480F552786D9653(4, $Ff876e96994aa5b09ce92e771efe2038);
+                $this->b6D66E5be7CB732ca480F552786D9653(4, $filename_size);
                 return array($this->a6F589602A7eBc2C9783B7e68f31F84D($e13ac89e162bcc9913e553b949f755b6), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
             case 'bytes':
                 return array($e13ac89e162bcc9913e553b949f755b6, $Ac8c5b61e3afc6a785826ad3f5c2fa60);
@@ -70,7 +70,7 @@ class dD866CD266d22904Db08ceDe9C891eEb
                 return array($this->F87748f1ac207C2bf58193D58aE52B5D($e13ac89e162bcc9913e553b949f755b6), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
             case 'uint64':
             case 'uint128':
-                return array($this->ed446eDdcE5659Ee3C94b47E3CD1ab95($e13ac89e162bcc9913e553b949f755b6, $Ff876e96994aa5b09ce92e771efe2038), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
+                return array($this->ed446eDdcE5659Ee3C94b47E3CD1ab95($e13ac89e162bcc9913e553b949f755b6, $filename_size), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
             default:
                 throw new e5FeA4BB1753B166e279e9172aD7B28d('Unknown or unexpected type: ' . $type);
         }
@@ -81,12 +81,12 @@ class dD866CD266d22904Db08ceDe9C891eEb
             throw new E5feA4bb1753b166e279e9172AD7b28D('The MaxMind DB file\'s data section contains bad data (unknown data type or corrupt data)');
         }
     }
-    private function E4b3204157994d7695AD6cc62487E431($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed)
+    private function E4b3204157994d7695AD6cc62487E431($filename_size, $Edcf28ccdc0122ea787e348c040427ed)
     {
         $array = array();
         $index = 0;
         //Ef4075258ae932205e18c356f58e8118:
-        while ($index < $Ff876e96994aa5b09ce92e771efe2038) {
+        while ($index < $filename_size) {
             list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203f7686cc9d7129db62CE01BD($Edcf28ccdc0122ea787e348c040427ed);
             array_push($array, $value);
             $index++;
@@ -94,9 +94,9 @@ class dD866CD266d22904Db08ceDe9C891eEb
         //c10c4d126a9495c09ec72c73258ec878:
         return array($array, $Edcf28ccdc0122ea787e348c040427ed);
     }
-    private function f9c7A22DB968d2e96a93b6B59d77fe91($Ff876e96994aa5b09ce92e771efe2038)
+    private function f9c7A22DB968d2e96a93b6B59d77fe91($filename_size)
     {
-        return $Ff876e96994aa5b09ce92e771efe2038 === 0 ? false : true;
+        return $filename_size === 0 ? false : true;
     }
     private function Bb27064a625BE50ef39f419923Ee6F3f($b652ec0c88e2f327fe0d16b777c6b6d5)
     {
@@ -111,15 +111,15 @@ class dD866CD266d22904Db08ceDe9C891eEb
     private function f87748f1Ac207c2bF58193d58ae52b5D($e13ac89e162bcc9913e553b949f755b6)
     {
         $e13ac89e162bcc9913e553b949f755b6 = $this->Fa9ef1a39D56b86513E23ce3e5642F2A($e13ac89e162bcc9913e553b949f755b6, 4);
-        list(, $d0d324f3dbb8bbc5fff56e8a848beb7a) = unpack('l', $this->e1f8C4Ddf340DE46ba06206F1844e677($e13ac89e162bcc9913e553b949f755b6));
-        return $d0d324f3dbb8bbc5fff56e8a848beb7a;
+        list(, $int) = unpack('l', $this->e1f8C4Ddf340DE46ba06206F1844e677($e13ac89e162bcc9913e553b949f755b6));
+        return $int;
     }
-    private function A52605CbF8680a519ef750C64BcDd859($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed)
+    private function A52605CbF8680a519ef750C64BcDd859($filename_size, $Edcf28ccdc0122ea787e348c040427ed)
     {
         $fd85ae68a4de5cc6cec54942d82e8f80 = array();
         $index = 0;
         //f2e2475352ef7e29eeecc0eaf14ba47e:
-        while ($index < $Ff876e96994aa5b09ce92e771efe2038) {
+        while ($index < $filename_size) {
             list($key, $Edcf28ccdc0122ea787e348c040427ed) = $this->A13c48203F7686cc9d7129db62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
             list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203F7686cc9d7129dB62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
             $fd85ae68a4de5cc6cec54942d82e8f80[$key] = $value;
@@ -141,8 +141,8 @@ class dD866CD266d22904Db08ceDe9C891eEb
     }
     private function D51BB43E3F3096830F5B813802B1f855($e13ac89e162bcc9913e553b949f755b6)
     {
-        list(, $d0d324f3dbb8bbc5fff56e8a848beb7a) = unpack('N', $this->FA9eF1A39D56B86513E23cE3E5642f2a($e13ac89e162bcc9913e553b949f755b6, 4));
-        return $d0d324f3dbb8bbc5fff56e8a848beb7a;
+        list(, $int) = unpack('N', $this->FA9eF1A39D56B86513E23cE3E5642f2a($e13ac89e162bcc9913e553b949f755b6, 4));
+        return $int;
     }
     private function ED446edDCE5659EE3c94B47E3Cd1AB95($e13ac89e162bcc9913e553b949f755b6, $E2904a2e6a49869f6d2fbe19ccac0391)
     {
@@ -182,23 +182,23 @@ class dD866CD266d22904Db08ceDe9C891eEb
     }
     private function C0E9a2980eC8447cBFb3c876FDF04d00($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed)
     {
-        $Ff876e96994aa5b09ce92e771efe2038 = $fa81eee42906632ae33f6829b4097955 & 31;
-        $Ae3234ddab2e42837c611f69b424ea66 = $Ff876e96994aa5b09ce92e771efe2038 < 29 ? 0 : $Ff876e96994aa5b09ce92e771efe2038 - 28;
+        $filename_size = $fa81eee42906632ae33f6829b4097955 & 31;
+        $Ae3234ddab2e42837c611f69b424ea66 = $filename_size < 29 ? 0 : $filename_size - 28;
         $e13ac89e162bcc9913e553b949f755b6 = c71F9A0aa9539E5bBb23f465b5B8A992::aD87a931Cde9286D705b4954d6B159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $Ae3234ddab2e42837c611f69b424ea66);
         $decoded = $this->D51bb43E3F3096830f5B813802B1f855($e13ac89e162bcc9913e553b949f755b6);
-        if (!($Ff876e96994aa5b09ce92e771efe2038 === 29)) {
-            if (!($Ff876e96994aa5b09ce92e771efe2038 === 30)) {
-                if ($Ff876e96994aa5b09ce92e771efe2038 > 30) {
-                    $Ff876e96994aa5b09ce92e771efe2038 = ($decoded & 268435455 >> 32 - 8 * $Ae3234ddab2e42837c611f69b424ea66) + 65821;
+        if (!($filename_size === 29)) {
+            if (!($filename_size === 30)) {
+                if ($filename_size > 30) {
+                    $filename_size = ($decoded & 268435455 >> 32 - 8 * $Ae3234ddab2e42837c611f69b424ea66) + 65821;
                 } else {
                     D13967813388bb221d83f8dac535a114:
-                    $Ff876e96994aa5b09ce92e771efe2038 = 29 + $decoded;
+                    $filename_size = 29 + $decoded;
                     goto E34776511fb67c488687c4d1fb35f8c7;
                     F514c16b613c162447d67d4978c87146:
-                    $Ff876e96994aa5b09ce92e771efe2038 = 285 + $decoded;
+                    $filename_size = 285 + $decoded;
                     goto E34776511fb67c488687c4d1fb35f8c7;
                 }
-                return array($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed + $Ae3234ddab2e42837c611f69b424ea66);
+                return array($filename_size, $Edcf28ccdc0122ea787e348c040427ed + $Ae3234ddab2e42837c611f69b424ea66);
             }
         }
     }

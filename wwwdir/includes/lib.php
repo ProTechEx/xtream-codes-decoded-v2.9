@@ -233,7 +233,7 @@ class ipTV_lib
         }
         return trim($res);
     }
-    public static function curlMultiRequest($urls, $callback = null, $E2862eaf3f4716fdadef0a008a343507 = 5)
+    public static function curlMultiRequest($urls, $callback = null, $timeout = 5)
     {
         if (empty($urls)) {
             return array();
@@ -249,7 +249,7 @@ class ipTV_lib
                 curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch[$key], CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($ch[$key], CURLOPT_CONNECTTIMEOUT, 5);
-                curl_setopt($ch[$key], CURLOPT_TIMEOUT, $E2862eaf3f4716fdadef0a008a343507);
+                curl_setopt($ch[$key], CURLOPT_TIMEOUT, $timeout);
                 curl_setopt($ch[$key], CURLOPT_SSL_VERIFYHOST, 0);
                 curl_setopt($ch[$key], CURLOPT_SSL_VERIFYPEER, 0);
                 if ($val['postdata'] != null) {
@@ -265,16 +265,16 @@ class ipTV_lib
         $running = null;
 		
         do {
-            $c0bf7fee7cd09c7f7de56880664bba3b = curl_multi_exec($mh, $running);
-        } while ($c0bf7fee7cd09c7f7de56880664bba3b == CURLM_CALL_MULTI_PERFORM);
+            $mrc = curl_multi_exec($mh, $running);
+        } while ($mrc == CURLM_CALL_MULTI_PERFORM);
 		
-        while ($running && $c0bf7fee7cd09c7f7de56880664bba3b == CURLM_OK) {
+        while ($running && $mrc == CURLM_OK) {
             if (curl_multi_select($mh) == -1) {
                 usleep(50000);
             }
 			do {
-                $c0bf7fee7cd09c7f7de56880664bba3b = curl_multi_exec($mh, $running);
-            } while ($c0bf7fee7cd09c7f7de56880664bba3b == CURLM_CALL_MULTI_PERFORM);
+                $mrc = curl_multi_exec($mh, $running);
+            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
         }
         foreach ($ch as $key => $val) {
             $results[$key] = curl_multi_getcontent($val);

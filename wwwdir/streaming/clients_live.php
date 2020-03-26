@@ -151,7 +151,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         if (!ipTV_streaming::ps_running($channel_info['pid'], FFMPEG_PATH)) {
             if ($channel_info['on_demand'] == 1) {
                 if (!ipTV_streaming::CDA72bC41975C364BC559dB25648A5b2($channel_info['monitor_pid'], $stream_id)) {
-                    ipTV_stream::E79092731573697c16A932c339D0a101($stream_id);
+                    ipTV_stream::startStream($stream_id);
                 }
             } else {
                 ipTV_streaming::ShowVideo($user_info['is_restreamer'], 'show_not_on_air_video', 'not_on_air_video_path', $extension);

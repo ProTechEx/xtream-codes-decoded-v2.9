@@ -57,15 +57,15 @@ class ipTV_db
     function query($query, $buffered = false)
     {
         $this->db_connect();
-        $bf71d30c152dd2edcc2dbd2d67b71257 = func_num_args();
-        $bcde8f5075cc50fc02f07923570c4006 = func_get_args();
-        $e3d665ac9d68febd9e8a2fa23a73999a = array();
+        $numargs = func_num_args();
+        $arg_list = func_get_args();
+        $list = array();
         $index = 1;
-        while ($index < $bf71d30c152dd2edcc2dbd2d67b71257) {
-            $e3d665ac9d68febd9e8a2fa23a73999a[] = mysqli_real_escape_string($this->dbh, $bcde8f5075cc50fc02f07923570c4006[$index]);
+        while ($index < $numargs) {
+            $list[] = mysqli_real_escape_string($this->dbh, $arg_list[$index]);
             $index++;
         }
-        $query = vsprintf($query, $e3d665ac9d68febd9e8a2fa23a73999a);
+        $query = vsprintf($query, $list);
         $this->last_query = $query;
         if ($buffered === true) {
             $this->result = mysqli_query($this->dbh, $query, MYSQLI_USE_RESULT);
@@ -78,7 +78,7 @@ class ipTV_db
         }
         return true;
     }
-    function get_rows($use_id = false, $column_as_id = '', $unique_row = true, $e5da5890532f44eaec7109ff806fa870 = '')
+    function get_rows($use_id = false, $column_as_id = '', $unique_row = true, $column = '')
     {
         if ($this->dbh && $this->result) {
             $rows = array();
@@ -89,8 +89,8 @@ class ipTV_db
                             $rows[$row[$column_as_id]] = array();
                         }
                         if (!$unique_row) {
-                            if (!empty($e5da5890532f44eaec7109ff806fa870) && array_key_exists($e5da5890532f44eaec7109ff806fa870, $row)) {
-                                $rows[$row[$column_as_id]][$row[$e5da5890532f44eaec7109ff806fa870]] = $row;
+                            if (!empty($column) && array_key_exists($column, $row)) {
+                                $rows[$row[$column_as_id]][$row[$column]] = $row;
                             } else {
                                 $rows[$row[$column_as_id]][] = $row;
                             }
