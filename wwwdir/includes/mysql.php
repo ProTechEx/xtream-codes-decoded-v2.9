@@ -1,5 +1,4 @@
 <?php
-/*Rev:26.09.18r0*/
 
 class ipTV_db
 {
@@ -62,12 +61,10 @@ class ipTV_db
         $bcde8f5075cc50fc02f07923570c4006 = func_get_args();
         $e3d665ac9d68febd9e8a2fa23a73999a = array();
         $index = 1;
-        //A527e2e94fe176728f169d39a4a4d85e:
         while ($index < $bf71d30c152dd2edcc2dbd2d67b71257) {
             $e3d665ac9d68febd9e8a2fa23a73999a[] = mysqli_real_escape_string($this->dbh, $bcde8f5075cc50fc02f07923570c4006[$index]);
             $index++;
         }
-        //b98b73da316b1cb484ae8ac5489e2edf:
         $query = vsprintf($query, $e3d665ac9d68febd9e8a2fa23a73999a);
         $this->last_query = $query;
         if ($buffered === true) {
@@ -84,31 +81,29 @@ class ipTV_db
     function get_rows($use_id = false, $column_as_id = '', $unique_row = true, $e5da5890532f44eaec7109ff806fa870 = '')
     {
         if ($this->dbh && $this->result) {
-            $Cd4eabf7ecf553f46c17f0bd5a382c46 = array();
+            $rows = array();
             if ($this->num_rows() > 0) {
-                //e3988826b887ae0e6e46fbfa14b3f173:
-                while ($row = mysqli_FETCH_array($this->result, MYSQLI_ASSOC)) {
+                while ($row = mysqli_fetch_array($this->result, MYSQLI_ASSOC)) {
                     if ($use_id && array_key_exists($column_as_id, $row)) {
-                        if (!isset($Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]])) {
-                            $Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]] = array();
+                        if (!isset($rows[$row[$column_as_id]])) {
+                            $rows[$row[$column_as_id]] = array();
                         }
                         if (!$unique_row) {
                             if (!empty($e5da5890532f44eaec7109ff806fa870) && array_key_exists($e5da5890532f44eaec7109ff806fa870, $row)) {
-                                $Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]][$row[$e5da5890532f44eaec7109ff806fa870]] = $row;
+                                $rows[$row[$column_as_id]][$row[$e5da5890532f44eaec7109ff806fa870]] = $row;
                             } else {
-                                $Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]][] = $row;
+                                $rows[$row[$column_as_id]][] = $row;
                             }
                         } else {
-                            $Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]] = $row;
+                            $rows[$row[$column_as_id]] = $row;
                         }
                     } else {
-                        $Cd4eabf7ecf553f46c17f0bd5a382c46[] = $row;
+                        $rows[] = $row;
                     }
                 }
-                //A9e286b3e3983352f9ff5becbec84ed8:
             }
             mysqli_free_result($this->result);
-            return $Cd4eabf7ecf553f46c17f0bd5a382c46;
+            return $rows;
         }
         return false;
     }
@@ -117,7 +112,7 @@ class ipTV_db
         if ($this->dbh && $this->result) {
             $row = array();
             if ($this->num_rows() > 0) {
-                $row = mysqli_FETCH_array($this->result, MYSQLI_ASSOC);
+                $row = mysqli_fetch_array($this->result, MYSQLI_ASSOC);
             }
             mysqli_free_result($this->result);
             return $row;
@@ -129,7 +124,7 @@ class ipTV_db
         if ($this->dbh && $this->result) {
             $row = false;
             if ($this->num_rows() > 0) {
-                $row = mysqli_FETCH_array($this->result, MYSQLI_NUM);
+                $row = mysqli_fetch_array($this->result, MYSQLI_NUM);
                 $row = $row[0];
             }
             mysqli_free_result($this->result);

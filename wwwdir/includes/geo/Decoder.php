@@ -83,16 +83,16 @@ class dD866CD266d22904Db08ceDe9C891eEb
     }
     private function E4b3204157994d7695AD6cc62487E431($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed)
     {
-        $e651d3327c00dab0032bac22e53d91e5 = array();
+        $array = array();
         $index = 0;
         //Ef4075258ae932205e18c356f58e8118:
         while ($index < $Ff876e96994aa5b09ce92e771efe2038) {
-            list($a1daec950dd361ae639ad3a57dc018c0, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203f7686cc9d7129db62CE01BD($Edcf28ccdc0122ea787e348c040427ed);
-            array_push($e651d3327c00dab0032bac22e53d91e5, $a1daec950dd361ae639ad3a57dc018c0);
+            list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203f7686cc9d7129db62CE01BD($Edcf28ccdc0122ea787e348c040427ed);
+            array_push($array, $value);
             $index++;
         }
         //c10c4d126a9495c09ec72c73258ec878:
-        return array($e651d3327c00dab0032bac22e53d91e5, $Edcf28ccdc0122ea787e348c040427ed);
+        return array($array, $Edcf28ccdc0122ea787e348c040427ed);
     }
     private function f9c7A22DB968d2e96a93b6B59d77fe91($Ff876e96994aa5b09ce92e771efe2038)
     {
@@ -121,8 +121,8 @@ class dD866CD266d22904Db08ceDe9C891eEb
         //f2e2475352ef7e29eeecc0eaf14ba47e:
         while ($index < $Ff876e96994aa5b09ce92e771efe2038) {
             list($key, $Edcf28ccdc0122ea787e348c040427ed) = $this->A13c48203F7686cc9d7129db62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
-            list($a1daec950dd361ae639ad3a57dc018c0, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203F7686cc9d7129dB62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
-            $fd85ae68a4de5cc6cec54942d82e8f80[$key] = $a1daec950dd361ae639ad3a57dc018c0;
+            list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203F7686cc9d7129dB62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
+            $fd85ae68a4de5cc6cec54942d82e8f80[$key] = $value;
             $index++;
         }
         //Bc21d0a0d4e484dd04213ed0894da5fb:
@@ -185,17 +185,17 @@ class dD866CD266d22904Db08ceDe9C891eEb
         $Ff876e96994aa5b09ce92e771efe2038 = $fa81eee42906632ae33f6829b4097955 & 31;
         $Ae3234ddab2e42837c611f69b424ea66 = $Ff876e96994aa5b09ce92e771efe2038 < 29 ? 0 : $Ff876e96994aa5b09ce92e771efe2038 - 28;
         $e13ac89e162bcc9913e553b949f755b6 = c71F9A0aa9539E5bBb23f465b5B8A992::aD87a931Cde9286D705b4954d6B159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $Ae3234ddab2e42837c611f69b424ea66);
-        $e604917258b158ba003c4d7352099362 = $this->D51bb43E3F3096830f5B813802B1f855($e13ac89e162bcc9913e553b949f755b6);
+        $decoded = $this->D51bb43E3F3096830f5B813802B1f855($e13ac89e162bcc9913e553b949f755b6);
         if (!($Ff876e96994aa5b09ce92e771efe2038 === 29)) {
             if (!($Ff876e96994aa5b09ce92e771efe2038 === 30)) {
                 if ($Ff876e96994aa5b09ce92e771efe2038 > 30) {
-                    $Ff876e96994aa5b09ce92e771efe2038 = ($e604917258b158ba003c4d7352099362 & 268435455 >> 32 - 8 * $Ae3234ddab2e42837c611f69b424ea66) + 65821;
+                    $Ff876e96994aa5b09ce92e771efe2038 = ($decoded & 268435455 >> 32 - 8 * $Ae3234ddab2e42837c611f69b424ea66) + 65821;
                 } else {
                     D13967813388bb221d83f8dac535a114:
-                    $Ff876e96994aa5b09ce92e771efe2038 = 29 + $e604917258b158ba003c4d7352099362;
+                    $Ff876e96994aa5b09ce92e771efe2038 = 29 + $decoded;
                     goto E34776511fb67c488687c4d1fb35f8c7;
                     F514c16b613c162447d67d4978c87146:
-                    $Ff876e96994aa5b09ce92e771efe2038 = 285 + $e604917258b158ba003c4d7352099362;
+                    $Ff876e96994aa5b09ce92e771efe2038 = 285 + $decoded;
                     goto E34776511fb67c488687c4d1fb35f8c7;
                 }
                 return array($Ff876e96994aa5b09ce92e771efe2038, $Edcf28ccdc0122ea787e348c040427ed + $Ae3234ddab2e42837c611f69b424ea66);

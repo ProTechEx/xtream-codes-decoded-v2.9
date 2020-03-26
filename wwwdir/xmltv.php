@@ -18,16 +18,16 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             echo '<?xml version="1.0" encoding="utf-8" ?><!DOCTYPE tv SYSTEM "xmltv.dtd">';
             echo "<tv generator-info-name=\"{$B1f3e7b388cc5e0a6305e957f3319444}\" generator-info-url=\"" . ipTV_lib::$StreamingServers[SERVER_ID]['site_url'] . '">';
             $ipTV_db->query('SELECT `stream_display_name`,`stream_icon`,`channel_id`,`epg_id` FROM `streams` WHERE `epg_id` IS NOT NULL');
-            $Cd4eabf7ecf553f46c17f0bd5a382c46 = $ipTV_db->get_rows();
+            $rows = $ipTV_db->get_rows();
             $Bbb7af082729bf21d97453279778fdee = array();
-            foreach ($Cd4eabf7ecf553f46c17f0bd5a382c46 as $row) {
+            foreach ($rows as $row) {
                 $Fe45388c8d13b941318458fa095983c3 = htmlspecialchars($row['stream_display_name'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
-                $f6cb8ff50fa6609892442191828c234b = htmlspecialchars($row['stream_icon'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
+                $stream_icon = htmlspecialchars($row['stream_icon'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $e818ebc908da0ee69f4f99daba6a1a18 = htmlspecialchars($row['channel_id'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 echo "<channel id=\"{$e818ebc908da0ee69f4f99daba6a1a18}\">";
                 echo "<display-name>{$Fe45388c8d13b941318458fa095983c3}</display-name>";
                 if (!empty($row['stream_icon'])) {
-                    echo "<icon src=\"{$f6cb8ff50fa6609892442191828c234b}\" />";
+                    echo "<icon src=\"{$stream_icon}\" />";
                 }
                 echo '</channel>';
                 $Bbb7af082729bf21d97453279778fdee[] = $row['epg_id'];
@@ -35,7 +35,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             $Bbb7af082729bf21d97453279778fdee = array_unique($Bbb7af082729bf21d97453279778fdee);
             $query = mysqli_query($ipTV_db->dbh, 'SELECT * FROM `epg_data` WHERE `epg_id` IN(' . implode(',', $Bbb7af082729bf21d97453279778fdee) . ') AND `start` BETWEEN \'' . date('Y-m-d H:i:00', strtotime("-{$cc787cb8dcdf96d84151c7a73aa831bf} day")) . '\' AND \'' . date('Y-m-d H:i:00', strtotime("+{$E9bd18f1acef0191a216cfc27a1fcfce} day")) . '\'', MYSQLI_USE_RESULT);
             //f1bcbc646b7caf73aa5b0b71be389f78:
-            while ($row = mysqli_FETCH_assoc($query)) {
+            while ($row = mysqli_fetch_assoc($query)) {
                 $E4416ae8f96620daee43ac43f9515200 = htmlspecialchars(base64_decode($row['title']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $d4c3c80b508f5d00d05316e7aa0858de = htmlspecialchars(base64_decode($row['description']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $e818ebc908da0ee69f4f99daba6a1a18 = htmlspecialchars($row['channel_id'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');

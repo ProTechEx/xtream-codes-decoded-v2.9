@@ -103,8 +103,8 @@ if ($ipTV_db->num_rows() > 0) {
                     $fp = fopen(STREAMS_PATH . $segment_file, 'r');
                     //D2d24958a6f2888a694ed67016b06229:
                     while ($c45cc215a073632a9e20d474ea91f7e3 <= $f065eccc0636f7fd92043c7118f7409b && !file_exists(STREAMS_PATH . $Bf3da9b14ae368d39b642b3f83d656fc)) {
-                        $d76067cf9572f7a6691c85c12faf2a29 = stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
-                        if (empty($d76067cf9572f7a6691c85c12faf2a29)) {
+                        $data = stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
+                        if (empty($data)) {
                             sleep(1);
                             if (!is_resource($fp) || !file_exists(STREAMS_PATH . $segment_file)) {
                                 die;
@@ -112,7 +112,7 @@ if ($ipTV_db->num_rows() > 0) {
                             ++$c45cc215a073632a9e20d474ea91f7e3;
                             continue;
                         }
-                        echo $d76067cf9572f7a6691c85c12faf2a29;
+                        echo $data;
                         $c45cc215a073632a9e20d474ea91f7e3 = 0;
                     }
                     //ef89f77163837836531e009abed1ed0a:

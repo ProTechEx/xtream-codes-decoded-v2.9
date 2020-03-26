@@ -12,7 +12,7 @@ if (!empty(ipTV_lib::$request['action']) && ipTV_lib::$request['action'] == 'gen
     die;
 }
 if (!empty(ipTV_lib::$request['action']) && ipTV_lib::$request['action'] == 'auth') {
-    $bad0c96fedbc6eccfe927016a4dc3cd6 = isset(ipTV_lib::$request['mac']) ? htmlentities(ipTV_lib::$request['mac']) : '';
+    $mac = isset(ipTV_lib::$request['mac']) ? htmlentities(ipTV_lib::$request['mac']) : '';
     $A772ae3d339199a2063a8114463187e9 = isset(ipTV_lib::$request['mmac']) ? htmlentities(ipTV_lib::$request['mmac']) : '';
     $fe0750f7aa30941e1e4cdf60bf6a717c = isset(ipTV_lib::$request['ip']) ? htmlentities(ipTV_lib::$request['ip']) : '';
     $Ad76f953cd176710f1445b66d793955d = isset(ipTV_lib::$request['version']) ? htmlentities(ipTV_lib::$request['version']) : '';
@@ -22,7 +22,7 @@ if (!empty(ipTV_lib::$request['action']) && ipTV_lib::$request['action'] == 'aut
     $b37f0a028a0cad24cae4c9e61119f8de = !empty(ipTV_lib::$request['dn']) ? htmlentities(ipTV_lib::$request['dn']) : '-';
     $b5014e12f754ad55b57d1a8e17efe7b0 = !empty(ipTV_lib::$request['cmac']) ? htmlentities(strtoupper(ipTV_lib::$request['cmac'])) : '';
     $f5cab1816ec764ef073063a4c9596cb6 = array();
-    if ($de0eb4ea8ae0aa5b5b8864529380cf22 = ipTV_streaming::A2999eeDbe1Ff2D9cE52EF5311680cD4(array('device_id' => null, 'mac' => strtoupper($bad0c96fedbc6eccfe927016a4dc3cd6)))) {
+    if ($de0eb4ea8ae0aa5b5b8864529380cf22 = ipTV_streaming::A2999eeDbe1Ff2D9cE52EF5311680cD4(array('device_id' => null, 'mac' => strtoupper($mac)))) {
         if ($de0eb4ea8ae0aa5b5b8864529380cf22['enigma2']['lock_device'] == 1) {
             if (!empty($de0eb4ea8ae0aa5b5b8864529380cf22['enigma2']['modem_mac']) && $de0eb4ea8ae0aa5b5b8864529380cf22['enigma2']['modem_mac'] !== $A772ae3d339199a2063a8114463187e9) {
                 die(json_encode(array()));

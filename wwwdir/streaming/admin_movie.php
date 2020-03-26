@@ -65,10 +65,10 @@ if ($ipTV_db->num_rows() > 0) {
         }
         $fp = @fopen($E6dd23f358d554b9a74e3ae676bc8c9b, 'rb');
         $Ff876e96994aa5b09ce92e771efe2038 = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
-        $b362cb2e1492b66663cf3718328409ad = $Ff876e96994aa5b09ce92e771efe2038;
+        $length = $Ff876e96994aa5b09ce92e771efe2038;
         $start = 0;
         $ebe823668f9748302d3bd87782a71948 = $Ff876e96994aa5b09ce92e771efe2038 - 1;
-        header("Accept-Ranges: 0-{$b362cb2e1492b66663cf3718328409ad}");
+        header("Accept-Ranges: 0-{$length}");
         if (isset($_SERVER['HTTP_RANGE'])) {
             $dccf2f0f292208ba833261a4da87860d = $start;
             $A34771e85be87aded632236239e94d98 = $ebe823668f9748302d3bd87782a71948;
@@ -93,12 +93,12 @@ if ($ipTV_db->num_rows() > 0) {
             }
             $start = $dccf2f0f292208ba833261a4da87860d;
             $ebe823668f9748302d3bd87782a71948 = $A34771e85be87aded632236239e94d98;
-            $b362cb2e1492b66663cf3718328409ad = $ebe823668f9748302d3bd87782a71948 - $start + 1;
+            $length = $ebe823668f9748302d3bd87782a71948 - $start + 1;
             fseek($fp, $start);
             header('HTTP/1.1 206 Partial Content');
         }
         header("Content-Range: bytes {$start}-{$ebe823668f9748302d3bd87782a71948}/{$Ff876e96994aa5b09ce92e771efe2038}");
-        header('Content-Length: ' . $b362cb2e1492b66663cf3718328409ad);
+        header('Content-Length: ' . $length);
         $C7558f823ac28009bfd4730a82f1f01b = 1024 * 8;
         //a28124da1815e0b87ed638f4cd963820:
         while (!feof($fp) && ($f11bd4ac0a2baf9850141d4517561cff = ftell($fp)) <= $ebe823668f9748302d3bd87782a71948) {

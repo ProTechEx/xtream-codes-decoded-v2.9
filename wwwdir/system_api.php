@@ -11,10 +11,10 @@ if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin())) {
     die(json_encode(array('main_fetch' => false)));
 }
 header('Access-Control-Allow-Origin: *');
-$b4af8b82d0e004d138b6f62947d7a1fa = !empty(ipTV_lib::$request['action']) ? ipTV_lib::$request['action'] : '';
-switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
-    case 'reset_CACHE':
-        $c2714edb9f7cb977cefa4865b4718aeb = opCACHE_reset();
+$action = !empty(ipTV_lib::$request['action']) ? ipTV_lib::$request['action'] : '';
+switch ($action) {
+    case 'reset_cache':
+        $c2714edb9f7cb977cefa4865b4718aeb = opcache_reset();
         echo (int) $c2714edb9f7cb977cefa4865b4718aeb;
         die;
         break;
@@ -41,11 +41,11 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
         break;
     case 'vod':
         if (!empty(ipTV_lib::$request['stream_ids']) && !empty(ipTV_lib::$request['function'])) {
-            $B5dac75572776cad02b4f375a2781a87 = array_map('intval', ipTV_lib::$request['stream_ids']);
+            $stream_ids = array_map('intval', ipTV_lib::$request['stream_ids']);
             $Daacff3221aec728feb2b951e375d30c = ipTV_lib::$request['function'];
             switch ($Daacff3221aec728feb2b951e375d30c) {
                 case 'start':
-                    foreach ($B5dac75572776cad02b4f375a2781a87 as $stream_id) {
+                    foreach ($stream_ids as $stream_id) {
                         ipTV_stream::b533e0F5F988919d1c3b076A87f9B0E3($stream_id);
                         ipTV_stream::f8ab00514D4db9462A088927B8d3A8e6($stream_id);
                         usleep(50000);
@@ -54,7 +54,7 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
                     die;
                     break;
                 case 'stop':
-                    foreach ($B5dac75572776cad02b4f375a2781a87 as $stream_id) {
+                    foreach ($stream_ids as $stream_id) {
                         ipTV_stream::B533E0f5f988919D1C3b076A87F9b0e3($stream_id);
                         //d2e259c6c4dde0e29760d1be8596a183:
                     }
@@ -66,11 +66,11 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
         break;
     case 'stream':
         if (!empty(ipTV_lib::$request['stream_ids']) && !empty(ipTV_lib::$request['function'])) {
-            $B5dac75572776cad02b4f375a2781a87 = array_map('intval', ipTV_lib::$request['stream_ids']);
+            $stream_ids = array_map('intval', ipTV_lib::$request['stream_ids']);
             $Daacff3221aec728feb2b951e375d30c = ipTV_lib::$request['function'];
             switch ($Daacff3221aec728feb2b951e375d30c) {
                 case 'start':
-                    foreach ($B5dac75572776cad02b4f375a2781a87 as $stream_id) {
+                    foreach ($stream_ids as $stream_id) {
                         ipTV_stream::e79092731573697c16A932c339D0a101($stream_id, true);
                         usleep(50000);
                     }
@@ -78,7 +78,7 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
                     die;
                     break;
                 case 'stop':
-                    foreach ($B5dac75572776cad02b4f375a2781a87 as $stream_id) {
+                    foreach ($stream_ids as $stream_id) {
                         ipTV_stream::C27c26B9eD331706a4C3F0292142FB52($stream_id, true);
                         //d38d68138bb88898325a5e31b37f3888:
                     }
@@ -90,8 +90,8 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
         break;
     case 'getURL':
         if (!empty($_REQUEST['url'])) {
-            $e3539ad64f4d9fc6c2e465986c622369 = urldecode(base64_decode($_REQUEST['url']));
-            passthru("wget --no-check-certificate --user-agent \"Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0\" --timeout=40 -O - \"{$e3539ad64f4d9fc6c2e465986c622369}\" -q 2>/dev/null");
+            $url = urldecode(base64_decode($_REQUEST['url']));
+            passthru("wget --no-check-certificate --user-agent \"Mozilla/5.0 (Windows NT 10.0; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0\" --timeout=40 -O - \"{$url}\" -q 2>/dev/null");
             die;
         }
         break;
@@ -200,10 +200,10 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
                 header('Content-Type: application/octet-stream');
                 $fp = @fopen($dae587fac852b56aefd2f953ed975545, 'rb');
                 $Ff876e96994aa5b09ce92e771efe2038 = filesize($dae587fac852b56aefd2f953ed975545);
-                $b362cb2e1492b66663cf3718328409ad = $Ff876e96994aa5b09ce92e771efe2038;
+                $length = $Ff876e96994aa5b09ce92e771efe2038;
                 $start = 0;
                 $ebe823668f9748302d3bd87782a71948 = $Ff876e96994aa5b09ce92e771efe2038 - 1;
-                header("Accept-Ranges: 0-{$b362cb2e1492b66663cf3718328409ad}");
+                header("Accept-Ranges: 0-{$length}");
                 if (isset($_SERVER['HTTP_RANGE'])) {
                     $dccf2f0f292208ba833261a4da87860d = $start;
                     $A34771e85be87aded632236239e94d98 = $ebe823668f9748302d3bd87782a71948;
@@ -228,12 +228,12 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
                     }
                     $start = $dccf2f0f292208ba833261a4da87860d;
                     $ebe823668f9748302d3bd87782a71948 = $A34771e85be87aded632236239e94d98;
-                    $b362cb2e1492b66663cf3718328409ad = $ebe823668f9748302d3bd87782a71948 - $start + 1;
+                    $length = $ebe823668f9748302d3bd87782a71948 - $start + 1;
                     fseek($fp, $start);
                     header('HTTP/1.1 206 Partial Content');
                 }
                 header("Content-Range: bytes {$start}-{$ebe823668f9748302d3bd87782a71948}/{$Ff876e96994aa5b09ce92e771efe2038}");
-                header('Content-Length: ' . $b362cb2e1492b66663cf3718328409ad);
+                header('Content-Length: ' . $length);
                 //B5e74df099d83a93b56f89f2cc3c10f2:
                 while (!feof($fp) && ($f11bd4ac0a2baf9850141d4517561cff = ftell($fp)) <= $ebe823668f9748302d3bd87782a71948) {
                     echo stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
@@ -284,19 +284,19 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
     case 'get_e2_screens':
         if (!empty(ipTV_lib::$request['device_id'])) {
             $a0bdfe2058b3579da2b71ebf929871e2 = intval(ipTV_lib::$request['device_id']);
-            $Af301a166badb15e0b00336d72fb9497 = array();
-            $Af301a166badb15e0b00336d72fb9497['screens'] = array();
-            $Af301a166badb15e0b00336d72fb9497['files'] = array();
+            $results = array();
+            $results['screens'] = array();
+            $results['files'] = array();
             if (is_dir(ENIGMA2_PLUGIN_DIR)) {
                 if ($abdb80e31a5182f342c715b2ea8096c7 = opendir(ENIGMA2_PLUGIN_DIR)) {
                     //cc5e7706d83f9b66a94d1874bdeeedd8:
                     while (($Ca434bcc380e9dbd2a3a588f6c32d84f = readdir($abdb80e31a5182f342c715b2ea8096c7)) !== false) {
-                        $d76067cf9572f7a6691c85c12faf2a29 = explode('_', $Ca434bcc380e9dbd2a3a588f6c32d84f);
-                        if (count($d76067cf9572f7a6691c85c12faf2a29) == 4 && $d76067cf9572f7a6691c85c12faf2a29[0] == $a0bdfe2058b3579da2b71ebf929871e2) {
-                            if ($d76067cf9572f7a6691c85c12faf2a29[1] == 'screen') {
-                                $Af301a166badb15e0b00336d72fb9497['screens'][basename($d76067cf9572f7a6691c85c12faf2a29[2], '.jpg')] = $_SERVER['REQUEST_SchEME'] . '://' . $_SERVER['HTTP_HOST'] . '/images/enigma2/' . basename($Ca434bcc380e9dbd2a3a588f6c32d84f);
+                        $data = explode('_', $Ca434bcc380e9dbd2a3a588f6c32d84f);
+                        if (count($data) == 4 && $data[0] == $a0bdfe2058b3579da2b71ebf929871e2) {
+                            if ($data[1] == 'screen') {
+                                $results['screens'][basename($data[2], '.jpg')] = $_SERVER['REQUEST_SchEME'] . '://' . $_SERVER['HTTP_HOST'] . '/images/enigma2/' . basename($Ca434bcc380e9dbd2a3a588f6c32d84f);
                             } else {
-                                $Af301a166badb15e0b00336d72fb9497['files'][] = ENIGMA2_PLUGIN_DIR . $Ca434bcc380e9dbd2a3a588f6c32d84f;
+                                $results['files'][] = ENIGMA2_PLUGIN_DIR . $Ca434bcc380e9dbd2a3a588f6c32d84f;
                             }
                         }
                     }
@@ -304,8 +304,8 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
                     closedir($abdb80e31a5182f342c715b2ea8096c7);
                 }
             }
-            krsort($Af301a166badb15e0b00336d72fb9497['screens']);
-            echo json_encode($Af301a166badb15e0b00336d72fb9497);
+            krsort($results['screens']);
+            echo json_encode($results);
             die;
         }
         break;
