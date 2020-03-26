@@ -237,7 +237,7 @@ function shutdown()
 {
     global $ipTV_db, $activity_id, $connection_speed_file, $user_info, $E2e6656d8b1675f70c487f89e4f27a3b, $f0ac6ad2b40669833242a10c23cad2e0, $stream_id, $user_agent, $user_ip, $A75f2436a5614184bfe3442ddd050ec5, $external_device, $date;
     if ($f0ac6ad2b40669833242a10c23cad2e0) {
-        D9F93B7c177E377d0BBfE315EAEae505();
+        CheckFlood();
         http_response_code(401);
     }
     $ipTV_db->close_mysql();

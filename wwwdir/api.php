@@ -4,7 +4,7 @@
 set_time_limit(0);
 require 'init.php';
 $user_ip = $_SERVER['REMOTE_ADDR'];
-if (!in_array($user_ip, ipTV_streaming::Ab69E1103C96eE33FE21a6453d788925()) && !in_array($user_ip, ipTV_lib::$settings['api_ips'])) {
+if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin()) && !in_array($user_ip, ipTV_lib::$settings['api_ips'])) {
     die(json_encode(array('result' => false, 'IP FORBIDDEN')));
 }
 if (!empty(ipTV_lib::$settings['api_pass']) && ipTV_lib::$request['api_pass'] != ipTV_lib::$settings['api_pass']) {

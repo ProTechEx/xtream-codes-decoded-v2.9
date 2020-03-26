@@ -11,7 +11,7 @@ class ipTV_lib
     public static $SegmentsSettings = array();
     public static $blockedUA = array();
     public static $customISP = array();
-    public static function fAB9232faa11c27667e20d2b25c46266()
+    public static function init()
     {
         global $_INFO;
         if (!empty($_GET)) {
@@ -31,7 +31,7 @@ class ipTV_lib
         self::$settings = self::f676C856Cdb61B02034dC26129ac9EB5();
         date_default_timezone_set(self::$settings['default_timezone']);
         self::$StreamingServers = self::A3ae6303492B1F90a30Bd57ad7F17760();
-        if (FETch_BOUQUETS) {
+        if (FETCH_BOUQUETS) {
             self::$Bouquets = self::dc118DD2B94e5f4e1A21651686ed6719();
         }
         self::$blockedUA = self::A7777eA812B783AE183c0e54B62e833C();
@@ -39,7 +39,7 @@ class ipTV_lib
         if (self::$StreamingServers[SERVER_ID]['persistent_connections'] != $_INFO['pconnect']) {
             $_INFO['pconnect'] = self::$StreamingServers[SERVER_ID]['persistent_connections'];
             if (!empty($_INFO) && is_array($_INFO) && !empty($_INFO['db_user'])) {
-                file_put_contents(IPTV_PANEL_DIR . 'config', base64_encode(EaAB451Ef7A60C6d480e43b6c15A14A1(json_encode($_INFO), CONFIG_CRYPT_KEY)), LOCK_EX);
+                file_put_contents(IPTV_PANEL_DIR . 'config', base64_encode(decrypt_config(json_encode($_INFO), CONFIG_CRYPT_KEY)), LOCK_EX);
             }
         }
         self::$SegmentsSettings = self::B142A019701de69Abd16CF1861ae5303();
@@ -60,7 +60,7 @@ class ipTV_lib
     }
     public static function B8fcbC16dC5dc82293765A61C8469AF9()
     {
-        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4CE886a5D30a9A137209f2F('customisp_cache');
+        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4CE886a5D30a9A137209f2F('customisp_CACHE');
         if ($a0a73187de2a9fa7f9f714c27f33c77c !== false) {
             return $a0a73187de2a9fa7f9f714c27f33c77c;
         }
@@ -71,7 +71,7 @@ class ipTV_lib
     }
     public static function a7777EA812B783ae183C0E54B62E833C()
     {
-        $a0a73187de2a9fa7f9f714c27f33c77c = self::e550705eC4CE886A5D30A9A137209f2f('uagents_cache');
+        $a0a73187de2a9fa7f9f714c27f33c77c = self::e550705eC4CE886A5D30A9A137209f2f('uagents_CACHE');
         if ($a0a73187de2a9fa7f9f714c27f33c77c !== false) {
             return $a0a73187de2a9fa7f9f714c27f33c77c;
         }
@@ -82,7 +82,7 @@ class ipTV_lib
     }
     public static function dC118dd2B94e5F4E1A21651686eD6719()
     {
-        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705eC4cE886A5D30a9A137209F2F('bouquets_cache');
+        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705eC4cE886A5D30a9A137209F2F('bouquets_CACHE');
         if ($a0a73187de2a9fa7f9f714c27f33c77c !== false) {
             return $a0a73187de2a9fa7f9f714c27f33c77c;
         }
@@ -96,15 +96,15 @@ class ipTV_lib
     }
     public static function F676c856Cdb61b02034dc26129ac9eb5()
     {
-        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4CE886A5D30a9a137209F2f('settings_cache');
+        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4CE886A5D30a9a137209F2f('settings_CACHE');
         if ($a0a73187de2a9fa7f9f714c27f33c77c !== false) {
             return $a0a73187de2a9fa7f9f714c27f33c77c;
         }
         $output = array();
         self::$ipTV_db->query('SELECT * FROM `settings`');
         $Cd4eabf7ecf553f46c17f0bd5a382c46 = self::$ipTV_db->get_row();
-        foreach ($Cd4eabf7ecf553f46c17f0bd5a382c46 as $E7cca48cfca85fc445419a32d7d8f973 => $C5805ed257c09a3079ad7fa87c6d5bb2) {
-            $output[$E7cca48cfca85fc445419a32d7d8f973] = $C5805ed257c09a3079ad7fa87c6d5bb2;
+        foreach ($Cd4eabf7ecf553f46c17f0bd5a382c46 as $key => $C5805ed257c09a3079ad7fa87c6d5bb2) {
+            $output[$key] = $C5805ed257c09a3079ad7fa87c6d5bb2;
             //f97b2b43f2fcdee432532a9877d3e1f9:
         }
         $output['allow_countries'] = json_decode($output['allow_countries'], true);
@@ -123,13 +123,13 @@ class ipTV_lib
     {
         $d76067cf9572f7a6691c85c12faf2a29 = '<?php $output = ' . var_export($d76067cf9572f7a6691c85c12faf2a29, true) . '; ?>';
         if (!file_exists(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php') || md5_file(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php') != md5($d76067cf9572f7a6691c85c12faf2a29)) {
-            file_put_contents(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php_cache', $d76067cf9572f7a6691c85c12faf2a29, LOCK_EX);
-            rename(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php_cache', TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php');
+            file_put_contents(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php_CACHE', $d76067cf9572f7a6691c85c12faf2a29, LOCK_EX);
+            rename(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php_CACHE', TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php');
         }
     }
     public static function e550705Ec4CE886a5D30A9a137209f2F($a0a73187de2a9fa7f9f714c27f33c77c)
     {
-        if (file_exists(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php') && USE_CAchE === true) {
+        if (file_exists(TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php') && USE_CACHE === true) {
             include TMP_DIR . $a0a73187de2a9fa7f9f714c27f33c77c . '.php';
             return $output;
         }
@@ -146,14 +146,14 @@ class ipTV_lib
     public static function cAdEb9125b2E81b183688842c5Ac3Ad7($stream_id)
     {
         $movie_properties = array();
-        if (file_exists(TMP_DIR . $stream_id . '_cache_properties')) {
-            $movie_properties = unserialize(file_get_contents(TMP_DIR . $stream_id . '_cache_properties'));
+        if (file_exists(TMP_DIR . $stream_id . '_CACHE_properties')) {
+            $movie_properties = unserialize(file_get_contents(TMP_DIR . $stream_id . '_CACHE_properties'));
         }
         return isset($movie_properties) && is_array($movie_properties) ? $movie_properties : array();
     }
     public static function a3AE6303492B1F90A30Bd57AD7F17760()
     {
-        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4Ce886a5D30a9A137209F2F('servers_cache');
+        $a0a73187de2a9fa7f9f714c27f33c77c = self::E550705Ec4Ce886a5D30a9A137209F2F('servers_CACHE');
         if ($a0a73187de2a9fa7f9f714c27f33c77c !== false) {
             return $a0a73187de2a9fa7f9f714c27f33c77c;
         }
@@ -190,7 +190,7 @@ class ipTV_lib
         }
         return $f9b9c9baaec5b82b03b15c6eb07ec8f9;
     }
-    public static function mc_decrypt($d826bb1b5f455613052c5b3b5949121c, $E7cca48cfca85fc445419a32d7d8f973)
+    public static function mc_decrypt($d826bb1b5f455613052c5b3b5949121c, $key)
     {
         $d826bb1b5f455613052c5b3b5949121c = explode('|', $d826bb1b5f455613052c5b3b5949121c . '|');
         $e604917258b158ba003c4d7352099362 = base64_decode($d826bb1b5f455613052c5b3b5949121c[0]);
@@ -198,11 +198,11 @@ class ipTV_lib
         if (strlen($d17b616e2ba1c5acd831fc89992d19b8) !== mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC)) {
             return false;
         }
-        $E7cca48cfca85fc445419a32d7d8f973 = pack('H*', $E7cca48cfca85fc445419a32d7d8f973);
-        $D49bad8413a1e326e00365852b39c341 = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $E7cca48cfca85fc445419a32d7d8f973, $e604917258b158ba003c4d7352099362, MCRYPT_MODE_CBC, $d17b616e2ba1c5acd831fc89992d19b8));
+        $key = pack('H*', $key);
+        $D49bad8413a1e326e00365852b39c341 = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $e604917258b158ba003c4d7352099362, MCRYPT_MODE_CBC, $d17b616e2ba1c5acd831fc89992d19b8));
         $bad0c96fedbc6eccfe927016a4dc3cd6 = substr($D49bad8413a1e326e00365852b39c341, -64);
         $D49bad8413a1e326e00365852b39c341 = substr($D49bad8413a1e326e00365852b39c341, 0, -64);
-        $Bf8251826e25f660c6052c269250efc7 = hash_hmac('sha256', $D49bad8413a1e326e00365852b39c341, substr(bin2hex($E7cca48cfca85fc445419a32d7d8f973), -32));
+        $Bf8251826e25f660c6052c269250efc7 = hash_hmac('sha256', $D49bad8413a1e326e00365852b39c341, substr(bin2hex($key), -32));
         if ($Bf8251826e25f660c6052c269250efc7 !== $bad0c96fedbc6eccfe927016a4dc3cd6) {
             return false;
         }
@@ -243,23 +243,23 @@ class ipTV_lib
         $ch = array();
         $Af301a166badb15e0b00336d72fb9497 = array();
         $Ca1351297422337811ecdd7968d5753d = curl_multi_init();
-        foreach ($B13e3f304ca1f14e137f209a5138ea10 as $E7cca48cfca85fc445419a32d7d8f973 => $C5805ed257c09a3079ad7fa87c6d5bb2) {
-            if (ipTV_lib::$StreamingServers[$E7cca48cfca85fc445419a32d7d8f973]['server_online']) {
-                $ch[$E7cca48cfca85fc445419a32d7d8f973] = curl_init();
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_URL, $C5805ed257c09a3079ad7fa87c6d5bb2['url']);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_FOLLOWLOCATION, true);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_CONNECTTIMEOUT, 5);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_TIMEOUT, $E2862eaf3f4716fdadef0a008a343507);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_SSL_VERIFYPEER, 0);
+        foreach ($B13e3f304ca1f14e137f209a5138ea10 as $key => $C5805ed257c09a3079ad7fa87c6d5bb2) {
+            if (ipTV_lib::$StreamingServers[$key]['server_online']) {
+                $ch[$key] = curl_init();
+                curl_setopt($ch[$key], CURLOPT_URL, $C5805ed257c09a3079ad7fa87c6d5bb2['url']);
+                curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch[$key], CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch[$key], CURLOPT_CONNECTTIMEOUT, 5);
+                curl_setopt($ch[$key], CURLOPT_TIMEOUT, $E2862eaf3f4716fdadef0a008a343507);
+                curl_setopt($ch[$key], CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($ch[$key], CURLOPT_SSL_VERIFYPEER, 0);
                 if ($C5805ed257c09a3079ad7fa87c6d5bb2['postdata'] != null) {
-                    curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_POST, true);
-                    curl_setopt($ch[$E7cca48cfca85fc445419a32d7d8f973], CURLOPT_POSTFIELDS, http_build_query($C5805ed257c09a3079ad7fa87c6d5bb2['postdata']));
+                    curl_setopt($ch[$key], CURLOPT_POST, true);
+                    curl_setopt($ch[$key], CURLOPT_POSTFIELDS, http_build_query($C5805ed257c09a3079ad7fa87c6d5bb2['postdata']));
                 }
-                curl_multi_add_handle($Ca1351297422337811ecdd7968d5753d, $ch[$E7cca48cfca85fc445419a32d7d8f973]);
+                curl_multi_add_handle($Ca1351297422337811ecdd7968d5753d, $ch[$key]);
             } else {
-                $A40568a91a6a25727824068aebbe8d94[] = $E7cca48cfca85fc445419a32d7d8f973;
+                $A40568a91a6a25727824068aebbe8d94[] = $key;
             }
         }
         $B06d3729ff277cecf526823e11a5f66d = null;
@@ -278,15 +278,15 @@ class ipTV_lib
             } while ($c0bf7fee7cd09c7f7de56880664bba3b == CURLM_CALL_MULTI_PERFORM);
         }
         //Ec95ab1cac3aa73316a84cbea4da8a7d:
-        foreach ($ch as $E7cca48cfca85fc445419a32d7d8f973 => $C5805ed257c09a3079ad7fa87c6d5bb2) {
-            $Af301a166badb15e0b00336d72fb9497[$E7cca48cfca85fc445419a32d7d8f973] = curl_multi_getcontent($C5805ed257c09a3079ad7fa87c6d5bb2);
+        foreach ($ch as $key => $C5805ed257c09a3079ad7fa87c6d5bb2) {
+            $Af301a166badb15e0b00336d72fb9497[$key] = curl_multi_getcontent($C5805ed257c09a3079ad7fa87c6d5bb2);
             if ($Aa83bd79d8568a4b10bd6fee72c2334c != null) {
-                $Af301a166badb15e0b00336d72fb9497[$E7cca48cfca85fc445419a32d7d8f973] = call_user_func($Aa83bd79d8568a4b10bd6fee72c2334c, $Af301a166badb15e0b00336d72fb9497[$E7cca48cfca85fc445419a32d7d8f973], true);
+                $Af301a166badb15e0b00336d72fb9497[$key] = call_user_func($Aa83bd79d8568a4b10bd6fee72c2334c, $Af301a166badb15e0b00336d72fb9497[$key], true);
             }
             curl_multi_remove_handle($Ca1351297422337811ecdd7968d5753d, $C5805ed257c09a3079ad7fa87c6d5bb2);
         }
-        foreach ($A40568a91a6a25727824068aebbe8d94 as $E7cca48cfca85fc445419a32d7d8f973) {
-            $Af301a166badb15e0b00336d72fb9497[$E7cca48cfca85fc445419a32d7d8f973] = false;
+        foreach ($A40568a91a6a25727824068aebbe8d94 as $key) {
+            $Af301a166badb15e0b00336d72fb9497[$key] = false;
             //D183a0bf62fb06ee69ac0c7223812377:
         }
         curl_multi_close($Ca1351297422337811ecdd7968d5753d);
@@ -329,16 +329,16 @@ class ipTV_lib
         }
         return $d8371b9d492a3a005aae00b32747599b;
     }
-    public static function Cb08394fc6E600fe27F05aEDc447d7bf($E7cca48cfca85fc445419a32d7d8f973)
+    public static function Cb08394fc6E600fe27F05aEDc447d7bf($key)
     {
-        if ($E7cca48cfca85fc445419a32d7d8f973 === '') {
+        if ($key === '') {
             return '';
         }
-        $E7cca48cfca85fc445419a32d7d8f973 = htmlspecialchars(urldecode($E7cca48cfca85fc445419a32d7d8f973));
-        $E7cca48cfca85fc445419a32d7d8f973 = str_replace('..', '', $E7cca48cfca85fc445419a32d7d8f973);
-        $E7cca48cfca85fc445419a32d7d8f973 = preg_replace('/\\_\\_(.+?)\\_\\_/', '', $E7cca48cfca85fc445419a32d7d8f973);
-        $E7cca48cfca85fc445419a32d7d8f973 = preg_replace('/^([\\w\\.\\-\\_]+)$/', '$1', $E7cca48cfca85fc445419a32d7d8f973);
-        return $E7cca48cfca85fc445419a32d7d8f973;
+        $key = htmlspecialchars(urldecode($key));
+        $key = str_replace('..', '', $key);
+        $key = preg_replace('/\\_\\_(.+?)\\_\\_/', '', $key);
+        $key = preg_replace('/^([\\w\\.\\-\\_]+)$/', '$1', $key);
+        return $key;
     }
     public static function d517ef19e12996f7d59BcE1b4bA03104($C5805ed257c09a3079ad7fa87c6d5bb2)
     {

@@ -6,7 +6,7 @@ register_shutdown_function('shutdown');
 set_time_limit(0);
 require '../init.php';
 $user_ip = $_SERVER['REMOTE_ADDR'];
-if (!in_array($user_ip, ipTV_streaming::AB69e1103c96ee33fe21a6453D788925(true))) {
+if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin(true))) {
     http_response_code(401);
     die;
 }

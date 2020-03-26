@@ -90,6 +90,6 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
     die;
 }
 if ($f0ac6ad2b40669833242a10c23cad2e0) {
-    D9F93b7c177E377d0BbfE315eAEAE505();
+    CheckFlood();
 }
 ?>

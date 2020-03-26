@@ -20,7 +20,7 @@ if (ipTV_lib::$request['call'] == 'play_done') {
     http_response_code(200);
     die;
 }
-if (empty(ipTV_lib::$request['username']) && empty(ipTV_lib::$request['password']) && in_array(ipTV_lib::$request['addr'], ipTV_streaming::Ab69e1103C96Ee33FE21A6453D788925())) {
+if (empty(ipTV_lib::$request['username']) && empty(ipTV_lib::$request['password']) && in_array(ipTV_lib::$request['addr'], ipTV_streaming::getAllowedIPsAdmin())) {
     http_response_code(200);
     die;
 }

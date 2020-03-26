@@ -9,7 +9,7 @@ $E824497a502b6e5dd609c0acb45697c7 = false;
 $e13ac89e162bcc9913e553b949f755b6 = 0;
 $activity_id = 0;
 $user_ip = $_SERVER['REMOTE_ADDR'];
-if (!in_array($user_ip, ipTV_streaming::aB69E1103c96eE33FE21a6453d788925(true))) {
+if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin(true))) {
     http_response_code(401);
     die;
 }
@@ -114,7 +114,7 @@ function shutdown()
 {
     global $ipTV_db, $f0ac6ad2b40669833242a10c23cad2e0;
     if ($f0ac6ad2b40669833242a10c23cad2e0) {
-        D9f93B7c177E377D0BBFE315EaEaE505();
+        CheckFlood();
     }
     if (is_object($ipTV_db)) {
         $ipTV_db->close_mysql();

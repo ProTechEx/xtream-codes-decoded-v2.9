@@ -138,7 +138,7 @@ if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
 } else {
     $fd08711a26bab44719872c7fff1f2dfb *= 24;
     $Ba78aa94423804e042a0eb27ba2e39a4 = array_values(array_filter(explode('
-', shell_exec('ls -tr ' . TV_ARchIVE . $stream_id . ' | sed -e \'s/\\s\\+/\\n/g\''))));
+', shell_exec('ls -tr ' . TV_ARCHIVE . $stream_id . ' | sed -e \'s/\\s\\+/\\n/g\''))));
     $f9214002d8ab6575c8e959794518358d = $Be553c1662ffa5054ccb6c5ce822974b * 24;
     if (count($Ba78aa94423804e042a0eb27ba2e39a4) >= $f9214002d8ab6575c8e959794518358d) {
         $f9214002d8ab6575c8e959794518358d = $Ba78aa94423804e042a0eb27ba2e39a4[count($Ba78aa94423804e042a0eb27ba2e39a4) - $f9214002d8ab6575c8e959794518358d];
@@ -152,7 +152,7 @@ if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
     }
 }
 $Df55b74833e9468cafb620fe446225a1 = array();
-$Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARchIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c) . '.ts';
+$Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c) . '.ts';
 if (empty($stream_id) || empty($c4eb261e96f50c6cac5c08c60d657d9c) || empty($fd08711a26bab44719872c7fff1f2dfb)) {
     header('HTTP/1.1 400 Bad Request');
     die;
@@ -165,7 +165,7 @@ $Df55b74833e9468cafb620fe446225a1 = array();
 $index = 0;
 //D5fcf2a72e99ec35092bea70c6000d54:
 while ($index < $fd08711a26bab44719872c7fff1f2dfb) {
-    $Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARchIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c + $index * 60) . '.ts';
+    $Ca434bcc380e9dbd2a3a588f6c32d84f = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c + $index * 60) . '.ts';
     if (file_exists($Ca434bcc380e9dbd2a3a588f6c32d84f)) {
         $Df55b74833e9468cafb620fe446225a1[] = array('filename' => $Ca434bcc380e9dbd2a3a588f6c32d84f, 'filesize' => filesize($Ca434bcc380e9dbd2a3a588f6c32d84f));
     }
@@ -355,7 +355,7 @@ function shutdown()
 {
     global $ipTV_db, $f0ac6ad2b40669833242a10c23cad2e0, $activity_id, $connection_speed_file, $user_info, $E2e6656d8b1675f70c487f89e4f27a3b, $stream_id, $user_agent, $user_ip, $A75f2436a5614184bfe3442ddd050ec5, $external_device, $date;
     if ($f0ac6ad2b40669833242a10c23cad2e0) {
-        d9f93b7C177e377D0bbFE315EAEAe505();
+        CheckFlood();
         http_response_code(401);
     }
     $ipTV_db->close_mysql();

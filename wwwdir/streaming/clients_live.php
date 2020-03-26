@@ -191,7 +191,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                     if ($F3803fa85b38b65447e6d438f8e9176a = ipTV_streaming::E7917F7F55606c448105A9a4016538b9($playlist, $username, $password, $stream_id)) {
                         header('Content-Type: application/x-mpegurl');
                         header('Content-Length: ' . strlen($F3803fa85b38b65447e6d438f8e9176a));
-                        header('Cache-Control: no-store, no-cache, must-revalidate');
+                        header('CACHE-Control: no-store, no-CACHE, must-revalidate');
                         echo $F3803fa85b38b65447e6d438f8e9176a;
                     }
                     die;
@@ -364,7 +364,7 @@ function shutdown()
 {
     global $ipTV_db, $activity_id, $close_connection, $connection_speed_file, $user_info, $extension, $f0ac6ad2b40669833242a10c23cad2e0, $stream_id, $user_agent, $user_ip, $A75f2436a5614184bfe3442ddd050ec5, $external_device, $date;
     if ($f0ac6ad2b40669833242a10c23cad2e0) {
-        D9F93B7c177E377D0bBFe315eaEae505();
+        CheckFlood();
         http_response_code(401);
     }
     $ipTV_db->close_mysql();

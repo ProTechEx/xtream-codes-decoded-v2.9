@@ -271,11 +271,11 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $B6fc8577128465b7a7ca16798a93f3cd->addchild('title', base64_encode($user_info['stream_display_name']));
                     $d4c3c80b508f5d00d05316e7aa0858de = '';
                     if ($movie_properties) {
-                        foreach ($movie_properties as $E7cca48cfca85fc445419a32d7d8f973 => $eb98f53b15ea5d816e72b353cc6c3326) {
-                            if ($E7cca48cfca85fc445419a32d7d8f973 == 'movie_image') {
+                        foreach ($movie_properties as $key => $eb98f53b15ea5d816e72b353cc6c3326) {
+                            if ($key == 'movie_image') {
                                 continue;
                             }
-                            $d4c3c80b508f5d00d05316e7aa0858de .= strtoupper($E7cca48cfca85fc445419a32d7d8f973) . ': ' . $eb98f53b15ea5d816e72b353cc6c3326 . '
+                            $d4c3c80b508f5d00d05316e7aa0858de .= strtoupper($key) . ': ' . $eb98f53b15ea5d816e72b353cc6c3326 . '
 ';
                             //Ad82bd38f29233cb618b80180dff471f:
                         }
@@ -331,6 +331,6 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
 }
 if ($f0ac6ad2b40669833242a10c23cad2e0) {
     http_response_code(401);
-    d9f93B7C177e377d0BBFE315eAeaE505();
+    CheckFlood();
 }
 ?>

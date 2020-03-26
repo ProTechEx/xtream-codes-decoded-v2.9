@@ -35,7 +35,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             $Bbb7af082729bf21d97453279778fdee = array_unique($Bbb7af082729bf21d97453279778fdee);
             $query = mysqli_query($ipTV_db->dbh, 'SELECT * FROM `epg_data` WHERE `epg_id` IN(' . implode(',', $Bbb7af082729bf21d97453279778fdee) . ') AND `start` BETWEEN \'' . date('Y-m-d H:i:00', strtotime("-{$cc787cb8dcdf96d84151c7a73aa831bf} day")) . '\' AND \'' . date('Y-m-d H:i:00', strtotime("+{$E9bd18f1acef0191a216cfc27a1fcfce} day")) . '\'', MYSQLI_USE_RESULT);
             //f1bcbc646b7caf73aa5b0b71be389f78:
-            while ($row = mysqli_fetch_assoc($query)) {
+            while ($row = mysqli_FETCH_assoc($query)) {
                 $E4416ae8f96620daee43ac43f9515200 = htmlspecialchars(base64_decode($row['title']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $d4c3c80b508f5d00d05316e7aa0858de = htmlspecialchars(base64_decode($row['description']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $e818ebc908da0ee69f4f99daba6a1a18 = htmlspecialchars($row['channel_id'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
@@ -55,6 +55,6 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
 }
 if ($f0ac6ad2b40669833242a10c23cad2e0) {
     http_response_code(401);
-    d9f93B7C177E377D0bbfE315EAeAE505();
+    CheckFlood();
 }
 ?>

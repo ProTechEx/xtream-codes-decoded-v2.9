@@ -18,6 +18,6 @@ if ($ipTV_db->num_rows() > 0) {
         }
     }
 }
-D9f93b7C177E377D0BbFe315eAEae505();
+CheckFlood();
 http_response_code(404);
 ?>

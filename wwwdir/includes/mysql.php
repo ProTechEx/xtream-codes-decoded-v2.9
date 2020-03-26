@@ -12,16 +12,16 @@ class ipTV_db
     public $dbh;
     protected $pconnect = false;
     protected $connected = false;
-    function __construct($e52446c69000e32dcba3587971751c55, $fe0e191d9679e3b25f12894b8643f8dc, $b4096134eae1a66dde5826015002e9e8, $e81fa4916966385db57a281e4350f3af, $Bbd935a3f7113263ed95731f6a48e3a4 = 7999, $f27e9801e97df9300aad11d5c40edeeb = false, $f828fbd7943068a1cd53cba5fe86120c = false)
+    function __construct($db_user, $db_pass, $db_name, $host, $db_port = 7999, $pconnect = false, $mysql_config_status = false)
     {
         $this->dbh = false;
-        if (!$f828fbd7943068a1cd53cba5fe86120c) {
-            $this->dbuser = $e52446c69000e32dcba3587971751c55;
-            $this->dbpassword = $fe0e191d9679e3b25f12894b8643f8dc;
-            $this->dbname = $b4096134eae1a66dde5826015002e9e8;
-            $this->dbhost = $e81fa4916966385db57a281e4350f3af;
-            $this->pconnect = $f27e9801e97df9300aad11d5c40edeeb;
-            $this->dbport = $Bbd935a3f7113263ed95731f6a48e3a4;
+        if (!$mysql_config_status) {
+            $this->dbuser = $db_user;
+            $this->dbpassword = $db_pass;
+            $this->dbname = $db_name;
+            $this->dbhost = $host;
+            $this->pconnect = $pconnect;
+            $this->dbport = $db_port;
         }
     }
     function close_mysql()
@@ -87,7 +87,7 @@ class ipTV_db
             $Cd4eabf7ecf553f46c17f0bd5a382c46 = array();
             if ($this->num_rows() > 0) {
                 //e3988826b887ae0e6e46fbfa14b3f173:
-                while ($row = mysqli_fetch_array($this->result, MYSQLI_ASSOC)) {
+                while ($row = mysqli_FETCH_array($this->result, MYSQLI_ASSOC)) {
                     if ($use_id && array_key_exists($column_as_id, $row)) {
                         if (!isset($Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]])) {
                             $Cd4eabf7ecf553f46c17f0bd5a382c46[$row[$column_as_id]] = array();
@@ -117,7 +117,7 @@ class ipTV_db
         if ($this->dbh && $this->result) {
             $row = array();
             if ($this->num_rows() > 0) {
-                $row = mysqli_fetch_array($this->result, MYSQLI_ASSOC);
+                $row = mysqli_FETCH_array($this->result, MYSQLI_ASSOC);
             }
             mysqli_free_result($this->result);
             return $row;
@@ -129,7 +129,7 @@ class ipTV_db
         if ($this->dbh && $this->result) {
             $row = false;
             if ($this->num_rows() > 0) {
-                $row = mysqli_fetch_array($this->result, MYSQLI_NUM);
+                $row = mysqli_FETCH_array($this->result, MYSQLI_NUM);
                 $row = $row[0];
             }
             mysqli_free_result($this->result);

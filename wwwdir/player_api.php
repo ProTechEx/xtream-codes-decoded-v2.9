@@ -228,6 +228,6 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
     die(json_encode($output, JSON_PARTIAL_OUTPUT_ON_ERROR));
 }
 if ($f0ac6ad2b40669833242a10c23cad2e0) {
-    D9f93b7c177E377d0BBFE315eAEae505();
+    CheckFlood();
 }
 ?>

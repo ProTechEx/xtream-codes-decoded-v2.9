@@ -1,15 +1,14 @@
 <?php
 /*Rev:26.09.18r0*/
 
-function eaaB451eF7a60c6D480E43B6C15a14A1($fbcc64af1e61bd602e57af35b343f521, $E7cca48cfca85fc445419a32d7d8f973)
+function decrypt_config($data, $key)
 {
     $index = 0;
-    $F2e6026e9c178369abb5fa65c7bf432b = '';
-    foreach (str_split($fbcc64af1e61bd602e57af35b343f521) as $d88b7dc5f89e0e7d0d394100bf992462) {
-        $F2e6026e9c178369abb5fa65c7bf432b .= chr(ord($d88b7dc5f89e0e7d0d394100bf992462) ^ ord($E7cca48cfca85fc445419a32d7d8f973[$index++ % strlen($E7cca48cfca85fc445419a32d7d8f973)]));
-        //e0120f63eb0a87f1acce7ef698d63a60:
+    $output = '';
+    foreach (str_split($data) as $d88b7dc5f89e0e7d0d394100bf992462) {
+        $output .= chr(ord($d88b7dc5f89e0e7d0d394100bf992462) ^ ord($key[$index++ % strlen($key)]));
     }
-    return $F2e6026e9c178369abb5fa65c7bf432b;
+    return $output;
 }
 function D6E530a9573198395bDB5822b82478E2()
 {
@@ -60,22 +59,22 @@ function e6A2B39B5861D06ca4034887864A5Fb5()
     }
     return false;
 }
-function c39eD4eaD88eD7C28c7C17F4FBb37669($e651d3327c00dab0032bac22e53d91e5, $E7cca48cfca85fc445419a32d7d8f973, $a1daec950dd361ae639ad3a57dc018c0)
+function c39eD4eaD88eD7C28c7C17F4FBb37669($e651d3327c00dab0032bac22e53d91e5, $key, $a1daec950dd361ae639ad3a57dc018c0)
 {
     $Af301a166badb15e0b00336d72fb9497 = array();
-    B437c8Ac70D749dAD4936900DBa780F9($e651d3327c00dab0032bac22e53d91e5, $E7cca48cfca85fc445419a32d7d8f973, $a1daec950dd361ae639ad3a57dc018c0, $Af301a166badb15e0b00336d72fb9497);
+    B437c8Ac70D749dAD4936900DBa780F9($e651d3327c00dab0032bac22e53d91e5, $key, $a1daec950dd361ae639ad3a57dc018c0, $Af301a166badb15e0b00336d72fb9497);
     return $Af301a166badb15e0b00336d72fb9497;
 }
-function B437c8AC70D749Dad4936900dbA780f9($e651d3327c00dab0032bac22e53d91e5, $E7cca48cfca85fc445419a32d7d8f973, $a1daec950dd361ae639ad3a57dc018c0, &$Af301a166badb15e0b00336d72fb9497)
+function B437c8AC70D749Dad4936900dbA780f9($e651d3327c00dab0032bac22e53d91e5, $key, $a1daec950dd361ae639ad3a57dc018c0, &$Af301a166badb15e0b00336d72fb9497)
 {
     if (!is_array($e651d3327c00dab0032bac22e53d91e5)) {
         return;
     }
-    if (isset($e651d3327c00dab0032bac22e53d91e5[$E7cca48cfca85fc445419a32d7d8f973]) && $e651d3327c00dab0032bac22e53d91e5[$E7cca48cfca85fc445419a32d7d8f973] == $a1daec950dd361ae639ad3a57dc018c0) {
+    if (isset($e651d3327c00dab0032bac22e53d91e5[$key]) && $e651d3327c00dab0032bac22e53d91e5[$key] == $a1daec950dd361ae639ad3a57dc018c0) {
         $Af301a166badb15e0b00336d72fb9497[] = $e651d3327c00dab0032bac22e53d91e5;
     }
     foreach ($e651d3327c00dab0032bac22e53d91e5 as $cf893362b341e42756ec3a6055a2bb5f) {
-        b437c8Ac70d749dad4936900DBA780f9($cf893362b341e42756ec3a6055a2bb5f, $E7cca48cfca85fc445419a32d7d8f973, $a1daec950dd361ae639ad3a57dc018c0, $Af301a166badb15e0b00336d72fb9497);
+        b437c8Ac70d749dad4936900DBA780f9($cf893362b341e42756ec3a6055a2bb5f, $key, $a1daec950dd361ae639ad3a57dc018c0, $Af301a166badb15e0b00336d72fb9497);
         //Ee858ab20550647c62f6e4338c6cadc1:
     }
 }
@@ -93,42 +92,42 @@ function BBd9e78AC32626E138e758e840305a7C($e5ececd623496efd3a17d36d4eb4b945, $Af
     file_put_contents($e5ececd623496efd3a17d36d4eb4b945, getmypid());
     return false;
 }
-function D9F93B7c177e377D0BbfE315eAeAE505()
+function CheckFlood()
 {
     global $ipTV_db;
     if (ipTV_lib::$settings['flood_limit'] == 0) {
         return;
     }
     $user_ip = ipTV_streaming::getUserIP();
-    if (empty($user_ip) || in_array($user_ip, ipTV_streaming::AB69E1103c96ee33fE21A6453d788925())) {
+    if (empty($user_ip) || in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin())) {
         return;
     }
-    $d07f0d12ec3e6a615c9e2128f53c0021 = array_filter(array_unique(explode(',', ipTV_lib::$settings['flood_ips_exclude'])));
-    if (in_array($user_ip, $d07f0d12ec3e6a615c9e2128f53c0021)) {
+    $restreamers = array_filter(array_unique(explode(',', ipTV_lib::$settings['flood_ips_exclude'])));
+    if (in_array($user_ip, $restreamers)) {
         return;
     }
-    $b63b894b2f9b5aabe135ef4a17f2aed8 = TMP_DIR . $user_ip . '.flood';
-    if (file_exists($b63b894b2f9b5aabe135ef4a17f2aed8)) {
-        $Fa6f56ee50a6331b464fdee0f2d47c94 = json_decode(file_get_contents($b63b894b2f9b5aabe135ef4a17f2aed8), true);
-        $E2d3cbb540b5d181229a8dd8556edb4e = ipTV_lib::$settings['flood_seconds'];
-        $Fb18c9917ee3e7aa4417a4f60504a9b5 = ipTV_lib::$settings['flood_limit'];
-        if (time() - $Fa6f56ee50a6331b464fdee0f2d47c94['last_request'] <= $E2d3cbb540b5d181229a8dd8556edb4e) {
-            ++$Fa6f56ee50a6331b464fdee0f2d47c94['requests'];
-            if ($Fa6f56ee50a6331b464fdee0f2d47c94['requests'] >= $Fb18c9917ee3e7aa4417a4f60504a9b5) {
+    $user_ip_file = TMP_DIR . $user_ip . '.flood';
+    if (file_exists($user_ip_file)) {
+        $connected_ips = json_decode(file_get_contents($user_ip_file), true);
+        $flood_seconds = ipTV_lib::$settings['flood_seconds'];
+        $flood_limit = ipTV_lib::$settings['flood_limit'];
+        if (time() - $connected_ips['last_request'] <= $flood_seconds) {
+            ++$connected_ips['requests'];
+            if ($connected_ips['requests'] >= $flood_limit) {
                 $ipTV_db->query('INSERT INTO `blocked_ips` (`ip`,`notes`,`date`) VALUES(\'%s\',\'%s\',\'%d\')', $user_ip, 'FLOOD ATTACK', time());
                 ipTV_servers::RunCommandServer(array_keys(ipTV_lib::$StreamingServers), "sudo /sbin/iptables -A INPUT -s {$user_ip} -j DROP");
-                unlink($b63b894b2f9b5aabe135ef4a17f2aed8);
+                unlink($user_ip_file);
                 return;
             }
-            $Fa6f56ee50a6331b464fdee0f2d47c94['last_request'] = time();
-            file_put_contents($b63b894b2f9b5aabe135ef4a17f2aed8, json_encode($Fa6f56ee50a6331b464fdee0f2d47c94), LOCK_EX);
+            $connected_ips['last_request'] = time();
+            file_put_contents($user_ip_file, json_encode($connected_ips), LOCK_EX);
         } else {
-            $Fa6f56ee50a6331b464fdee0f2d47c94['requests'] = 0;
-            $Fa6f56ee50a6331b464fdee0f2d47c94['last_request'] = time();
-            file_put_contents($b63b894b2f9b5aabe135ef4a17f2aed8, json_encode($Fa6f56ee50a6331b464fdee0f2d47c94), LOCK_EX);
+            $connected_ips['requests'] = 0;
+            $connected_ips['last_request'] = time();
+            file_put_contents($user_ip_file, json_encode($connected_ips), LOCK_EX);
         }
     } else {
-        file_put_contents($b63b894b2f9b5aabe135ef4a17f2aed8, json_encode(array('requests' => 0, 'last_request' => time())), LOCK_EX);
+        file_put_contents($user_ip_file, json_encode(array('requests' => 0, 'last_request' => time())), LOCK_EX);
     }
 }
 function b66dac37e77D0B4B60e2De1e5e4FA184($stream_id, $ea6531b28219f4f71cfd02aec23a0f33 = false)
@@ -427,7 +426,7 @@ function Ea3020592126F8e67C0825492484aEF2($E38668abaa324e464e266fb7b7e784b1, $eb
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
             header('Expires: 0');
-            header('Cache-Control: must-revalidate');
+            header('CACHE-Control: must-revalidate');
             header('Pragma: public');
             header('Content-Disposition: attachment; filename="' . str_replace('{USERNAME}', $user_info['username'], $ef2191c41d898dd4d2c297b9115d985d['device_filename']) . '"');
             header('Content-Length: ' . strlen($d76067cf9572f7a6691c85c12faf2a29));

@@ -7,14 +7,14 @@ if (empty(ipTV_lib::$request['password']) || ipTV_lib::$request['password'] != i
     die;
 }
 $user_ip = $_SERVER['REMOTE_ADDR'];
-if (!in_array($user_ip, ipTV_streaming::ab69e1103c96Ee33Fe21A6453D788925())) {
+if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin())) {
     die(json_encode(array('main_fetch' => false)));
 }
 header('Access-Control-Allow-Origin: *');
 $b4af8b82d0e004d138b6f62947d7a1fa = !empty(ipTV_lib::$request['action']) ? ipTV_lib::$request['action'] : '';
 switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
-    case 'reset_cache':
-        $c2714edb9f7cb977cefa4865b4718aeb = opcache_reset();
+    case 'reset_CACHE':
+        $c2714edb9f7cb977cefa4865b4718aeb = opCACHE_reset();
         echo (int) $c2714edb9f7cb977cefa4865b4718aeb;
         die;
         break;
@@ -134,13 +134,13 @@ switch ($b4af8b82d0e004d138b6f62947d7a1fa) {
         if (!empty(ipTV_lib::$request['cmds'])) {
             $F89e3c76f1417e0acb828e29b1a741bc = ipTV_lib::$request['cmds'];
             $output = array();
-            foreach ($F89e3c76f1417e0acb828e29b1a741bc as $E7cca48cfca85fc445419a32d7d8f973 => $cmd) {
+            foreach ($F89e3c76f1417e0acb828e29b1a741bc as $key => $cmd) {
                 if (!is_array($cmd)) {
-                    $output[$E7cca48cfca85fc445419a32d7d8f973] = shell_exec($cmd);
+                    $output[$key] = shell_exec($cmd);
                     usleep(ipTV_lib::$settings['stream_start_delay']);
                 } else {
                     foreach ($cmd as $bd8ff2f6ff707379a535b26ad00d9524 => $Ecd6895dce094cd665683aacb70b4039) {
-                        $output[$E7cca48cfca85fc445419a32d7d8f973][$bd8ff2f6ff707379a535b26ad00d9524] = shell_exec($Ecd6895dce094cd665683aacb70b4039);
+                        $output[$key][$bd8ff2f6ff707379a535b26ad00d9524] = shell_exec($Ecd6895dce094cd665683aacb70b4039);
                         usleep(ipTV_lib::$settings['stream_start_delay']);
                     }
                 }
