@@ -39,10 +39,10 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                 $E4416ae8f96620daee43ac43f9515200 = htmlspecialchars(base64_decode($row['title']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $d4c3c80b508f5d00d05316e7aa0858de = htmlspecialchars(base64_decode($row['description']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $e818ebc908da0ee69f4f99daba6a1a18 = htmlspecialchars($row['channel_id'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
-                $A73d5129dfb465fd94f3e09e9b179de0 = new DateTime($row['start']);
-                $cdd6af41b10abec2ff03fe043f3df1cf = new DateTime($row['end']);
-                $start = $A73d5129dfb465fd94f3e09e9b179de0->format('YmdHis O');
-                $end = $cdd6af41b10abec2ff03fe043f3df1cf->format('YmdHis O');
+                $epgStart = new DateTime($row['start']);
+                $epgEnd = new DateTime($row['end']);
+                $start = $epgStart->format('YmdHis O');
+                $end = $epgEnd->format('YmdHis O');
                 echo "<programme start=\"{$start}\" stop=\"{$end}\" channel=\"{$e818ebc908da0ee69f4f99daba6a1a18}\" >";
                 echo '<title>' . $E4416ae8f96620daee43ac43f9515200 . '</title>';
                 echo '<desc>' . $d4c3c80b508f5d00d05316e7aa0858de . '</desc>';

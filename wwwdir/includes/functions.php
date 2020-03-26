@@ -59,13 +59,13 @@ function e6A2B39B5861D06ca4034887864A5Fb5()
     }
     return false;
 }
-function c39eD4eaD88eD7C28c7C17F4FBb37669($array, $key, $value)
+function epg_search($array, $key, $value)
 {
     $results = array();
-    B437c8Ac70D749dAD4936900DBa780F9($array, $key, $value, $results);
+    formatArrayResults($array, $key, $value, $results);
     return $results;
 }
-function B437c8AC70D749Dad4936900dbA780f9($array, $key, $value, &$results)
+function formatArrayResults($array, $key, $value, &$results)
 {
     if (!is_array($array)) {
         return;
@@ -73,23 +73,22 @@ function B437c8AC70D749Dad4936900dbA780f9($array, $key, $value, &$results)
     if (isset($array[$key]) && $array[$key] == $value) {
         $results[] = $array;
     }
-    foreach ($array as $cf893362b341e42756ec3a6055a2bb5f) {
-        b437c8Ac70d749dad4936900DBA780f9($cf893362b341e42756ec3a6055a2bb5f, $key, $value, $results);
-        //Ee858ab20550647c62f6e4338c6cadc1:
+    foreach ($array as $item_value) {
+        formatArrayResults($item_value, $key, $value, $results);
     }
 }
-function BBd9e78AC32626E138e758e840305a7C($e5ececd623496efd3a17d36d4eb4b945, $time = 600)
+function KillProcessCmd($file, $time = 600)
 {
-    if (file_exists($e5ececd623496efd3a17d36d4eb4b945)) {
-        $pid = trim(file_get_contents($e5ececd623496efd3a17d36d4eb4b945));
+    if (file_exists($file)) {
+        $pid = trim(file_get_contents($file));
         if (file_exists('/proc/' . $pid)) {
-            if (time() - filemtime($e5ececd623496efd3a17d36d4eb4b945) < $time) {
+            if (time() - filemtime($file) < $time) {
                 die('Running...');
             }
             posix_kill($pid, 9);
         }
     }
-    file_put_contents($e5ececd623496efd3a17d36d4eb4b945, getmypid());
+    file_put_contents($file, getmypid());
     return false;
 }
 function CheckFlood()
@@ -155,7 +154,7 @@ function GetTotalCPUsage()
     $cores = intval(shell_exec('grep --count processor /proc/cpuinfo'));
     return intval($total_cpu / $cores);
 }
-function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $device_id, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $A60fc3238902ec8f309d806e5a28e0f7)
+function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $device_id, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $req_action)
 {
     global $ipTV_db;
     $mac = base64_encode(strtoupper(urldecode($mac)));
@@ -163,7 +162,7 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
     if (!$A6dde9bd7afc06231a1481ec56fd5768 && (!empty($fca2439385f041f384419649ca2471d6) || !empty($d8ba920e2a1ba9839322c2bca0a7a741) || !empty($be29ac67a4314fc9435deb1462cae967) || !empty($device_id) || !empty($Ba644b1066f7c673215de30d5ce5e62c) || !empty($B71eec623f2edcac610184525828cc2d))) {
         $cfc7b4c8f12f119c2180693d0fa61648 = true;
     }
-    if (!$A6dde9bd7afc06231a1481ec56fd5768 && !$cfc7b4c8f12f119c2180693d0fa61648 && $f34a0094f9db3be3b99dd1eb1e9a3b6d != 'stb' && $A60fc3238902ec8f309d806e5a28e0f7 != 'set_fav' && file_exists(TMP_DIR . 'stalker_' . md5($mac))) {
+    if (!$A6dde9bd7afc06231a1481ec56fd5768 && !$cfc7b4c8f12f119c2180693d0fa61648 && $f34a0094f9db3be3b99dd1eb1e9a3b6d != 'stb' && $req_action != 'set_fav' && file_exists(TMP_DIR . 'stalker_' . md5($mac))) {
         $res = json_decode(file_get_contents(TMP_DIR . 'stalker_' . md5($mac)), true);
         return empty($res) ? false : $res;
     }
@@ -245,7 +244,7 @@ function GetCategories($type = null)
     }
     return $ipTV_db->num_rows() > 0 ? $ipTV_db->get_rows(true, 'id') : array();
 }
-function AfFb052CcA396818D81004fF99Db49AA()
+function UniqueID()
 {
     return substr(md5(ipTV_lib::$settings['unique_id']), 0, 15);
 }
@@ -280,16 +279,16 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
     if (ipTV_lib::$settings['use_mdomain_in_lists'] == 1) {
         $domain_name = ipTV_lib::$StreamingServers[SERVER_ID]['site_url'];
     } else {
-        list($C67d267db947e49f6df4c2c8f1f3a7e8, $B9037608c0d62641e46acd9b3d50eee8) = explode(':', $_SERVER['HTTP_HOST']);
-        $domain_name = ipTV_lib::$StreamingServers[SERVER_ID]['server_protocol'] . '://' . $C67d267db947e49f6df4c2c8f1f3a7e8 . ':' . ipTV_lib::$StreamingServers[SERVER_ID]['request_port'] . '/';
+        list($host, $act) = explode(':', $_SERVER['HTTP_HOST']);
+        $domain_name = ipTV_lib::$StreamingServers[SERVER_ID]['server_protocol'] . '://' . $host . ':' . ipTV_lib::$StreamingServers[SERVER_ID]['request_port'] . '/';
     }
-    $f53d081795585cc3a4de84113ceb7f31 = array();
+    $streams_sys = array();
     if ($output_key == 'rtmp') {
         $ipTV_db->query('SELECT t1.id,t2.server_id FROM 
                          `streams` t1
                           INNER JOIN `streams_sys` t2 ON t2.stream_id = t1.id
                           WHERE t1.rtmp_output = 1');
-        $f53d081795585cc3a4de84113ceb7f31 = $ipTV_db->get_rows(true, 'id', false, 'server_id');
+        $streams_sys = $ipTV_db->get_rows(true, 'id', false, 'server_id');
     }
     if (empty($output_ext)) {
         $output_ext = 'ts';
@@ -302,8 +301,8 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
         $device_info = $ipTV_db->get_row();
         $data = '';
         if (!empty($user_info['series_ids'])) {
-            $deff942ee62f1e5c2c16d11aee464729 = ipTV_lib::seriesData();
-            foreach ($deff942ee62f1e5c2c16d11aee464729 as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $A0766c7ec9b7cbc336d730454514b34f) {
+            $series = ipTV_lib::seriesData();
+            foreach ($series as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $A0766c7ec9b7cbc336d730454514b34f) {
                 if (!in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $user_info['series_ids'])) {
                     continue;
                 }
@@ -375,8 +374,8 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
                     $movie_propeties = !isset($channel['movie_propeties']) ? ipTV_lib::movieProperties($channel['id']) : $channel['movie_propeties'];
                     if (empty($channel['stream_source'])) {
                         if (!($channel['live'] == 0)) {
-                            if (!($output_key != 'rtmp' || !array_key_exists($channel['id'], $f53d081795585cc3a4de84113ceb7f31))) {
-                                $e3215fa97db12812ee074d6c110dea4b = array_values(array_keys($f53d081795585cc3a4de84113ceb7f31[$channel['id']]));
+                            if (!($output_key != 'rtmp' || !array_key_exists($channel['id'], $streams_sys))) {
+                                $e3215fa97db12812ee074d6c110dea4b = array_values(array_keys($streams_sys[$channel['id']]));
                                 if (in_array($user_info['force_server_id'], $e3215fa97db12812ee074d6c110dea4b)) {
                                     $server_id = $user_info['force_server_id'];
                                 }

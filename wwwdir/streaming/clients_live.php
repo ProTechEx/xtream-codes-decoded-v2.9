@@ -203,9 +203,9 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                         header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden', true, 403);
                         die;
                     }
-                    $Aacb752351b5de80f12830c2026b757e = ipTV_lib::$request['token'];
+                    $token = ipTV_lib::$request['token'];
                     $A0450eaeae72ee603999aa268ea82b0c = md5(urldecode(ipTV_lib::$request['segment']) . $user_info['username'] . ipTV_lib::$settings['crypt_load_balancing'] . filesize($fe9d0d199fc51f64065055d8bcade279));
-                    if ($A0450eaeae72ee603999aa268ea82b0c != $Aacb752351b5de80f12830c2026b757e) {
+                    if ($A0450eaeae72ee603999aa268ea82b0c != $token) {
                         header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden', true, 403);
                         die;
                     }
@@ -232,7 +232,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                     if (is_array($C325d28e238c3a646bd7b095aa1ffa85)) {
                         if (ipTV_lib::$settings['restreamer_prebuffer'] == 1 && $user_info['is_restreamer'] == 1 || $user_info['is_restreamer'] == 0) {
                             $e13ac89e162bcc9913e553b949f755b6 = 0;
-                            $A73d5129dfb465fd94f3e09e9b179de0 = time();
+                            $epgStart = time();
                             foreach ($C325d28e238c3a646bd7b095aa1ffa85 as $fe9d0d199fc51f64065055d8bcade279) {
                                 if (file_exists(STREAMS_PATH . $fe9d0d199fc51f64065055d8bcade279)) {
                                     $e13ac89e162bcc9913e553b949f755b6 += readfile(STREAMS_PATH . $fe9d0d199fc51f64065055d8bcade279);
@@ -240,7 +240,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                                     die;
                                 }
                             }
-                            $D6db7e73f7da5e54d965f7ef1c369bd6 = time() - $A73d5129dfb465fd94f3e09e9b179de0;
+                            $D6db7e73f7da5e54d965f7ef1c369bd6 = time() - $epgStart;
                             if ($D6db7e73f7da5e54d965f7ef1c369bd6 == 0) {
                                 $D6db7e73f7da5e54d965f7ef1c369bd6 = 0.1;
                             }

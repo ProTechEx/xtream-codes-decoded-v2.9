@@ -320,8 +320,8 @@ class ipTV_streaming
             }
             if ($user_info['is_mag'] == 1 && ipTV_lib::$settings['mag_security'] == 1) {
                 if (!empty($user_info['play_token']) && !empty($play_token)) {
-                    list($Aacb752351b5de80f12830c2026b757e, $B96676565d19827b6e2eda6db94167c0, $cced8089119eaa83c17b19ea19d9af22) = explode(':', $user_info['play_token']);
-                    if (!($Aacb752351b5de80f12830c2026b757e == $play_token && $B96676565d19827b6e2eda6db94167c0 >= time() && $cced8089119eaa83c17b19ea19d9af22 == $stream_id)) {
+                    list($token, $B96676565d19827b6e2eda6db94167c0, $cced8089119eaa83c17b19ea19d9af22) = explode(':', $user_info['play_token']);
+                    if (!($token == $play_token && $B96676565d19827b6e2eda6db94167c0 >= time() && $cced8089119eaa83c17b19ea19d9af22 == $stream_id)) {
                         $user_info['mag_invalid_token'] = true;
                     }
                 } else {
@@ -413,8 +413,8 @@ class ipTV_streaming
                 if ($getBouquetInfo && !empty($user_info['channel_ids'])) {
                     $user_info['channels'] = array();
                     $output = array();
-                    $e3a76043abaf369f5e7250f23baaf1bb = empty($type) ? STREAM_TYPE : $type;
-                    foreach ($e3a76043abaf369f5e7250f23baaf1bb as $file) {
+                    $types = empty($type) ? STREAM_TYPE : $type;
+                    foreach ($types as $file) {
                         if (file_exists(TMP_DIR . $file . '_main.php')) {
                             $input = (include TMP_DIR . $file . '_main.php');
                             $output = array_replace($output, $input);
@@ -439,7 +439,7 @@ class ipTV_streaming
         }
         return false;
     }
-    public static function Bc358DB57D4903bFdDF6652560fae708($Fe9028a70727ba5f6b7129f9352b020c, $a9b4c615c3623cb531f93f87f402ccdc)
+    public static function Bc358DB57D4903bFdDF6652560fae708($category_id, $a9b4c615c3623cb531f93f87f402ccdc)
     {
         if (!file_exists(TMP_DIR . 'categories_bouq')) {
             return true;
@@ -450,7 +450,7 @@ class ipTV_streaming
         $output = unserialize(file_get_contents(TMP_DIR . 'categories_bouq'));
         foreach ($a9b4c615c3623cb531f93f87f402ccdc as $A4d6fb6268124336b7497e2f7283d227) {
             if (isset($output[$A4d6fb6268124336b7497e2f7283d227])) {
-                if (in_array($Fe9028a70727ba5f6b7129f9352b020c, $output[$A4d6fb6268124336b7497e2f7283d227])) {
+                if (in_array($category_id, $output[$A4d6fb6268124336b7497e2f7283d227])) {
                     return true;
                 }
             }
@@ -485,30 +485,30 @@ class ipTV_streaming
         }
         return false;
     }
-    public static function a2999eEDBe1FF2D9cE52ef5311680Cd4($E84b78040a42ede27e9c6a342a7cf406, $get_ChannelIDS = false, $getBouquetInfo = false, $get_cons = false)
+    public static function EnigmaDevices($maginfo, $get_ChannelIDS = false, $getBouquetInfo = false, $get_cons = false)
     {
-        if (empty($E84b78040a42ede27e9c6a342a7cf406['device_id'])) {
-            self::$ipTV_db->query('SELECT * FROM `enigma2_devices` WHERE `mac` = \'%s\'', $E84b78040a42ede27e9c6a342a7cf406['mac']);
+        if (empty($maginfo['device_id'])) {
+            self::$ipTV_db->query('SELECT * FROM `enigma2_devices` WHERE `mac` = \'%s\'', $maginfo['mac']);
         } else {
-            self::$ipTV_db->query('SELECT * FROM `enigma2_devices` WHERE `device_id` = \'%d\'', $E84b78040a42ede27e9c6a342a7cf406['device_id']);
+            self::$ipTV_db->query('SELECT * FROM `enigma2_devices` WHERE `device_id` = \'%d\'', $maginfo['device_id']);
         }
         if (self::$ipTV_db->num_rows() > 0) {
-            $f80fde69180c88b387a3450bccab89de = array();
-            $f80fde69180c88b387a3450bccab89de['enigma2'] = self::$ipTV_db->get_row();
-            $f80fde69180c88b387a3450bccab89de['user_info'] = array();
-            if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['enigma2']['user_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
-                $f80fde69180c88b387a3450bccab89de['user_info'] = $user_info;
+            $enigma2devices = array();
+            $enigma2devices['enigma2'] = self::$ipTV_db->get_row();
+            $enigma2devices['user_info'] = array();
+            if ($user_info = self::GetUserInfo($enigma2devices['enigma2']['user_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
+                $enigma2devices['user_info'] = $user_info;
             }
-            $f80fde69180c88b387a3450bccab89de['pair_line_info'] = array();
-            if (!empty($f80fde69180c88b387a3450bccab89de['user_info'])) {
-                $f80fde69180c88b387a3450bccab89de['pair_line_info'] = array();
-                if (!is_null($f80fde69180c88b387a3450bccab89de['user_info']['pair_id'])) {
-                    if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['user_info']['pair_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
-                        $f80fde69180c88b387a3450bccab89de['pair_line_info'] = $user_info;
+            $enigma2devices['pair_line_info'] = array();
+            if (!empty($enigma2devices['user_info'])) {
+                $enigma2devices['pair_line_info'] = array();
+                if (!is_null($enigma2devices['user_info']['pair_id'])) {
+                    if ($user_info = self::GetUserInfo($enigma2devices['user_info']['pair_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
+                        $enigma2devices['pair_line_info'] = $user_info;
                     }
                 }
             }
-            return $f80fde69180c88b387a3450bccab89de;
+            return $enigma2devices;
         }
         return false;
     }
@@ -650,8 +650,8 @@ class ipTV_streaming
             $F3803fa85b38b65447e6d438f8e9176a = file_get_contents($D556aa916c3639fd698001b7fef2c4ea);
             if (preg_match_all('/(.*?)\\.ts/', $F3803fa85b38b65447e6d438f8e9176a, $ae37877cee3bc97c8cfa6ec5843993ed)) {
                 foreach ($ae37877cee3bc97c8cfa6ec5843993ed[0] as $A35c84197cc933d0578522463b946147) {
-                    $Aacb752351b5de80f12830c2026b757e = md5($A35c84197cc933d0578522463b946147 . $username . ipTV_lib::$settings['crypt_load_balancing'] . filesize(STREAMS_PATH . $A35c84197cc933d0578522463b946147));
-                    $F3803fa85b38b65447e6d438f8e9176a = str_replace($A35c84197cc933d0578522463b946147, "/hls/{$username}/{$password}/{$Fa6494e569aed942b375e025f096b099}/{$Aacb752351b5de80f12830c2026b757e}/{$A35c84197cc933d0578522463b946147}", $F3803fa85b38b65447e6d438f8e9176a);
+                    $token = md5($A35c84197cc933d0578522463b946147 . $username . ipTV_lib::$settings['crypt_load_balancing'] . filesize(STREAMS_PATH . $A35c84197cc933d0578522463b946147));
+                    $F3803fa85b38b65447e6d438f8e9176a = str_replace($A35c84197cc933d0578522463b946147, "/hls/{$username}/{$password}/{$Fa6494e569aed942b375e025f096b099}/{$token}/{$A35c84197cc933d0578522463b946147}", $F3803fa85b38b65447e6d438f8e9176a);
                 }
                 return $F3803fa85b38b65447e6d438f8e9176a;
             }

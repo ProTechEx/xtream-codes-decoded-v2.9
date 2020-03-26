@@ -123,15 +123,15 @@ $Be553c1662ffa5054ccb6c5ce822974b = ipTV_lib::$request['start'];
 $fd08711a26bab44719872c7fff1f2dfb = intval(ipTV_lib::$request['duration']);
 if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
     if (substr_count($Be553c1662ffa5054ccb6c5ce822974b, '-') == 1) {
-        list($e309bb80a71b96ca2c0ff856446be219, $job) = explode('-', $Be553c1662ffa5054ccb6c5ce822974b);
-        $Ee43d9ecc9cbf5787673058445cfac70 = substr($e309bb80a71b96ca2c0ff856446be219, 0, 4);
-        $Dee598827978959770188b0749ebd8dd = substr($e309bb80a71b96ca2c0ff856446be219, 4, 2);
-        $b8c55e6036c9c00eccabf835e272cdcb = substr($e309bb80a71b96ca2c0ff856446be219, 6, 2);
+        list($date, $job) = explode('-', $Be553c1662ffa5054ccb6c5ce822974b);
+        $Ee43d9ecc9cbf5787673058445cfac70 = substr($date, 0, 4);
+        $Dee598827978959770188b0749ebd8dd = substr($date, 4, 2);
+        $b8c55e6036c9c00eccabf835e272cdcb = substr($date, 6, 2);
         $minutes = 0;
         $Ed62709841469f20fe0f7a17a4268692 = $job;
     } else {
-        list($e309bb80a71b96ca2c0ff856446be219, $job) = explode(':', $Be553c1662ffa5054ccb6c5ce822974b);
-        list($Ee43d9ecc9cbf5787673058445cfac70, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb) = explode('-', $e309bb80a71b96ca2c0ff856446be219);
+        list($date, $job) = explode(':', $Be553c1662ffa5054ccb6c5ce822974b);
+        list($Ee43d9ecc9cbf5787673058445cfac70, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb) = explode('-', $date);
         list($Ed62709841469f20fe0f7a17a4268692, $minutes) = explode('-', $job);
     }
     $c4eb261e96f50c6cac5c08c60d657d9c = mktime($Ed62709841469f20fe0f7a17a4268692, $minutes, 0, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb, $Ee43d9ecc9cbf5787673058445cfac70);

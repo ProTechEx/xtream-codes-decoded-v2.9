@@ -4,7 +4,7 @@
 require 'init.php';
 header('Content-Type: application/json');
 $f0ac6ad2b40669833242a10c23cad2e0 = true;
-$B626d33e939f0dd9b6a026aa3f8c87a3 = $_SERVER['REMOTE_ADDR'];
+$remote_addr = $_SERVER['REMOTE_ADDR'];
 $user_agent = trim($_SERVER['HTTP_USER_AGENT']);
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
@@ -22,7 +22,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
         $D3786992403104d27e1032eda43412cb = ipTV_lib::$settings['mobile_apps'];
         if ($result['is_e2'] == 1) {
             if (!empty(ipTV_lib::$request['token'])) {
-                $ipTV_db->query('SELECT * FROM enigma2_devices WHERE `token` = \'%s\' AND `public_ip` = \'%s\' AND `key_auth` = \'%s\' LIMIT 1', ipTV_lib::$request['token'], $B626d33e939f0dd9b6a026aa3f8c87a3, $user_agent);
+                $ipTV_db->query('SELECT * FROM enigma2_devices WHERE `token` = \'%s\' AND `public_ip` = \'%s\' AND `key_auth` = \'%s\' LIMIT 1', ipTV_lib::$request['token'], $remote_addr, $user_agent);
                 if ($ipTV_db->num_rows() <= 0) {
                     die;
                 }
@@ -40,11 +40,11 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             case 'get_series_info':
             case 204:
                 $acb1d10773fb0d1b6ac8cf2c16ecf1b5 = empty(ipTV_lib::$request['series_id']) ? 0 : intval(ipTV_lib::$request['series_id']);
-                $deff942ee62f1e5c2c16d11aee464729 = ipTV_lib::seriesData();
-                if (!empty($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]) && in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $result['series_ids'])) {
-                    $output['seasons'] = !empty($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['seasons']) ? array_values(json_decode($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['seasons'], true)) : array();
-                    $output['info'] = array('name' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['title'], 'cover' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['cover'], 'plot' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['plot'], 'cast' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['cast'], 'director' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['director'], 'genre' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['genre'], 'releaseDate' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['releaseDate'], 'last_modified' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['last_modified'], 'rating' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['rating'], 'rating_5based' => number_format($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['rating'] * 0.5, 1) + 0, 'backdrop_path' => json_decode($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['backdrop_path'], true), 'youtube_trailer' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['youtube_trailer'], 'episode_run_time' => $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['episode_run_time'], 'category_id' => !empty($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['category_id']) ? $deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['category_id'] : null);
-                    foreach ($deff942ee62f1e5c2c16d11aee464729[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['series_data'] as $c0792eb00d656504ed969c0d4d84f7e3 => $E86ff017778d0dc804add84ab1be9052) {
+                $series = ipTV_lib::seriesData();
+                if (!empty($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]) && in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $result['series_ids'])) {
+                    $output['seasons'] = !empty($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['seasons']) ? array_values(json_decode($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['seasons'], true)) : array();
+                    $output['info'] = array('name' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['title'], 'cover' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['cover'], 'plot' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['plot'], 'cast' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['cast'], 'director' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['director'], 'genre' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['genre'], 'releaseDate' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['releaseDate'], 'last_modified' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['last_modified'], 'rating' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['rating'], 'rating_5based' => number_format($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['rating'] * 0.5, 1) + 0, 'backdrop_path' => json_decode($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['backdrop_path'], true), 'youtube_trailer' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['youtube_trailer'], 'episode_run_time' => $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['episode_run_time'], 'category_id' => !empty($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['category_id']) ? $series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['category_id'] : null);
+                    foreach ($series[$acb1d10773fb0d1b6ac8cf2c16ecf1b5]['series_data'] as $c0792eb00d656504ed969c0d4d84f7e3 => $E86ff017778d0dc804add84ab1be9052) {
                         $F413fb4a34e3e65ab00d750206ac1bc3 = 1;
                         foreach ($E86ff017778d0dc804add84ab1be9052 as $a14a8f906639aa7f5509518ff935b8f0) {
                             $movie_properties = ipTV_lib::movieProperties($a14a8f906639aa7f5509518ff935b8f0['stream_id']);
@@ -55,15 +55,15 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                 break;
             case 'get_series':
             case 208:
-                $Fe9028a70727ba5f6b7129f9352b020c = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
+                $category_id = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
                 $movie_num = 0;
                 if (!empty($result['series_ids'])) {
-                    $deff942ee62f1e5c2c16d11aee464729 = ipTV_lib::seriesData();
-                    foreach ($deff942ee62f1e5c2c16d11aee464729 as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $a62676726d339eb8ed6d6c13795402f9) {
+                    $series = ipTV_lib::seriesData();
+                    foreach ($series as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $a62676726d339eb8ed6d6c13795402f9) {
                         if (!in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $result['series_ids'])) {
                             continue;
                         }
-                        if (!empty($Fe9028a70727ba5f6b7129f9352b020c) && $a62676726d339eb8ed6d6c13795402f9['category_id'] != $Fe9028a70727ba5f6b7129f9352b020c) {
+                        if (!empty($category_id) && $a62676726d339eb8ed6d6c13795402f9['category_id'] != $category_id) {
                             continue;
                         }
                         $output[] = array('num' => ++$movie_num, 'name' => $a62676726d339eb8ed6d6c13795402f9['title'], 'series_id' => (int) $a62676726d339eb8ed6d6c13795402f9['id'], 'cover' => $a62676726d339eb8ed6d6c13795402f9['cover'], 'plot' => $a62676726d339eb8ed6d6c13795402f9['plot'], 'cast' => $a62676726d339eb8ed6d6c13795402f9['cast'], 'director' => $a62676726d339eb8ed6d6c13795402f9['director'], 'genre' => $a62676726d339eb8ed6d6c13795402f9['genre'], 'releaseDate' => $a62676726d339eb8ed6d6c13795402f9['releaseDate'], 'last_modified' => $a62676726d339eb8ed6d6c13795402f9['last_modified'], 'rating' => $a62676726d339eb8ed6d6c13795402f9['rating'], 'rating_5based' => number_format($a62676726d339eb8ed6d6c13795402f9['rating'] * 0.5, 1) + 0, 'backdrop_path' => json_decode($a62676726d339eb8ed6d6c13795402f9['backdrop_path'], true), 'youtube_trailer' => $a62676726d339eb8ed6d6c13795402f9['youtube_trailer'], 'episode_run_time' => $a62676726d339eb8ed6d6c13795402f9['episode_run_time'], 'category_id' => !empty($a62676726d339eb8ed6d6c13795402f9['category_id']) ? $a62676726d339eb8ed6d6c13795402f9['category_id'] : null);
@@ -105,8 +105,8 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             case 207:
                 $output['epg_listings'] = array();
                 if (!empty(ipTV_lib::$request['stream_id'])) {
-                    $A7386eca40c08bf499c3668f497f7653 = intval(ipTV_lib::$request['stream_id']);
-                    $ipTV_db->query('SELECT `tv_archive_server_id`,`tv_archive_duration`,`channel_id`,`epg_id` FROM `streams` WHERE `id` = \'%d\' AND epg_id IS NOT NULL', $A7386eca40c08bf499c3668f497f7653);
+                    $ch_id = intval(ipTV_lib::$request['stream_id']);
+                    $ipTV_db->query('SELECT `tv_archive_server_id`,`tv_archive_duration`,`channel_id`,`epg_id` FROM `streams` WHERE `id` = \'%d\' AND epg_id IS NOT NULL', $ch_id);
                     if ($ipTV_db->num_rows() > 0) {
                         $Cb52bcec44c66c3338fb465d14935a95 = $ipTV_db->get_row();
                         $ipTV_db->query('SELECT *,UNIX_TIMESTAMP(start) as start_timestamp,UNIX_TIMESTAMP(end) as stop_timestamp FROM `epg_data` WHERE `epg_id` = \'%d\' AND `channel_id` = \'%s\' ORDER BY `start` ASC', $Cb52bcec44c66c3338fb465d14935a95['epg_id'], $Cb52bcec44c66c3338fb465d14935a95['channel_id']);
@@ -132,9 +132,9 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             case 205:
                 $output['epg_listings'] = array();
                 if (!empty(ipTV_lib::$request['stream_id'])) {
-                    $A7386eca40c08bf499c3668f497f7653 = intval(ipTV_lib::$request['stream_id']);
+                    $ch_id = intval(ipTV_lib::$request['stream_id']);
                     $Ffb14fe8aab74bc4aab279b42393475f = empty(ipTV_lib::$request['limit']) ? 4 : intval(ipTV_lib::$request['limit']);
-                    $ipTV_db->query('SELECT `channel_id`,`epg_id` FROM `streams` WHERE `id` = \'%d\' AND epg_id IS NOT NULL', $A7386eca40c08bf499c3668f497f7653);
+                    $ipTV_db->query('SELECT `channel_id`,`epg_id` FROM `streams` WHERE `id` = \'%d\' AND epg_id IS NOT NULL', $ch_id);
                     if ($ipTV_db->num_rows() > 0) {
                         $faca5f1c4c9dec5b739d7a905876b0cd = $ipTV_db->get_row();
                         $ipTV_db->simple_query("SELECT *,UNIX_TIMESTAMP(start) as start_timestamp, UNIX_TIMESTAMP(end) as stop_timestamp  FROM `epg_data` WHERE `epg_id` = '{$faca5f1c4c9dec5b739d7a905876b0cd['epg_id']}' AND `channel_id` = '{$faca5f1c4c9dec5b739d7a905876b0cd['channel_id']}' AND ('" . date('Y-m-d H:i:00') . '\' BETWEEN `start` AND `end` OR `start` >= \'' . date('Y-m-d H:i:00') . "') ORDER BY `start` LIMIT {$Ffb14fe8aab74bc4aab279b42393475f}");
@@ -146,13 +146,13 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                 break;
             case 'get_live_streams':
             case 202:
-                $Fe9028a70727ba5f6b7129f9352b020c = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
+                $category_id = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
                 $live_num = 0;
                 foreach ($result['channels'] as $channel) {
                     if ($channel['live'] != 1) {
                         continue;
                     }
-                    if (!empty($Fe9028a70727ba5f6b7129f9352b020c) && $channel['category_id'] != $Fe9028a70727ba5f6b7129f9352b020c) {
+                    if (!empty($category_id) && $channel['category_id'] != $category_id) {
                         continue;
                     }
                     $stream_icon = $channel['stream_icon'];
@@ -175,13 +175,13 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                 break;
             case 'get_vod_streams':
             case 203:
-                $Fe9028a70727ba5f6b7129f9352b020c = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
+                $category_id = empty(ipTV_lib::$request['category_id']) ? 0 : intval(ipTV_lib::$request['category_id']);
                 $movie_num = 0;
                 foreach ($result['channels'] as $channel) {
                     if ($channel['live'] != 0 || $channel['type_key'] != 'movie') {
                         continue;
                     }
-                    if (!empty($Fe9028a70727ba5f6b7129f9352b020c) && $channel['category_id'] != $Fe9028a70727ba5f6b7129f9352b020c) {
+                    if (!empty($category_id) && $channel['category_id'] != $category_id) {
                         continue;
                     }
                     $movie_properties = ipTV_lib::movieProperties($channel['id']);

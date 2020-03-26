@@ -78,8 +78,8 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
             $value->addchild('category_id', 0);
             $acfcb8efbada54f036f7bf632f1038a9 = $value->addchild('playlist_url');
             $acfcb8efbada54f036f7bf632f1038a9->addCData($url . "enigma2.php?username={$username}&password={$password}&type=get_vod_streams&cat_id=0" . $category['id']);
-            foreach ($a646f0bc753ffe6eb4d18abe30bbcd66 as $B51a7e937f03bda1f1e77ebf1bb5a96e => $category) {
-                if (!ipTV_streaming::bC358dB57d4903BfDdf6652560fae708($B51a7e937f03bda1f1e77ebf1bb5a96e, $D321370cfdc22e783dd897e5afed673e['bouquet'])) {
+            foreach ($a646f0bc753ffe6eb4d18abe30bbcd66 as $key => $category) {
+                if (!ipTV_streaming::bC358dB57d4903BfDdf6652560fae708($key, $D321370cfdc22e783dd897e5afed673e['bouquet'])) {
                     continue;
                 }
                 $value = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('channel');
@@ -105,7 +105,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
             $value->addchild('category_id', 0);
             $acfcb8efbada54f036f7bf632f1038a9 = $value->addchild('playlist_url');
             $acfcb8efbada54f036f7bf632f1038a9->addCData($url . "enigma2.php?username={$username}&password={$password}&type=get_series&cat_id=0" . $category['id']);
-            foreach ($f24472413ed27fc2ffc06adda68c0806 as $B51a7e937f03bda1f1e77ebf1bb5a96e => $category) {
+            foreach ($f24472413ed27fc2ffc06adda68c0806 as $key => $category) {
                 $value = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('channel');
                 $value->addchild('title', base64_encode($category['category_name']));
                 $value->addchild('description', base64_encode('TV Series Category'));
@@ -125,8 +125,8 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
                 $category->addchild('category_id', 1);
                 $category->addchild('category_title', "TV Series [ {$A27497ef3d4dad3da90c414c89f81615} ]");
-                $deff942ee62f1e5c2c16d11aee464729 = ipTV_lib::seriesData();
-                foreach ($deff942ee62f1e5c2c16d11aee464729 as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $A0766c7ec9b7cbc336d730454514b34f) {
+                $series = ipTV_lib::seriesData();
+                foreach ($series as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $A0766c7ec9b7cbc336d730454514b34f) {
                     if (!in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $D321370cfdc22e783dd897e5afed673e['series_ids'])) {
                         continue;
                     }
