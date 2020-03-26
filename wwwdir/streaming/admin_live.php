@@ -25,12 +25,12 @@ if (ipTV_lib::$settings['use_buffer'] == 0) {
     header('X-Accel-Buffering: no');
 }
 if ($ipTV_db->num_rows() > 0) {
-    $ffb1e0970b62b01f46c2e57f2cded6c2 = $ipTV_db->get_row();
+    $channel_info = $ipTV_db->get_row();
     $ipTV_db->close_mysql();
     $playlist = STREAMS_PATH . $stream_id . '_.m3u8';
-    if (!ipTV_streaming::bCaa9B8A7b46eb36Cd507A218fa64474($ffb1e0970b62b01f46c2e57f2cded6c2['pid'], $stream_id)) {
-        if ($ffb1e0970b62b01f46c2e57f2cded6c2['on_demand'] == 1) {
-            if (!ipTV_streaming::CDa72Bc41975C364BC559dB25648a5B2($ffb1e0970b62b01f46c2e57f2cded6c2['monitor_pid'], $stream_id)) {
+    if (!ipTV_streaming::bCaa9B8A7b46eb36Cd507A218fa64474($channel_info['pid'], $stream_id)) {
+        if ($channel_info['on_demand'] == 1) {
+            if (!ipTV_streaming::CDa72Bc41975C364BC559dB25648a5B2($channel_info['monitor_pid'], $stream_id)) {
                 ipTV_stream::e79092731573697C16a932C339d0a101($stream_id);
             }
         } else {
@@ -40,7 +40,7 @@ if ($ipTV_db->num_rows() > 0) {
     }
     switch ($extension) {
         case 'm3u8':
-            if (ipTV_streaming::IsValidStream($playlist, $ffb1e0970b62b01f46c2e57f2cded6c2['pid'])) {
+            if (ipTV_streaming::IsValidStream($playlist, $channel_info['pid'])) {
                 if (empty(ipTV_lib::$request['segment'])) {
                     if ($F3803fa85b38b65447e6d438f8e9176a = ipTV_streaming::B18C6Bf534aE0B9b94354Db508d52a48($playlist, $password, $stream_id)) {
                         header('Content-Type: application/vnd.apple.mpegurl');
@@ -96,8 +96,8 @@ if ($ipTV_db->num_rows() > 0) {
                     if (!file_exists(STREAMS_PATH . $segment_file)) {
                         die;
                     }
-                    if (empty($ffb1e0970b62b01f46c2e57f2cded6c2['pid']) && file_exists(STREAMS_PATH . $stream_id . '_.pid')) {
-                        $ffb1e0970b62b01f46c2e57f2cded6c2['pid'] = intval(file_get_contents(STREAMS_PATH . $stream_id . '_.pid'));
+                    if (empty($channel_info['pid']) && file_exists(STREAMS_PATH . $stream_id . '_.pid')) {
+                        $channel_info['pid'] = intval(file_get_contents(STREAMS_PATH . $stream_id . '_.pid'));
                     }
                     $c45cc215a073632a9e20d474ea91f7e3 = 0;
                     $fp = fopen(STREAMS_PATH . $segment_file, 'r');
@@ -116,7 +116,7 @@ if ($ipTV_db->num_rows() > 0) {
                         $c45cc215a073632a9e20d474ea91f7e3 = 0;
                     }
                     //ef89f77163837836531e009abed1ed0a:
-                    if (ipTV_streaming::ps_running($ffb1e0970b62b01f46c2e57f2cded6c2['pid'], FFMPEG_PATH) && $c45cc215a073632a9e20d474ea91f7e3 <= $f065eccc0636f7fd92043c7118f7409b && file_exists(STREAMS_PATH . $segment_file) && is_resource($fp)) {
+                    if (ipTV_streaming::ps_running($channel_info['pid'], FFMPEG_PATH) && $c45cc215a073632a9e20d474ea91f7e3 <= $f065eccc0636f7fd92043c7118f7409b && file_exists(STREAMS_PATH . $segment_file) && is_resource($fp)) {
                         $F19b64ffad55876d290cb6f756a2dea5 = filesize(STREAMS_PATH . $segment_file);
                         $C73fe796a6baad7ca2e4251886562ef0 = $F19b64ffad55876d290cb6f756a2dea5 - ftell($fp);
                         if ($C73fe796a6baad7ca2e4251886562ef0 > 0) {

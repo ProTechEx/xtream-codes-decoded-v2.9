@@ -197,7 +197,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     if (!empty($a14a8f906639aa7f5509518ff935b8f0['stream_source'])) {
                         $F3803fa85b38b65447e6d438f8e9176a = json_decode($a14a8f906639aa7f5509518ff935b8f0['stream_source'], true)[0];
                     } else {
-                        $F3803fa85b38b65447e6d438f8e9176a = $url . "series/{$username}/{$password}/{$a14a8f906639aa7f5509518ff935b8f0['stream_id']}." . dC53aE228Df72D4C140fda7fD5E7e0BE($a14a8f906639aa7f5509518ff935b8f0['target_container']);
+                        $F3803fa85b38b65447e6d438f8e9176a = $url . "series/{$username}/{$password}/{$a14a8f906639aa7f5509518ff935b8f0['stream_id']}." . GetContainerExtension($a14a8f906639aa7f5509518ff935b8f0['target_container']);
                     }
                     $a1ef5a6a798dd2f8725ccec3f544f380->addCData($F3803fa85b38b65447e6d438f8e9176a);
                 }
@@ -288,7 +288,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     if (!empty($user_info['stream_source'])) {
                         $F3803fa85b38b65447e6d438f8e9176a = json_decode($user_info['stream_source'], true)[0];
                     } else {
-                        $F3803fa85b38b65447e6d438f8e9176a = $url . "movie/{$username}/{$password}/{$user_info['id']}." . dc53AE228df72D4C140FdA7Fd5E7e0bE($user_info['target_container']);
+                        $F3803fa85b38b65447e6d438f8e9176a = $url . "movie/{$username}/{$password}/{$user_info['id']}." . GetContainerExtension($user_info['target_container']);
                     }
                     $a1ef5a6a798dd2f8725ccec3f544f380->addCData($F3803fa85b38b65447e6d438f8e9176a);
                     //ad1b0d55ff130bfff011d2a9d71d4a15:

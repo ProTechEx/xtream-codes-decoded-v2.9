@@ -300,7 +300,7 @@ class ipTV_streaming
             return false;
         }
     }
-    public static function GetUserInfo($user_id = null, $username = null, $password = null, $Fa9d0275367287eb0662f130e93d3a25 = false, $C1c49b38f7480b5e67acaf5b0185dc21 = false, $F7b34d6358a2bbb674f79a68e942b7e2 = false, $type = array(), $B5e1c013996afcec27bf828245c3ec37 = false, $user_ip = '', $user_agent = '', $a8851ef591e0cdd9aad6ec4f7bd4b160 = array(), $play_token = '', $stream_id = 0)
+    public static function GetUserInfo($user_id = null, $username = null, $password = null, $get_ChannelIDS = false, $getBouquetInfo = false, $get_cons = false, $type = array(), $B5e1c013996afcec27bf828245c3ec37 = false, $user_ip = '', $user_agent = '', $a8851ef591e0cdd9aad6ec4f7bd4b160 = array(), $play_token = '', $stream_id = 0)
     {
         if (empty($user_id)) {
             self::$ipTV_db->query('SELECT * FROM `users` WHERE `username` = \'%s\' AND `password` = \'%s\' LIMIT 1', $username, $password);
@@ -331,7 +331,7 @@ class ipTV_streaming
             $user_info['bouquet'] = json_decode($user_info['bouquet'], true);
             $user_info['allowed_ips'] = @array_filter(array_map('trim', json_decode($user_info['allowed_ips'], true)));
             $user_info['allowed_ua'] = @array_filter(array_map('trim', json_decode($user_info['allowed_ua'], true)));
-            if ($F7b34d6358a2bbb674f79a68e942b7e2) {
+            if ($get_cons) {
                 self::$ipTV_db->query('SELECT COUNT(`activity_id`) FROM `user_activity_now` WHERE `user_id` = \'%d\'', $user_info['id']);
                 $user_info['active_cons'] = self::$ipTV_db->get_col();
                 if ($user_info['max_connections'] == 1 && ipTV_lib::$settings['disallow_2nd_ip_con'] == 1 && $user_info['active_cons'] > 0 && !empty($user_ip)) {
@@ -390,7 +390,7 @@ class ipTV_streaming
                     self::$ipTV_db->query('UPDATE `users` SET `isp_desc` = \'%s\' WHERE `id` = \'%d\'', $user_info['con_isp_name'], $user_info['id']);
                 }
             }
-            if ($Fa9d0275367287eb0662f130e93d3a25) {
+            if ($get_ChannelIDS) {
                 $Ff48bb3649e5b84524bd8d318c03db3c = $A92229131e0f5177a362478fd6f3bd8d = array();
                 if (ipTV_lib::$settings['new_sorting_bouquet'] != 1) {
                     sort($user_info['bouquet']);
@@ -410,7 +410,7 @@ class ipTV_streaming
                     $user_info['channel_ids'] = array_reverse(array_unique(array_reverse($Ff48bb3649e5b84524bd8d318c03db3c)));
                     $user_info['series_ids'] = array_reverse(array_unique(array_reverse($A92229131e0f5177a362478fd6f3bd8d)));
                 }
-                if ($C1c49b38f7480b5e67acaf5b0185dc21 && !empty($user_info['channel_ids'])) {
+                if ($getBouquetInfo && !empty($user_info['channel_ids'])) {
                     $user_info['channels'] = array();
                     $output = array();
                     $e3a76043abaf369f5e7250f23baaf1bb = empty($type) ? STREAM_TYPE : $type;
@@ -457,35 +457,35 @@ class ipTV_streaming
         }
         return false;
     }
-    public static function f2cBd6b6f59558B819C0cFF8C3B2EF2c($F89e57ebe9caa43312cce5a27bfa9e5c = null, $mac = null, $Fa9d0275367287eb0662f130e93d3a25 = false, $C1c49b38f7480b5e67acaf5b0185dc21 = false, $F7b34d6358a2bbb674f79a68e942b7e2 = false)
+    public static function GetMagInfo($mag_id = null, $mac = null, $get_ChannelIDS = false, $getBouquetInfo = false, $get_cons = false)
     {
-        if (empty($F89e57ebe9caa43312cce5a27bfa9e5c)) {
+        if (empty($mag_id)) {
             self::$ipTV_db->query('SELECT * FROM `mag_devices` WHERE `mac` = \'%s\'', base64_encode($mac));
         } else {
-            self::$ipTV_db->query('SELECT * FROM `mag_devices` WHERE `mag_id` = \'%d\'', $F89e57ebe9caa43312cce5a27bfa9e5c);
+            self::$ipTV_db->query('SELECT * FROM `mag_devices` WHERE `mag_id` = \'%d\'', $mag_id);
         }
         if (self::$ipTV_db->num_rows() > 0) {
-            $a9acf1899f95ee2d7eaf6ccc5c6e8d8e = array();
-            $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['mag_device'] = self::$ipTV_db->get_row();
-            $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['mag_device']['mac'] = base64_decode($a9acf1899f95ee2d7eaf6ccc5c6e8d8e['mag_device']['mac']);
-            $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['user_info'] = array();
-            if ($user_info = self::GetUserInfo($a9acf1899f95ee2d7eaf6ccc5c6e8d8e['mag_device']['user_id'], null, null, $Fa9d0275367287eb0662f130e93d3a25, $C1c49b38f7480b5e67acaf5b0185dc21, $F7b34d6358a2bbb674f79a68e942b7e2)) {
-                $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['user_info'] = $user_info;
+            $maginfo = array();
+            $maginfo['mag_device'] = self::$ipTV_db->get_row();
+            $maginfo['mag_device']['mac'] = base64_decode($maginfo['mag_device']['mac']);
+            $maginfo['user_info'] = array();
+            if ($user_info = self::GetUserInfo($maginfo['mag_device']['user_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
+                $maginfo['user_info'] = $user_info;
             }
-            $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['pair_line_info'] = array();
-            if (!empty($a9acf1899f95ee2d7eaf6ccc5c6e8d8e['user_info'])) {
-                $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['pair_line_info'] = array();
-                if (!is_null($a9acf1899f95ee2d7eaf6ccc5c6e8d8e['user_info']['pair_id'])) {
-                    if ($user_info = self::GetUserInfo($a9acf1899f95ee2d7eaf6ccc5c6e8d8e['user_info']['pair_id'], null, null, $Fa9d0275367287eb0662f130e93d3a25, $C1c49b38f7480b5e67acaf5b0185dc21, $F7b34d6358a2bbb674f79a68e942b7e2)) {
-                        $a9acf1899f95ee2d7eaf6ccc5c6e8d8e['pair_line_info'] = $user_info;
+            $maginfo['pair_line_info'] = array();
+            if (!empty($maginfo['user_info'])) {
+                $maginfo['pair_line_info'] = array();
+                if (!is_null($maginfo['user_info']['pair_id'])) {
+                    if ($user_info = self::GetUserInfo($maginfo['user_info']['pair_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
+                        $maginfo['pair_line_info'] = $user_info;
                     }
                 }
             }
-            return $a9acf1899f95ee2d7eaf6ccc5c6e8d8e;
+            return $maginfo;
         }
         return false;
     }
-    public static function a2999eEDBe1FF2D9cE52ef5311680Cd4($E84b78040a42ede27e9c6a342a7cf406, $Fa9d0275367287eb0662f130e93d3a25 = false, $C1c49b38f7480b5e67acaf5b0185dc21 = false, $F7b34d6358a2bbb674f79a68e942b7e2 = false)
+    public static function a2999eEDBe1FF2D9cE52ef5311680Cd4($E84b78040a42ede27e9c6a342a7cf406, $get_ChannelIDS = false, $getBouquetInfo = false, $get_cons = false)
     {
         if (empty($E84b78040a42ede27e9c6a342a7cf406['device_id'])) {
             self::$ipTV_db->query('SELECT * FROM `enigma2_devices` WHERE `mac` = \'%s\'', $E84b78040a42ede27e9c6a342a7cf406['mac']);
@@ -496,14 +496,14 @@ class ipTV_streaming
             $f80fde69180c88b387a3450bccab89de = array();
             $f80fde69180c88b387a3450bccab89de['enigma2'] = self::$ipTV_db->get_row();
             $f80fde69180c88b387a3450bccab89de['user_info'] = array();
-            if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['enigma2']['user_id'], null, null, $Fa9d0275367287eb0662f130e93d3a25, $C1c49b38f7480b5e67acaf5b0185dc21, $F7b34d6358a2bbb674f79a68e942b7e2)) {
+            if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['enigma2']['user_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
                 $f80fde69180c88b387a3450bccab89de['user_info'] = $user_info;
             }
             $f80fde69180c88b387a3450bccab89de['pair_line_info'] = array();
             if (!empty($f80fde69180c88b387a3450bccab89de['user_info'])) {
                 $f80fde69180c88b387a3450bccab89de['pair_line_info'] = array();
                 if (!is_null($f80fde69180c88b387a3450bccab89de['user_info']['pair_id'])) {
-                    if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['user_info']['pair_id'], null, null, $Fa9d0275367287eb0662f130e93d3a25, $C1c49b38f7480b5e67acaf5b0185dc21, $F7b34d6358a2bbb674f79a68e942b7e2)) {
+                    if ($user_info = self::GetUserInfo($f80fde69180c88b387a3450bccab89de['user_info']['pair_id'], null, null, $get_ChannelIDS, $getBouquetInfo, $get_cons)) {
                         $f80fde69180c88b387a3450bccab89de['pair_line_info'] = $user_info;
                     }
                 }

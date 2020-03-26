@@ -48,7 +48,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                         $F413fb4a34e3e65ab00d750206ac1bc3 = 1;
                         foreach ($E86ff017778d0dc804add84ab1be9052 as $a14a8f906639aa7f5509518ff935b8f0) {
                             $movie_properties = ipTV_lib::movieProperties($a14a8f906639aa7f5509518ff935b8f0['stream_id']);
-                            $output['episodes'][$c0792eb00d656504ed969c0d4d84f7e3][] = array('id' => $a14a8f906639aa7f5509518ff935b8f0['stream_id'], 'episode_num' => $F413fb4a34e3e65ab00d750206ac1bc3++, 'title' => $a14a8f906639aa7f5509518ff935b8f0['stream_display_name'], 'container_extension' => Dc53aE228dF72D4c140FDa7fD5e7E0bE($a14a8f906639aa7f5509518ff935b8f0['target_container']), 'info' => $movie_properties, 'custom_sid' => $a14a8f906639aa7f5509518ff935b8f0['custom_sid'], 'added' => $a14a8f906639aa7f5509518ff935b8f0['added'], 'season' => $c0792eb00d656504ed969c0d4d84f7e3, 'direct_source' => !empty($a14a8f906639aa7f5509518ff935b8f0['stream_source']) ? json_decode($a14a8f906639aa7f5509518ff935b8f0['stream_source'], true)[0] : '');
+                            $output['episodes'][$c0792eb00d656504ed969c0d4d84f7e3][] = array('id' => $a14a8f906639aa7f5509518ff935b8f0['stream_id'], 'episode_num' => $F413fb4a34e3e65ab00d750206ac1bc3++, 'title' => $a14a8f906639aa7f5509518ff935b8f0['stream_display_name'], 'container_extension' => GetContainerExtension($a14a8f906639aa7f5509518ff935b8f0['target_container']), 'info' => $movie_properties, 'custom_sid' => $a14a8f906639aa7f5509518ff935b8f0['custom_sid'], 'added' => $a14a8f906639aa7f5509518ff935b8f0['added'], 'season' => $c0792eb00d656504ed969c0d4d84f7e3, 'direct_source' => !empty($a14a8f906639aa7f5509518ff935b8f0['stream_source']) ? json_decode($a14a8f906639aa7f5509518ff935b8f0['stream_source'], true)[0] : '');
                         }
                     }
                 }
@@ -169,7 +169,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                     if (!empty($result['channels'][$E3f154d2577bf634396fbfff5a2f8434])) {
                         $row = $result['channels'][$E3f154d2577bf634396fbfff5a2f8434];
                         $output['info'] = ipTV_lib::movieProperties($E3f154d2577bf634396fbfff5a2f8434);
-                        $output['movie_data'] = array('stream_id' => (int) $row['id'], 'name' => $row['stream_display_name'], 'added' => $row['added'], 'category_id' => !empty($row['category_id']) ? $row['category_id'] : null, 'container_extension' => DC53Ae228df72D4C140fda7Fd5e7E0Be($row['target_container']), 'custom_sid' => $row['custom_sid'], 'direct_source' => !empty($row['stream_source']) ? json_decode($row['stream_source'], true)[0] : '');
+                        $output['movie_data'] = array('stream_id' => (int) $row['id'], 'name' => $row['stream_display_name'], 'added' => $row['added'], 'category_id' => !empty($row['category_id']) ? $row['category_id'] : null, 'container_extension' => GetContainerExtension($row['target_container']), 'custom_sid' => $row['custom_sid'], 'direct_source' => !empty($row['stream_source']) ? json_decode($row['stream_source'], true)[0] : '');
                     }
                 }
                 break;
@@ -185,7 +185,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                         continue;
                     }
                     $movie_properties = ipTV_lib::movieProperties($channel['id']);
-                    $output[] = array('num' => ++$movie_num, 'name' => $channel['stream_display_name'], 'stream_type' => $channel['type_key'], 'stream_id' => (int) $channel['id'], 'stream_icon' => $movie_properties['movie_image'], 'rating' => $movie_properties['rating'], 'rating_5based' => number_format($movie_properties['rating'] * 0.5, 1) + 0, 'added' => $channel['added'], 'category_id' => !empty($channel['category_id']) ? $channel['category_id'] : null, 'container_extension' => Dc53Ae228dF72d4C140fdA7fD5e7E0Be($channel['target_container']), 'custom_sid' => $channel['custom_sid'], 'direct_source' => !empty($channel['stream_source']) ? json_decode($channel['stream_source'], true)[0] : '');
+                    $output[] = array('num' => ++$movie_num, 'name' => $channel['stream_display_name'], 'stream_type' => $channel['type_key'], 'stream_id' => (int) $channel['id'], 'stream_icon' => $movie_properties['movie_image'], 'rating' => $movie_properties['rating'], 'rating_5based' => number_format($movie_properties['rating'] * 0.5, 1) + 0, 'added' => $channel['added'], 'category_id' => !empty($channel['category_id']) ? $channel['category_id'] : null, 'container_extension' => GetContainerExtension($channel['target_container']), 'custom_sid' => $channel['custom_sid'], 'direct_source' => !empty($channel['stream_source']) ? json_decode($channel['stream_source'], true)[0] : '');
                     //fda08156cf8f9416e4e3d8f6df975fe8:
                 }
                 break;

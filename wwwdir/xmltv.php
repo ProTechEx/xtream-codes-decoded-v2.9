@@ -42,8 +42,8 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
                 $A73d5129dfb465fd94f3e09e9b179de0 = new DateTime($row['start']);
                 $cdd6af41b10abec2ff03fe043f3df1cf = new DateTime($row['end']);
                 $start = $A73d5129dfb465fd94f3e09e9b179de0->format('YmdHis O');
-                $ebe823668f9748302d3bd87782a71948 = $cdd6af41b10abec2ff03fe043f3df1cf->format('YmdHis O');
-                echo "<programme start=\"{$start}\" stop=\"{$ebe823668f9748302d3bd87782a71948}\" channel=\"{$e818ebc908da0ee69f4f99daba6a1a18}\" >";
+                $end = $cdd6af41b10abec2ff03fe043f3df1cf->format('YmdHis O');
+                echo "<programme start=\"{$start}\" stop=\"{$end}\" channel=\"{$e818ebc908da0ee69f4f99daba6a1a18}\" >";
                 echo '<title>' . $E4416ae8f96620daee43ac43f9515200 . '</title>';
                 echo '<desc>' . $d4c3c80b508f5d00d05316e7aa0858de . '</desc>';
                 echo '</programme>';

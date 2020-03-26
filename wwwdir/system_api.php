@@ -111,7 +111,7 @@ switch ($action) {
         $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used'] = $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] - $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_free'];
         $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used_percent'] = (int) $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem_used'] / $D8dbdb2118a7a93a0eeb04fc548f2af4['total_mem'] * 100;
         $D8dbdb2118a7a93a0eeb04fc548f2af4['total_disk_space'] = disk_total_space(IPTV_PANEL_DIR);
-        $D8dbdb2118a7a93a0eeb04fc548f2af4['uptime'] = B46eFA30B8cF4A7596D9D54730aDB795();
+        $D8dbdb2118a7a93a0eeb04fc548f2af4['uptime'] = get_boottime();
         $D8dbdb2118a7a93a0eeb04fc548f2af4['total_running_streams'] = shell_exec('ps ax | grep -v grep | grep ffmpeg | grep -c ' . FFMPEG_PATH);
         $d0d324f3dbb8bbc5fff56e8a848beb7a = ipTV_lib::$StreamingServers[SERVER_ID]['network_interface'];
         $D8dbdb2118a7a93a0eeb04fc548f2af4['bytes_sent'] = 0;
@@ -202,15 +202,15 @@ switch ($action) {
                 $Ff876e96994aa5b09ce92e771efe2038 = filesize($dae587fac852b56aefd2f953ed975545);
                 $length = $Ff876e96994aa5b09ce92e771efe2038;
                 $start = 0;
-                $ebe823668f9748302d3bd87782a71948 = $Ff876e96994aa5b09ce92e771efe2038 - 1;
+                $end = $Ff876e96994aa5b09ce92e771efe2038 - 1;
                 header("Accept-Ranges: 0-{$length}");
                 if (isset($_SERVER['HTTP_RANGE'])) {
                     $dccf2f0f292208ba833261a4da87860d = $start;
-                    $A34771e85be87aded632236239e94d98 = $ebe823668f9748302d3bd87782a71948;
+                    $A34771e85be87aded632236239e94d98 = $end;
                     list(, $cabafd9509f1a525c1d85143a5372ed8) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                     if (strpos($cabafd9509f1a525c1d85143a5372ed8, ',') !== false) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes {$start}-{$ebe823668f9748302d3bd87782a71948}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                        header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
                         die;
                     }
                     if ($cabafd9509f1a525c1d85143a5372ed8 == '-') {
@@ -220,22 +220,22 @@ switch ($action) {
                         $dccf2f0f292208ba833261a4da87860d = $cabafd9509f1a525c1d85143a5372ed8[0];
                         $A34771e85be87aded632236239e94d98 = isset($cabafd9509f1a525c1d85143a5372ed8[1]) && is_numeric($cabafd9509f1a525c1d85143a5372ed8[1]) ? $cabafd9509f1a525c1d85143a5372ed8[1] : $Ff876e96994aa5b09ce92e771efe2038;
                     }
-                    $A34771e85be87aded632236239e94d98 = $A34771e85be87aded632236239e94d98 > $ebe823668f9748302d3bd87782a71948 ? $ebe823668f9748302d3bd87782a71948 : $A34771e85be87aded632236239e94d98;
+                    $A34771e85be87aded632236239e94d98 = $A34771e85be87aded632236239e94d98 > $end ? $end : $A34771e85be87aded632236239e94d98;
                     if ($dccf2f0f292208ba833261a4da87860d > $A34771e85be87aded632236239e94d98 || $dccf2f0f292208ba833261a4da87860d > $Ff876e96994aa5b09ce92e771efe2038 - 1 || $A34771e85be87aded632236239e94d98 >= $Ff876e96994aa5b09ce92e771efe2038) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes {$start}-{$ebe823668f9748302d3bd87782a71948}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                        header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
                         die;
                     }
                     $start = $dccf2f0f292208ba833261a4da87860d;
-                    $ebe823668f9748302d3bd87782a71948 = $A34771e85be87aded632236239e94d98;
-                    $length = $ebe823668f9748302d3bd87782a71948 - $start + 1;
+                    $end = $A34771e85be87aded632236239e94d98;
+                    $length = $end - $start + 1;
                     fseek($fp, $start);
                     header('HTTP/1.1 206 Partial Content');
                 }
-                header("Content-Range: bytes {$start}-{$ebe823668f9748302d3bd87782a71948}/{$Ff876e96994aa5b09ce92e771efe2038}");
+                header("Content-Range: bytes {$start}-{$end}/{$Ff876e96994aa5b09ce92e771efe2038}");
                 header('Content-Length: ' . $length);
                 //B5e74df099d83a93b56f89f2cc3c10f2:
-                while (!feof($fp) && ($f11bd4ac0a2baf9850141d4517561cff = ftell($fp)) <= $ebe823668f9748302d3bd87782a71948) {
+                while (!feof($fp) && ($f11bd4ac0a2baf9850141d4517561cff = ftell($fp)) <= $end) {
                     echo stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
                 }
                 //ea0af39edc4d150dd8e9d6c757cef3e8:

@@ -248,14 +248,14 @@ class ipTV_stream
                 $stream['stream_info']['transcode_attributes']['-vcodec'] = 'copy';
             }
             $A7c6258649492b26d77c75c60c793409 = array();
-            foreach ($stream['stream_info']['target_container'] as $E2e6656d8b1675f70c487f89e4f27a3b) {
-                $A7c6258649492b26d77c75c60c793409[$E2e6656d8b1675f70c487f89e4f27a3b] = "-movflags +faststart -dn {$fd85ae68a4de5cc6cec54942d82e8f80} -ignore_unknown {$f2130ba0f82d2308b743977b2ba5eaa9} " . MOVIES_PATH . $stream_id . '.' . $E2e6656d8b1675f70c487f89e4f27a3b . ' ';
+            foreach ($stream['stream_info']['target_container'] as $container_priority) {
+                $A7c6258649492b26d77c75c60c793409[$container_priority] = "-movflags +faststart -dn {$fd85ae68a4de5cc6cec54942d82e8f80} -ignore_unknown {$f2130ba0f82d2308b743977b2ba5eaa9} " . MOVIES_PATH . $stream_id . '.' . $container_priority . ' ';
                 //a346f1a3f8ef9650581483d29e5eaab0:
             }
-            foreach ($A7c6258649492b26d77c75c60c793409 as $bca72c242cf770f855c0eae8936335b7 => $cd7bafd64552e6ca58318f09800cbddd) {
-                if (($bca72c242cf770f855c0eae8936335b7 == 'mp4')) { 
+            foreach ($A7c6258649492b26d77c75c60c793409 as $output_key => $cd7bafd64552e6ca58318f09800cbddd) {
+                if (($output_key == 'mp4')) { 
                     $stream['stream_info']['transcode_attributes']['-scodec'] = 'mov_text';
-                } else if ($bca72c242cf770f855c0eae8936335b7 == 'mkv') {
+                } else if ($output_key == 'mkv') {
                     $stream['stream_info']['transcode_attributes']['-scodec'] = 'srt';
                 } else {
                     //dbac771c7bb31b3cafe5bd4906c9b6b4:
@@ -431,7 +431,7 @@ class ipTV_stream
                     }
                     $f32785b2a16d0d92cda0b44ed436f505 = 0;
                     if (!($stream['stream_info']['delay_minutes'] > 0 && $stream['server_info']['parent_id'] == 0)) {
-                        foreach ($A7c6258649492b26d77c75c60c793409 as $bca72c242cf770f855c0eae8936335b7 => $f72c3a34155eca511d79ca3671e1063f) {
+                        foreach ($A7c6258649492b26d77c75c60c793409 as $output_key => $f72c3a34155eca511d79ca3671e1063f) {
                             foreach ($f72c3a34155eca511d79ca3671e1063f as $cd7bafd64552e6ca58318f09800cbddd) {
                                 $af428179032a83d9ec1df565934b1c89 .= implode(' ', self::f6664c80bde3e9BBe2c12ceb906d5a11($stream['stream_info']['transcode_attributes'])) . ' ';
                                 $af428179032a83d9ec1df565934b1c89 .= $cd7bafd64552e6ca58318f09800cbddd;

@@ -48,8 +48,8 @@ $ipTV_db->query('SELECT * FROM enigma2_devices WHERE `token` = \'%s\' AND `publi
 if ($ipTV_db->num_rows() <= 0) {
     die(json_encode(array('valid' => false)));
 }
-$ef2191c41d898dd4d2c297b9115d985d = $ipTV_db->get_row();
-if (time() - $ef2191c41d898dd4d2c297b9115d985d['last_updated'] > $ef2191c41d898dd4d2c297b9115d985d['watchdog_timeout'] + 20) {
+$device_info = $ipTV_db->get_row();
+if (time() - $device_info['last_updated'] > $device_info['watchdog_timeout'] + 20) {
     die(json_encode(array('valid' => false)));
 }
 $Efbabdfbd20db2470efbf8a713287c36 = isset(ipTV_lib::$request['page']) ? ipTV_lib::$request['page'] : '';
@@ -61,15 +61,15 @@ if (!empty($Efbabdfbd20db2470efbf8a713287c36)) {
                 $type = ipTV_lib::$request['t'];
                 switch ($type) {
                     case 'screen':
-                        move_uploaded_file($_FILES['f']['tmp_name'], ENIGMA2_PLUGIN_DIR . $ef2191c41d898dd4d2c297b9115d985d['device_id'] . '_screen_' . time() . '_' . uniqid() . '.jpg');
+                        move_uploaded_file($_FILES['f']['tmp_name'], ENIGMA2_PLUGIN_DIR . $device_info['device_id'] . '_screen_' . time() . '_' . uniqid() . '.jpg');
                         break;
                 }
             }
         }
     } else {
         //Ef9c0fd87485ae4e7ac1168d3ef632c3:
-        $ipTV_db->query('UPDATE `enigma2_devices` SET `last_updated` = \'%d\',`rc` = \'%d\' WHERE `device_id` = \'%d\'', time(), ipTV_lib::$request['rc'], $ef2191c41d898dd4d2c297b9115d985d['device_id']);
-        $ipTV_db->query('SELECT * FROM `enigma2_actions` WHERE `device_id` = \'%d\'', $ef2191c41d898dd4d2c297b9115d985d['device_id']);
+        $ipTV_db->query('UPDATE `enigma2_devices` SET `last_updated` = \'%d\',`rc` = \'%d\' WHERE `device_id` = \'%d\'', time(), ipTV_lib::$request['rc'], $device_info['device_id']);
+        $ipTV_db->query('SELECT * FROM `enigma2_actions` WHERE `device_id` = \'%d\'', $device_info['device_id']);
         $result = array();
         if ($ipTV_db->num_rows() > 0) {
             $Ce7729bc93110c2030dc45bb29c9f93f = $ipTV_db->get_row();

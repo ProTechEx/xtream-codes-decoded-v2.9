@@ -47,7 +47,6 @@ switch ($action) {
                 $servers = empty(ipTV_lib::$request['servers']) ? array_keys(ipTV_lib::$StreamingServers) : array_map('intval', ipTV_lib::$request['servers']);
                 foreach ($servers as $server_id) {
                     $urls[$server_id] = array('url' => ipTV_lib::$StreamingServers[$server_id]['api_url_ip'] . '&action=stream', 'postdata' => array('function' => $sub, 'stream_ids' => $stream_ids));
-                    //a7f49c96cd32b78607c69a117274e36f:
                 }
                 ipTV_lib::curlMultiRequest($urls);
                 echo json_encode(array('result' => true));
@@ -58,7 +57,6 @@ switch ($action) {
                 $ipTV_db->query('SELECT id,stream_display_name FROM `streams` WHERE type <> 2');
                 foreach ($ipTV_db->get_rows() as $row) {
                     $output[] = array('id' => $row['id'], 'stream_name' => $row['stream_display_name']);
-                    //E283b1770ca1413a7db2234f55ee3b96:
                 }
                 echo json_encode($output);
                 break;
@@ -67,11 +65,10 @@ switch ($action) {
                                   FROM `streams_sys` t1
                                   INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2
                                   WHERE t1.stream_status = 1');
-                $D465fc5085f41251c6fa7c77b8333b0f = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
+                $streamSys = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
                 $output = array();
-                foreach ($D465fc5085f41251c6fa7c77b8333b0f as $stream_id => $servers) {
-                    $output[$stream_id] = array_keys($servers);
-                    //dc36140b17e2214cd0291f81609d6855:
+                foreach ($streamSys as $stream_id => $server_id) {
+                    $output[$stream_id] = array_keys($server_id);
                 }
                 echo json_encode($output);
                 break;
@@ -80,11 +77,10 @@ switch ($action) {
                                   FROM `streams_sys` t1
                                   INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2
                                   WHERE t1.pid > 0 AND t1.stream_status = 0');
-                $D465fc5085f41251c6fa7c77b8333b0f = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
+                $streamSys = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
                 $output = array();
-                foreach ($D465fc5085f41251c6fa7c77b8333b0f as $stream_id => $servers) {
-                    $output[$stream_id] = array_keys($servers);
-                    //b95fa06e61bc3c48ce56f6bf18da484c:
+                foreach ($streamSys as $stream_id => $server_id) {
+                    $output[$stream_id] = array_keys($server_id);
                 }
                 echo json_encode($output);
                 break;
@@ -95,7 +91,7 @@ switch ($action) {
             case 'info':
                 if (!empty(ipTV_lib::$request['mac'])) {
                     $mac = ipTV_lib::$request['mac'];
-                    $user_info = ipTV_streaming::f2cBD6b6F59558B819C0CFF8c3b2Ef2c(false, $mac, true, false, true);
+                    $user_info = ipTV_streaming::GetMagInfo(false, $mac, true, false, true);
                     if (!empty($user_info)) {
                         echo json_encode(array_merge(array('result' => true), $user_info));
                     } else {
@@ -108,9 +104,9 @@ switch ($action) {
             case 'edit':
                 if (!empty(ipTV_lib::$request['mac'])) {
                     $mac = ipTV_lib::$request['mac'];
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['is_mag'] = 1;
-                    $query = FBAac025084A44F7876230Ff53A6137F($Bf4bb0ad11102aaccbf77b6cdc1fd66f);
+                    $user_data = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
+                    $user_data['is_mag'] = 1;
+                    $query = GetColumnNames($user_data);
                     if ($ipTV_db->query("UPDATE `users` SET {$query} WHERE id = ( SELECT user_id FROM mag_devices WHERE `mac` = '%s' )", base64_encode(strtoupper($mac)))) {
                         if ($ipTV_db->affected_rows() > 0) {
                             echo json_encode(array('result' => true));
@@ -126,36 +122,35 @@ switch ($action) {
                 }
                 break;
             case 'create':
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
-                if (!empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['mac'])) {
-                    $fb226b0ab56e366f44da9cf9ee107fff = array(1, 2, 3);
-                    $mac = base64_encode(strtoupper($Bf4bb0ad11102aaccbf77b6cdc1fd66f['mac']));
-                    unset($Bf4bb0ad11102aaccbf77b6cdc1fd66f['mac']);
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'] = ipTV_lib::GenerateString(10);
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password'] = ipTV_lib::GenerateString(10);
-                    if (!array_key_exists('allowed_ips', $Bf4bb0ad11102aaccbf77b6cdc1fd66f) || !Ef9fcEFFa62DB6eCc4c8a628b9B5A9aF($Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ips'])) {
-                        $Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ips'] = json_encode(array());
+                $user_data = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
+                if (!empty($user_data['mac'])) {
+                    $output_formats_types = array(1, 2, 3);
+                    $mac = base64_encode(strtoupper($user_data['mac']));
+                    unset($user_data['mac']);
+                    $user_data['username'] = ipTV_lib::GenerateString(10);
+                    $user_data['password'] = ipTV_lib::GenerateString(10);
+                    if (!array_key_exists('allowed_ips', $user_data) || !parseJson($user_data['allowed_ips'])) {
+                        $user_data['allowed_ips'] = json_encode(array());
                     }
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ua'] = json_encode(array());
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['created_at'] = time();
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['created_by'] = 0;
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date'] = empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date']) ? null : intval($Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date']);
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet'] = empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet']) || !EF9fCefFa62DB6ECc4c8a628B9B5A9aF($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet']) ? array() : array_map('intval', json_decode($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet'], true));
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['is_mag'] = 1;
-                    if (array_key_exists('mac', $Bf4bb0ad11102aaccbf77b6cdc1fd66f)) {
-                        unset($Bf4bb0ad11102aaccbf77b6cdc1fd66f['mac']);
+                    $user_data['allowed_ua'] = json_encode(array());
+                    $user_data['created_at'] = time();
+                    $user_data['created_by'] = 0;
+                    $user_data['exp_date'] = empty($user_data['exp_date']) ? null : intval($user_data['exp_date']);
+                    $user_data['bouquet'] = empty($user_data['bouquet']) || !parseJson($user_data['bouquet']) ? array() : array_map('intval', json_decode($user_data['bouquet'], true));
+                    $user_data['is_mag'] = 1;
+                    if (array_key_exists('mac', $user_data)) {
+                        unset($user_data['mac']);
                     }
-                    if (array_key_exists('output_formats', $Bf4bb0ad11102aaccbf77b6cdc1fd66f)) {
-                        unset($Bf4bb0ad11102aaccbf77b6cdc1fd66f['output_formats']);
+                    if (array_key_exists('output_formats', $user_data)) {
+                        unset($user_data['output_formats']);
                     }
-                    if (!CE15043404aa3e950fc9C9dd8bc0325a('mag_devices', 'mac', $mac)) {
-                        $query = b484C4Ff0e3EE69B9d98B92884B88c0F($Bf4bb0ad11102aaccbf77b6cdc1fd66f);
+                    if (!searchQuery('mag_devices', 'mac', $mac)) {
+                        $query = queryParse($user_data);
                         if ($ipTV_db->simple_query("INSERT INTO `users` {$query}")) {
                             if ($ipTV_db->affected_rows() > 0) {
                                 $user_id = $ipTV_db->last_insert_id();
-                                foreach ($fb226b0ab56e366f44da9cf9ee107fff as $b1f84f020035bf724cdc2f6d05ee33c3) {
-                                    $ipTV_db->query('INSERT INTO `user_output` ( `user_id`, `access_output_id` )VALUES( \'%d\', \'%d\' )', $user_id, $b1f84f020035bf724cdc2f6d05ee33c3);
-                                    //D65ea973d5f15f8d2dcfd5c4a658493f:
+                                foreach ($output_formats_types as $type) {
+                                    $ipTV_db->query('INSERT INTO `user_output` ( `user_id`, `access_output_id` )VALUES( \'%d\', \'%d\' )', $user_id, $type);
                                 }
                                 $ipTV_db->query('INSERT INTO `mag_devices` ( `user_id`, `mac`, `created` )VALUES( \'%d\', \'%s\', \'%d\' )', $user_id, $mac, time());
                                 echo json_encode(array('result' => true));
@@ -195,10 +190,10 @@ switch ($action) {
                 if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['password'])) {
                     $username = ipTV_lib::$request['username'];
                     $password = ipTV_lib::$request['password'];
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
+                    $user_data = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
                     $ipTV_db->query('SELECT * FROM `users` WHERE `username` = \'%s\' and `password` = \'%s\'', $username, $password);
                     if ($ipTV_db->num_rows() > 0) {
-                        $query = fBaaC025084a44F7876230Ff53A6137F($Bf4bb0ad11102aaccbf77b6cdc1fd66f);
+                        $query = GetColumnNames($user_data);
                         if ($ipTV_db->query("UPDATE `users` SET {$query} WHERE `username` = '%s' and `password` = '%s'", $username, $password)) {
                             echo json_encode(array('result' => true));
                             $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $username, $password, time(), '[API->Edit Line]');
@@ -213,40 +208,39 @@ switch ($action) {
                 }
                 break;
             case 'create':
-                $fb226b0ab56e366f44da9cf9ee107fff = array(1, 2, 3);
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
-                if (!array_key_exists('username', $Bf4bb0ad11102aaccbf77b6cdc1fd66f)) {
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'] = ipTV_lib::GenerateString(10);
+                $output_formats_types = array(1, 2, 3);
+                $user_data = empty(ipTV_lib::$request['user_data']) ? array() : ipTV_lib::$request['user_data'];
+                if (!array_key_exists('username', $user_data)) {
+                    $user_data['username'] = ipTV_lib::GenerateString(10);
                 }
-                if (!array_key_exists('password', $Bf4bb0ad11102aaccbf77b6cdc1fd66f)) {
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password'] = ipTV_lib::GenerateString(10);
+                if (!array_key_exists('password', $user_data)) {
+                    $user_data['password'] = ipTV_lib::GenerateString(10);
                 }
-                if (!array_key_exists('allowed_ips', $Bf4bb0ad11102aaccbf77b6cdc1fd66f) || !ef9fCeffa62dB6ECC4C8A628B9B5a9aF($Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ips'])) {
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ips'] = json_encode(array());
+                if (!array_key_exists('allowed_ips', $user_data) || !parseJson($user_data['allowed_ips'])) {
+                    $user_data['allowed_ips'] = json_encode(array());
                 }
-                if (!array_key_exists('allowed_ua', $Bf4bb0ad11102aaccbf77b6cdc1fd66f) || !eF9FCEfFa62Db6ecC4C8A628b9b5A9aF($Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ua'])) {
-                    $Bf4bb0ad11102aaccbf77b6cdc1fd66f['allowed_ua'] = json_encode(array());
+                if (!array_key_exists('allowed_ua', $user_data) || !parseJson($user_data['allowed_ua'])) {
+                    $user_data['allowed_ua'] = json_encode(array());
                 }
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f['created_at'] = time();
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f['created_by'] = 0;
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date'] = empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date']) ? null : intval($Bf4bb0ad11102aaccbf77b6cdc1fd66f['exp_date']);
-                $Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet'] = empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet']) || !EF9FcEFFA62dB6Ecc4C8a628b9b5A9af($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet']) ? array() : array_map('intval', json_decode($Bf4bb0ad11102aaccbf77b6cdc1fd66f['bouquet'], true));
-                $fb226b0ab56e366f44da9cf9ee107fff = empty($Bf4bb0ad11102aaccbf77b6cdc1fd66f['output_formats']) || !ef9FCefFa62DB6ECC4C8A628B9B5A9AF($Bf4bb0ad11102aaccbf77b6cdc1fd66f['output_formats']) ? $fb226b0ab56e366f44da9cf9ee107fff : array_map('intval', $Bf4bb0ad11102aaccbf77b6cdc1fd66f['output_formats']);
-                if (array_key_exists('output_formats', $Bf4bb0ad11102aaccbf77b6cdc1fd66f)) {
-                    unset($Bf4bb0ad11102aaccbf77b6cdc1fd66f['output_formats']);
+                $user_data['created_at'] = time();
+                $user_data['created_by'] = 0;
+                $user_data['exp_date'] = empty($user_data['exp_date']) ? null : intval($user_data['exp_date']);
+                $user_data['bouquet'] = empty($user_data['bouquet']) || !parseJson($user_data['bouquet']) ? array() : array_map('intval', json_decode($user_data['bouquet'], true));
+                $output_formats_types = empty($user_data['output_formats']) || !parseJson($user_data['output_formats']) ? $output_formats_types : array_map('intval', $user_data['output_formats']);
+                if (array_key_exists('output_formats', $user_data)) {
+                    unset($user_data['output_formats']);
                 }
-                $ipTV_db->query('SELECT id FROM `users` WHERE `username` = \'%s\' AND `password` = \'%s\' LIMIT 1', $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'], $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password']);
+                $ipTV_db->query('SELECT id FROM `users` WHERE `username` = \'%s\' AND `password` = \'%s\' LIMIT 1', $user_data['username'], $user_data['password']);
                 if ($ipTV_db->num_rows() == 0) {
-                    $query = b484C4FF0E3eE69b9D98b92884B88c0F($Bf4bb0ad11102aaccbf77b6cdc1fd66f);
+                    $query = queryParse($user_data);
                     if ($ipTV_db->simple_query("INSERT INTO `users` {$query}")) {
                         if ($ipTV_db->affected_rows() > 0) {
                             $user_id = $ipTV_db->last_insert_id();
-                            foreach ($fb226b0ab56e366f44da9cf9ee107fff as $b1f84f020035bf724cdc2f6d05ee33c3) {
-                                $ipTV_db->query('INSERT INTO `user_output` ( `user_id`, `access_output_id` ) VALUES( \'%d\', \'%d\' )', $user_id, $b1f84f020035bf724cdc2f6d05ee33c3);
-                                //deafaac83305037a219641703427257d:
+                            foreach ($output_formats_types as $type) {
+                                $ipTV_db->query('INSERT INTO `user_output` ( `user_id`, `access_output_id` ) VALUES( \'%d\', \'%d\' )', $user_id, $type);
                             }
-                            echo json_encode(array('result' => true, 'created_id' => $user_id, 'username' => $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'], 'password' => $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password']));
-                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'], $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password'], time(), '[API->New Line]');
+                            echo json_encode(array('result' => true, 'created_id' => $user_id, 'username' => $user_data['username'], 'password' => $user_data['password']));
+                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $user_data['username'], $user_data['password'], time(), '[API->New Line]');
                         } else {
                             echo json_encode(array('result' => false));
                         }
@@ -284,7 +278,7 @@ switch ($action) {
                         } else {
                             $ipTV_db->query('UPDATE reg_users SET `credits` = \'%.2f\' WHERE `id` = \'%d\'', $A6f4ecc798bcb285eee6efb4467c6708, $Eb809884ee4b7eb427d7a2ae5a5fb355['id']);
                             echo json_encode(array('result' => true));
-                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $Bf4bb0ad11102aaccbf77b6cdc1fd66f['username'], $Bf4bb0ad11102aaccbf77b6cdc1fd66f['password'], time(), "[API->ADD Credits {$Cadd766037a4c84044843f30dd506e37}]");
+                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $user_data['username'], $user_data['password'], time(), "[API->ADD Credits {$Cadd766037a4c84044843f30dd506e37}]");
                         }
                     } else {
                         echo json_encode(array('result' => false, 'error' => 'NOT EXISTS'));
@@ -296,7 +290,7 @@ switch ($action) {
         }
         break;
 }
-function fbAAC025084A44f7876230ff53A6137f($data)
+function GetColumnNames($data)
 {
     global $ipTV_db;
     $query = '';
@@ -309,14 +303,12 @@ function fbAAC025084A44f7876230ff53A6137f($data)
             $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}` = null,";
         } else {
             $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}` = '" . $ipTV_db->escape($value) . '\',';
-            //c075392751c4828bc4e00e0965478472:
-            //goto Eb823b81d52a0b2a1256d64215290521;
         }
         
     }
     return rtrim($query, ',');
 }
-function b484c4Ff0e3eE69B9D98B92884B88C0f($data)
+function queryParse($data)
 {
     global $ipTV_db;
     $query = '(';
@@ -332,16 +324,14 @@ function b484c4Ff0e3eE69B9D98B92884B88C0f($data)
         else if (is_null($value)) {
             $query .= 'NULL,';
         } else {
-            //cb6f681d4fbd2684f1c003ecc9ac7a91:
             $query .= '\'' . $ipTV_db->escape($value) . '\',';
-            //goto e1365d05c90b3128c0d7a8cfecb5a3d5;
         }
         
     }
     $query = rtrim($query, ',') . ');';
     return $query;
 }
-function eF9fcefFa62Db6ecC4c8a628B9b5a9Af($string)
+function parseJson($string)
 {
     return is_array(json_decode($string, true));
 }
