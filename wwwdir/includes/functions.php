@@ -202,12 +202,12 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
             if (!empty(ipTV_lib::$settings['stalker_lock_images']) && !in_array($fca2439385f041f384419649ca2471d6, ipTV_lib::$settings['stalker_lock_images'])) {
                 return false;
             }
-            $ded15b7e9c47ec5a3dea3c69332153c8 = new geoip(GEOIP2_FILENAME);
-            $geoip_country_code = $ded15b7e9c47ec5a3dea3c69332153c8->c6A76952b4cef18F3C98C0E6A9Dd1274($f429d0e47085017e3f1e415952e44cba)['registered_country']['iso_code'];
-            $ded15b7e9c47ec5a3dea3c69332153c8->close();
+            $geoip = new geoip(GEOIP2_FILENAME);
+            $geoip_country_code = $geoip->c6A76952b4cef18F3C98C0E6A9Dd1274($f429d0e47085017e3f1e415952e44cba)['registered_country']['iso_code'];
+            $geoip->close();
             if (!empty($geoip_country_code)) {
-                $ab59908f6050f752836a953eb8bb8e52 = !empty($E574ed349c1c464172b5a4221afe809e['forced_country']) ? true : false;
-                if ($ab59908f6050f752836a953eb8bb8e52 && $E574ed349c1c464172b5a4221afe809e['forced_country'] != 'ALL' && $geoip_country_code != $E574ed349c1c464172b5a4221afe809e['forced_country'] || !$ab59908f6050f752836a953eb8bb8e52 && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
+                $forced_country = !empty($E574ed349c1c464172b5a4221afe809e['forced_country']) ? true : false;
+                if ($forced_country && $E574ed349c1c464172b5a4221afe809e['forced_country'] != 'ALL' && $geoip_country_code != $E574ed349c1c464172b5a4221afe809e['forced_country'] || !$forced_country && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
                     return false;
                 }
             }
@@ -302,25 +302,25 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
         $data = '';
         if (!empty($user_info['series_ids'])) {
             $series = ipTV_lib::seriesData();
-            foreach ($series as $acb1d10773fb0d1b6ac8cf2c16ecf1b5 => $A0766c7ec9b7cbc336d730454514b34f) {
-                if (!in_array($acb1d10773fb0d1b6ac8cf2c16ecf1b5, $user_info['series_ids'])) {
+            foreach ($series as $id => $A0766c7ec9b7cbc336d730454514b34f) {
+                if (!in_array($id, $user_info['series_ids'])) {
                     continue;
                 }
-                foreach ($A0766c7ec9b7cbc336d730454514b34f['series_data'] as $c59070c3eab15fea2abe4546ccf476de => $E86ff017778d0dc804add84ab1be9052) {
+                foreach ($A0766c7ec9b7cbc336d730454514b34f['series_data'] as $c59070c3eab15fea2abe4546ccf476de => $series) {
                     $e831c6d2f20288c01902323cccc3733a = 0;
-                    foreach ($E86ff017778d0dc804add84ab1be9052 as $stream_id => $a14a8f906639aa7f5509518ff935b8f0) {
+                    foreach ($series as $stream_id => $serie) {
                         $movie_properties = ipTV_lib::movieProperties($stream_id);
-                        $a14a8f906639aa7f5509518ff935b8f0['live'] = 0;
+                        $serie['live'] = 0;
                         if (ipTV_lib::$settings['series_custom_name'] == 0) {
-                            $a14a8f906639aa7f5509518ff935b8f0['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . ' E' . sprintf('%02d', ++$e831c6d2f20288c01902323cccc3733a);
+                            $serie['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . ' E' . sprintf('%02d', ++$e831c6d2f20288c01902323cccc3733a);
                         } else {
-                            $a14a8f906639aa7f5509518ff935b8f0['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . " {$a14a8f906639aa7f5509518ff935b8f0['stream_display_name']}";
+                            $serie['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . " {$serie['stream_display_name']}";
                         }
-                        $a14a8f906639aa7f5509518ff935b8f0['movie_propeties'] = array('movie_image' => !empty($movie_properties['movie_image']) ? $movie_properties['movie_image'] : $A0766c7ec9b7cbc336d730454514b34f['cover']);
-                        $a14a8f906639aa7f5509518ff935b8f0['type_output'] = 'series';
-                        $a14a8f906639aa7f5509518ff935b8f0['category_name'] = $A0766c7ec9b7cbc336d730454514b34f['category_name'];
-                        $a14a8f906639aa7f5509518ff935b8f0['id'] = $stream_id;
-                        $user_info['channels'][$stream_id] = $a14a8f906639aa7f5509518ff935b8f0;
+                        $serie['movie_propeties'] = array('movie_image' => !empty($movie_properties['movie_image']) ? $movie_properties['movie_image'] : $A0766c7ec9b7cbc336d730454514b34f['cover']);
+                        $serie['type_output'] = 'series';
+                        $serie['category_name'] = $A0766c7ec9b7cbc336d730454514b34f['category_name'];
+                        $serie['id'] = $stream_id;
+                        $user_info['channels'][$stream_id] = $serie;
                     }
                 }
             }
@@ -363,9 +363,9 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
                 $data = str_replace(array('{BOUQUET_NAME}', '{USERNAME}', '{PASSWORD}', '{SERVER_URL}', '{OUTPUT_KEY}'), array(ipTV_lib::$settings['bouquet_name'], $user_info['username'], $user_info['password'], $domain_name, $output_key), $device_info['device_header']) . '';
             }
             if (!empty($device_info['device_conf'])) {
-                if (preg_match('/\\{URL\\#(.*?)\\}/', $device_info['device_conf'], $ae37877cee3bc97c8cfa6ec5843993ed)) {
-                    $e5cb656483e7536471dc8d1c0bab1ed0 = str_split($ae37877cee3bc97c8cfa6ec5843993ed[1]);
-                    $url_pattern = $ae37877cee3bc97c8cfa6ec5843993ed[0];
+                if (preg_match('/\\{URL\\#(.*?)\\}/', $device_info['device_conf'], $matches)) {
+                    $e5cb656483e7536471dc8d1c0bab1ed0 = str_split($matches[1]);
+                    $url_pattern = $matches[0];
                 } else {
                     $e5cb656483e7536471dc8d1c0bab1ed0 = array();
                     $url_pattern = '{URL}';

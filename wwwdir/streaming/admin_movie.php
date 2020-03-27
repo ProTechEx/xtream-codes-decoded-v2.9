@@ -4,7 +4,7 @@
 register_shutdown_function('shutdown');
 set_time_limit(0);
 require '../init.php';
-$f0ac6ad2b40669833242a10c23cad2e0 = true;
+$streaming_block = true;
 $E824497a502b6e5dd609c0acb45697c7 = false;
 $e13ac89e162bcc9913e553b949f755b6 = 0;
 $activity_id = 0;
@@ -17,7 +17,7 @@ if (empty(ipTV_lib::$request['stream']) || empty(ipTV_lib::$request['password'])
     http_response_code(401);
     die;
 }
-$f0ac6ad2b40669833242a10c23cad2e0 = false;
+$streaming_block = false;
 $stream = pathinfo(ipTV_lib::$request['stream']);
 $stream_id = intval($stream['filename']);
 $extension = $stream['extension'];
@@ -112,8 +112,8 @@ if ($ipTV_db->num_rows() > 0) {
 }
 function shutdown()
 {
-    global $ipTV_db, $f0ac6ad2b40669833242a10c23cad2e0;
-    if ($f0ac6ad2b40669833242a10c23cad2e0) {
+    global $ipTV_db, $streaming_block;
+    if ($streaming_block) {
         CheckFlood();
     }
     if (is_object($ipTV_db)) {

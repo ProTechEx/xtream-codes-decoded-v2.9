@@ -30,7 +30,7 @@ if ($ipTV_db->num_rows() > 0) {
     $playlist = STREAMS_PATH . $stream_id . '_.m3u8';
     if (!ipTV_streaming::bCaa9B8A7b46eb36Cd507A218fa64474($channel_info['pid'], $stream_id)) {
         if ($channel_info['on_demand'] == 1) {
-            if (!ipTV_streaming::CDa72Bc41975C364BC559dB25648a5B2($channel_info['monitor_pid'], $stream_id)) {
+            if (!ipTV_streaming::CheckPidExist($channel_info['monitor_pid'], $stream_id)) {
                 ipTV_stream::startStream($stream_id);
             }
         } else {
@@ -42,11 +42,11 @@ if ($ipTV_db->num_rows() > 0) {
         case 'm3u8':
             if (ipTV_streaming::IsValidStream($playlist, $channel_info['pid'])) {
                 if (empty(ipTV_lib::$request['segment'])) {
-                    if ($F3803fa85b38b65447e6d438f8e9176a = ipTV_streaming::B18C6Bf534aE0B9b94354Db508d52a48($playlist, $password, $stream_id)) {
+                    if ($source = ipTV_streaming::GeneratePlayListWithAuthenticationAdmin($playlist, $password, $stream_id)) {
                         header('Content-Type: application/vnd.apple.mpegurl');
-                        header('Content-Length: ' . strlen($F3803fa85b38b65447e6d438f8e9176a));
+                        header('Content-Length: ' . strlen($source));
                         ob_end_flush();
-                        echo $F3803fa85b38b65447e6d438f8e9176a;
+                        echo $source;
                     }
                 } else {
                     $fe9d0d199fc51f64065055d8bcade279 = STREAMS_PATH . str_replace(array('\\', '/'), '', urldecode(ipTV_lib::$request['segment']));
@@ -61,7 +61,7 @@ if ($ipTV_db->num_rows() > 0) {
             break;
         default:
             header('Content-Type: video/mp2t');
-            $C325d28e238c3a646bd7b095aa1ffa85 = ipTV_streaming::b8430212cC8301200A4976571dbA202c($playlist, ipTV_lib::$settings['client_prebuffer']);
+            $C325d28e238c3a646bd7b095aa1ffa85 = ipTV_streaming::GetSegmentsOfPlaylist($playlist, ipTV_lib::$settings['client_prebuffer']);
             if (empty($C325d28e238c3a646bd7b095aa1ffa85)) {
                 if (!file_exists($playlist)) {
                     $E76c20c612d64210f5bcc0611992d2f7 = -1;
@@ -73,8 +73,8 @@ if ($ipTV_db->num_rows() > 0) {
                             readfile(STREAMS_PATH . $fe9d0d199fc51f64065055d8bcade279);
                             A6ef4ccb381ec4a6b0c8c43e66d85825:
                         }
-                        preg_match('/_(.*)\\./', array_pop($C325d28e238c3a646bd7b095aa1ffa85), $adb24597b0e7956b0f3baad7c260916d);
-                        $E76c20c612d64210f5bcc0611992d2f7 = $adb24597b0e7956b0f3baad7c260916d[1];
+                        preg_match('/_(.*)\\./', array_pop($C325d28e238c3a646bd7b095aa1ffa85), $pregmatches);
+                        $E76c20c612d64210f5bcc0611992d2f7 = $pregmatches[1];
                     } else {
                         $E76c20c612d64210f5bcc0611992d2f7 = $C325d28e238c3a646bd7b095aa1ffa85;
                     }

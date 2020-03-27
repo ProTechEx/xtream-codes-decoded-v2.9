@@ -4,11 +4,11 @@
 register_shutdown_function('shutdown');
 set_time_limit(0);
 require '../init.php';
-$f0ac6ad2b40669833242a10c23cad2e0 = true;
+$streaming_block = true;
 if (!isset(ipTV_lib::$request['username']) || !isset(ipTV_lib::$request['password']) || !isset(ipTV_lib::$request['stream'])) {
     die('Missing parameters.');
 }
-$ded15b7e9c47ec5a3dea3c69332153c8 = new geoip(GEOIP2_FILENAME);
+$geoip = new geoip(GEOIP2_FILENAME);
 $activity_id = 0;
 $container_priority = null;
 $connection_speed_file = null;
@@ -60,18 +60,18 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'EMPTY_UA', $user_ip);
         die;
     }
-    $geoip_country_code = $ded15b7e9c47ec5a3dea3c69332153c8->C6A76952B4ceF18f3C98C0E6a9dd1274($user_ip)['registered_country']['iso_code'];
+    $geoip_country_code = $geoip->C6A76952B4ceF18f3C98C0E6a9dd1274($user_ip)['registered_country']['iso_code'];
     if (!empty($user_info['allowed_ips']) && !in_array($user_ip, array_map('gethostbyname', $user_info['allowed_ips']))) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'IP_BAN', $user_ip);
         die;
     }
     if (!empty($geoip_country_code)) {
-        $ab59908f6050f752836a953eb8bb8e52 = !empty($user_info['forced_country']) ? true : false;
-        if ($ab59908f6050f752836a953eb8bb8e52 && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
+        $forced_country = !empty($user_info['forced_country']) ? true : false;
+        if ($forced_country && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             die;
         }
-        if (!$ab59908f6050f752836a953eb8bb8e52 && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
+        if (!$forced_country && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             die;
         }
@@ -84,11 +84,11 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'USER_ALREADY_CONNECTED', $user_ip);
         die;
     }
-    if (ipTV_streaming::C57799E5196664CB99139813250673E2($user_ip)) {
+    if (ipTV_streaming::checkIsCracked($user_ip)) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'CRACKED', $user_ip);
         die;
     }
-    $f0ac6ad2b40669833242a10c23cad2e0 = false;
+    $streaming_block = false;
     if (!ipTV_streaming::ec7e013CF424bdF03238c1D46aB2a9AE($stream_id, $type == 'movie' ? $user_info['channel_ids'] : $user_info['series_ids'], $type)) {
         http_response_code(406);
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'NOT_IN_BOUQUET', $user_ip);
@@ -235,15 +235,15 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
 }
 function shutdown()
 {
-    global $ipTV_db, $activity_id, $connection_speed_file, $user_info, $container_priority, $f0ac6ad2b40669833242a10c23cad2e0, $stream_id, $user_agent, $user_ip, $geoip_country_code, $external_device, $date;
-    if ($f0ac6ad2b40669833242a10c23cad2e0) {
+    global $ipTV_db, $activity_id, $connection_speed_file, $user_info, $container_priority, $streaming_block, $stream_id, $user_agent, $user_ip, $geoip_country_code, $external_device, $date;
+    if ($streaming_block) {
         CheckFlood();
         http_response_code(401);
     }
     $ipTV_db->close_mysql();
     if ($activity_id != 0) {
         ipTV_streaming::CloseAndTransfer($activity_id);
-        ipTV_streaming::A49C2fb1eBA096c52a352A85C8d09d8d(SERVER_ID, $user_info['id'], $stream_id, $date, $user_agent, $user_ip, $container_priority, $geoip_country_code, $user_info['con_isp_name'], $external_device);
+        ipTV_streaming::SaveClosedConnection(SERVER_ID, $user_info['id'], $stream_id, $date, $user_agent, $user_ip, $container_priority, $geoip_country_code, $user_info['con_isp_name'], $external_device);
         if (file_exists($connection_speed_file)) {
             unlink($connection_speed_file);
         }

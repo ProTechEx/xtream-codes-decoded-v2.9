@@ -3,7 +3,7 @@
 
 set_time_limit(0);
 require './init.php';
-$f0ac6ad2b40669833242a10c23cad2e0 = true;
+$streaming_block = true;
 if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['password'])) {
     $username = ipTV_lib::$request['username'];
     $password = ipTV_lib::$request['password'];
@@ -12,7 +12,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
     ini_set('memory_limit', -1);
     if ($result = ipTV_streaming::GetUserInfo(null, $username, $password, true, true, true)) {
         if ((is_null($result['exp_date']) or $result['exp_date'] > time()) and $result['admin_enabled'] == 1 and $result['enabled'] == 1) {
-            $f0ac6ad2b40669833242a10c23cad2e0 = false;
+            $streaming_block = false;
             header('Content-Type: application/xml; charset=utf-8');
             $B1f3e7b388cc5e0a6305e957f3319444 = htmlspecialchars(ipTV_lib::$settings['server_name'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
             echo '<?xml version="1.0" encoding="utf-8" ?><!DOCTYPE tv SYSTEM "xmltv.dtd">';
@@ -53,7 +53,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
         }
     }
 }
-if ($f0ac6ad2b40669833242a10c23cad2e0) {
+if ($streaming_block) {
     http_response_code(401);
     CheckFlood();
 }

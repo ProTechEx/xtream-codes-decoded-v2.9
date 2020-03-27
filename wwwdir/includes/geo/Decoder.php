@@ -15,43 +15,43 @@ class dD866CD266d22904Db08ceDe9C891eEb
         $this->pointerTestHack = $E4b8aad42e0cc9d6bd7517288b45b181;
         $this->switchByteOrder = $this->b4463d2f7a75bD1F2F253918215a9EDf();
     }
-    public function A13c48203F7686cC9D7129DB62ce01Bd($Edcf28ccdc0122ea787e348c040427ed)
+    public function A13c48203F7686cC9D7129DB62ce01Bd($offset)
     {
-        list(, $fa81eee42906632ae33f6829b4097955) = unpack('C', c71f9A0aA9539E5BbB23f465B5B8a992::Ad87a931cde9286d705b4954D6B159D3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, 1));
-        $Edcf28ccdc0122ea787e348c040427ed++;
+        list(, $fa81eee42906632ae33f6829b4097955) = unpack('C', c71f9A0aA9539E5BbB23f465B5B8a992::Ad87a931cde9286d705b4954D6B159D3($this->fileStream, $offset, 1));
+        $offset++;
         $type = $this->types[$fa81eee42906632ae33f6829b4097955 >> 5];
         if ($type === 'pointer') {
-            list($ecbe9cf84c74cb6bd2bc530654115271, $Edcf28ccdc0122ea787e348c040427ed) = $this->D3bFf033f4453C1601a7154E94092f42($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed);
+            list($ecbe9cf84c74cb6bd2bc530654115271, $offset) = $this->D3bFf033f4453C1601a7154E94092f42($fa81eee42906632ae33f6829b4097955, $offset);
             if ($this->pointerTestHack) {
                 return array($ecbe9cf84c74cb6bd2bc530654115271);
             }
             list($result) = $this->a13C48203f7686cc9D7129Db62ce01BD($ecbe9cf84c74cb6bd2bc530654115271);
-            return array($result, $Edcf28ccdc0122ea787e348c040427ed);
+            return array($result, $offset);
         }
         if ($type === 'extended') {
-            list(, $eac64cd3c127d996e1f6721323192f81) = unpack('C', c71f9A0aA9539E5bBB23f465B5b8a992::Ad87A931CdE9286d705B4954D6b159D3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, 1));
+            list(, $eac64cd3c127d996e1f6721323192f81) = unpack('C', c71f9A0aA9539E5bBB23f465B5b8a992::Ad87A931CdE9286d705B4954D6b159D3($this->fileStream, $offset, 1));
             $f43977a2711522ef243cc57b97d2da1e = $eac64cd3c127d996e1f6721323192f81 + 7;
             if ($f43977a2711522ef243cc57b97d2da1e < 8) {
                 throw new E5fEa4BB1753b166E279e9172AD7b28d('Something went horribly wrong in the decoder. An extended type ' . 'resolved to a type number < 8 (' . $this->types[$f43977a2711522ef243cc57b97d2da1e] . ')');
             }
             $type = $this->types[$f43977a2711522ef243cc57b97d2da1e];
-            $Edcf28ccdc0122ea787e348c040427ed++;
+            $offset++;
         }
-        list($filename_size, $Edcf28ccdc0122ea787e348c040427ed) = $this->C0e9A2980ec8447CbfB3c876fdF04D00($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed);
-        return $this->a88dDC37a3f221DB252f2Dd11D32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $filename_size);
+        list($filename_size, $offset) = $this->C0e9A2980ec8447CbfB3c876fdF04D00($fa81eee42906632ae33f6829b4097955, $offset);
+        return $this->a88dDC37a3f221DB252f2Dd11D32F348($type, $offset, $filename_size);
     }
-    private function a88Ddc37a3F221dB252f2DD11d32F348($type, $Edcf28ccdc0122ea787e348c040427ed, $filename_size)
+    private function a88Ddc37a3F221dB252f2DD11d32F348($type, $offset, $filename_size)
     {
         switch ($type) {
             case 'map':
-                return $this->a52605CBF8680a519EF750C64BcDD859($filename_size, $Edcf28ccdc0122ea787e348c040427ed);
+                return $this->a52605CBF8680a519EF750C64BcDD859($filename_size, $offset);
             case 'array':
-                return $this->E4b3204157994d7695Ad6CC62487E431($filename_size, $Edcf28ccdc0122ea787e348c040427ed);
+                return $this->E4b3204157994d7695Ad6CC62487E431($filename_size, $offset);
             case 'boolean':
-                return array($this->F9c7A22db968d2E96a93B6B59d77fE91($filename_size), $Edcf28ccdc0122ea787e348c040427ed);
+                return array($this->F9c7A22db968d2E96a93B6B59d77fE91($filename_size), $offset);
         }
-        $Ac8c5b61e3afc6a785826ad3f5c2fa60 = $Edcf28ccdc0122ea787e348c040427ed + $filename_size;
-        $e13ac89e162bcc9913e553b949f755b6 = c71f9a0aa9539E5BbB23f465b5B8A992::aD87a931CDe9286d705b4954d6b159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $filename_size);
+        $Ac8c5b61e3afc6a785826ad3f5c2fa60 = $offset + $filename_size;
+        $e13ac89e162bcc9913e553b949f755b6 = c71f9a0aa9539E5BbB23f465b5B8A992::aD87a931CDe9286d705b4954d6b159d3($this->fileStream, $offset, $filename_size);
         switch ($type) {
             case 'utf8_string':
                 return array($this->c75187FbCaf407721D54B95Aa5293fb7($e13ac89e162bcc9913e553b949f755b6), $Ac8c5b61e3afc6a785826ad3f5c2fa60);
@@ -81,18 +81,18 @@ class dD866CD266d22904Db08ceDe9C891eEb
             throw new E5feA4bb1753b166e279e9172AD7b28D('The MaxMind DB file\'s data section contains bad data (unknown data type or corrupt data)');
         }
     }
-    private function E4b3204157994d7695AD6cc62487E431($filename_size, $Edcf28ccdc0122ea787e348c040427ed)
+    private function E4b3204157994d7695AD6cc62487E431($filename_size, $offset)
     {
         $array = array();
         $index = 0;
         //Ef4075258ae932205e18c356f58e8118:
         while ($index < $filename_size) {
-            list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203f7686cc9d7129db62CE01BD($Edcf28ccdc0122ea787e348c040427ed);
+            list($value, $offset) = $this->a13c48203f7686cc9d7129db62CE01BD($offset);
             array_push($array, $value);
             $index++;
         }
         //c10c4d126a9495c09ec72c73258ec878:
-        return array($array, $Edcf28ccdc0122ea787e348c040427ed);
+        return array($array, $offset);
     }
     private function f9c7A22DB968d2e96a93b6B59d77fe91($filename_size)
     {
@@ -114,30 +114,30 @@ class dD866CD266d22904Db08ceDe9C891eEb
         list(, $int) = unpack('l', $this->e1f8C4Ddf340DE46ba06206F1844e677($e13ac89e162bcc9913e553b949f755b6));
         return $int;
     }
-    private function A52605CbF8680a519ef750C64BcDd859($filename_size, $Edcf28ccdc0122ea787e348c040427ed)
+    private function A52605CbF8680a519ef750C64BcDd859($filename_size, $offset)
     {
         $fd85ae68a4de5cc6cec54942d82e8f80 = array();
         $index = 0;
         //f2e2475352ef7e29eeecc0eaf14ba47e:
         while ($index < $filename_size) {
-            list($key, $Edcf28ccdc0122ea787e348c040427ed) = $this->A13c48203F7686cc9d7129db62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
-            list($value, $Edcf28ccdc0122ea787e348c040427ed) = $this->a13c48203F7686cc9d7129dB62Ce01bd($Edcf28ccdc0122ea787e348c040427ed);
+            list($key, $offset) = $this->A13c48203F7686cc9d7129db62Ce01bd($offset);
+            list($value, $offset) = $this->a13c48203F7686cc9d7129dB62Ce01bd($offset);
             $fd85ae68a4de5cc6cec54942d82e8f80[$key] = $value;
             $index++;
         }
         //Bc21d0a0d4e484dd04213ed0894da5fb:
-        return array($fd85ae68a4de5cc6cec54942d82e8f80, $Edcf28ccdc0122ea787e348c040427ed);
+        return array($fd85ae68a4de5cc6cec54942d82e8f80, $offset);
     }
     private $pointerValueOffset = array(1 => 0, 2 => 2048, 3 => 526336, 4 => 0);
-    private function D3BfF033f4453c1601a7154e94092F42($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed)
+    private function D3BfF033f4453c1601a7154e94092F42($fa81eee42906632ae33f6829b4097955, $offset)
     {
         $E7f81375788e92c1cdf085850353643a = ($fa81eee42906632ae33f6829b4097955 >> 3 & 3) + 1;
-        $C7558f823ac28009bfd4730a82f1f01b = C71f9a0aA9539E5bBb23f465b5b8A992::ad87A931Cde9286D705b4954D6B159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $E7f81375788e92c1cdf085850353643a);
-        $Edcf28ccdc0122ea787e348c040427ed = $Edcf28ccdc0122ea787e348c040427ed + $E7f81375788e92c1cdf085850353643a;
+        $C7558f823ac28009bfd4730a82f1f01b = C71f9a0aA9539E5bBb23f465b5b8A992::ad87A931Cde9286D705b4954D6B159d3($this->fileStream, $offset, $E7f81375788e92c1cdf085850353643a);
+        $offset = $offset + $E7f81375788e92c1cdf085850353643a;
         $Df87cb09b2e093a3433e65903b9b2cde = $E7f81375788e92c1cdf085850353643a === 4 ? $C7558f823ac28009bfd4730a82f1f01b : pack('C', $fa81eee42906632ae33f6829b4097955 & 7) . $C7558f823ac28009bfd4730a82f1f01b;
         $b1f89455f192d622d014c1b78397c130 = $this->d51Bb43e3f3096830f5b813802b1F855($Df87cb09b2e093a3433e65903b9b2cde);
         $ecbe9cf84c74cb6bd2bc530654115271 = $b1f89455f192d622d014c1b78397c130 + $this->pointerBase + $this->pointerValueOffset[$E7f81375788e92c1cdf085850353643a];
-        return array($ecbe9cf84c74cb6bd2bc530654115271, $Edcf28ccdc0122ea787e348c040427ed);
+        return array($ecbe9cf84c74cb6bd2bc530654115271, $offset);
     }
     private function D51BB43E3F3096830F5B813802B1f855($e13ac89e162bcc9913e553b949f755b6)
     {
@@ -180,11 +180,11 @@ class dD866CD266d22904Db08ceDe9C891eEb
     {
         return $e13ac89e162bcc9913e553b949f755b6;
     }
-    private function C0E9a2980eC8447cBFb3c876FDF04d00($fa81eee42906632ae33f6829b4097955, $Edcf28ccdc0122ea787e348c040427ed)
+    private function C0E9a2980eC8447cBFb3c876FDF04d00($fa81eee42906632ae33f6829b4097955, $offset)
     {
         $filename_size = $fa81eee42906632ae33f6829b4097955 & 31;
         $Ae3234ddab2e42837c611f69b424ea66 = $filename_size < 29 ? 0 : $filename_size - 28;
-        $e13ac89e162bcc9913e553b949f755b6 = c71F9A0aa9539E5bBb23f465b5B8A992::aD87a931Cde9286D705b4954d6B159d3($this->fileStream, $Edcf28ccdc0122ea787e348c040427ed, $Ae3234ddab2e42837c611f69b424ea66);
+        $e13ac89e162bcc9913e553b949f755b6 = c71F9A0aa9539E5bBb23f465b5B8A992::aD87a931Cde9286D705b4954d6B159d3($this->fileStream, $offset, $Ae3234ddab2e42837c611f69b424ea66);
         $decoded = $this->D51bb43E3F3096830f5B813802B1f855($e13ac89e162bcc9913e553b949f755b6);
         if (!($filename_size === 29)) {
             if (!($filename_size === 30)) {
@@ -198,7 +198,7 @@ class dD866CD266d22904Db08ceDe9C891eEb
                     $filename_size = 285 + $decoded;
                     goto E34776511fb67c488687c4d1fb35f8c7;
                 }
-                return array($filename_size, $Edcf28ccdc0122ea787e348c040427ed + $Ae3234ddab2e42837c611f69b424ea66);
+                return array($filename_size, $offset + $Ae3234ddab2e42837c611f69b424ea66);
             }
         }
     }

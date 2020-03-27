@@ -16,7 +16,7 @@ if (ipTV_lib::$request['call'] == 'publish') {
     }
 }
 if (ipTV_lib::$request['call'] == 'play_done') {
-    ipTV_streaming::bA58BB30969E80d158dA7DB06421d0d8(ipTV_lib::$request['clientid']);
+    ipTV_streaming::playDone(ipTV_lib::$request['clientid']);
     http_response_code(200);
     die;
 }
@@ -50,21 +50,21 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         http_response_code(404);
         die;
     }
-    $ded15b7e9c47ec5a3dea3c69332153c8 = new geoip(GEOIP2_FILENAME);
-    $geoip_country_code = $ded15b7e9c47ec5a3dea3c69332153c8->c6A76952B4cEf18f3C98C0E6a9Dd1274($user_ip)['registered_country']['iso_code'];
-    $ded15b7e9c47ec5a3dea3c69332153c8->close();
+    $geoip = new geoip(GEOIP2_FILENAME);
+    $geoip_country_code = $geoip->c6A76952B4cEf18f3C98C0E6a9Dd1274($user_ip)['registered_country']['iso_code'];
+    $geoip->close();
     if (!empty($user_info['allowed_ips']) && !in_array($user_ip, array_map('gethostbyname', $user_info['allowed_ips']))) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'IP_BAN', $user_ip);
         http_response_code(404);
     }
     if (!empty($geoip_country_code)) {
-        $ab59908f6050f752836a953eb8bb8e52 = !empty($user_info['forced_country']) ? true : false;
-        if ($ab59908f6050f752836a953eb8bb8e52 && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
+        $forced_country = !empty($user_info['forced_country']) ? true : false;
+        if ($forced_country && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             http_response_code(404);
             die;
         }
-        if (!$ab59908f6050f752836a953eb8bb8e52 && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
+        if (!$forced_country && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             http_response_code(404);
             die;
@@ -75,7 +75,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         http_response_code(404);
         die;
     }
-    if (ipTV_streaming::C57799e5196664CB99139813250673E2($user_ip)) {
+    if (ipTV_streaming::checkIsCracked($user_ip)) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'CRACKED', $user_ip);
         http_response_code(404);
         die;

@@ -3,7 +3,7 @@
 
 require 'init.php';
 ini_set('memory_limit', -1);
-$f0ac6ad2b40669833242a10c23cad2e0 = true;
+$streaming_block = true;
 if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['password'])) {
     $valid_actions = array('get_epg');
     $username = ipTV_lib::$request['username'];
@@ -12,7 +12,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
     $output = array();
     $output['user_info'] = array();
     if ($result = ipTV_streaming::GetUserInfo(null, $username, $password, true, true, true)) {
-        $f0ac6ad2b40669833242a10c23cad2e0 = false;
+        $streaming_block = false;
         switch ($action) {
             case 'get_epg':
                 if (!empty(ipTV_lib::$request['stream_id']) && (is_null($result['exp_date']) or $result['exp_date'] > time())) {
@@ -84,7 +84,7 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
     echo json_encode($output, JSON_PARTIAL_OUTPUT_ON_ERROR);
     die;
 }
-if ($f0ac6ad2b40669833242a10c23cad2e0) {
+if ($streaming_block) {
     CheckFlood();
 }
 ?>

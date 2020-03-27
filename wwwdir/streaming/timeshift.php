@@ -5,14 +5,14 @@ register_shutdown_function('shutdown');
 set_time_limit(0);
 require '../init.php';
 header('Access-Control-Allow-Origin: *');
-$f0ac6ad2b40669833242a10c23cad2e0 = true;
+$streaming_block = true;
 if (!isset(ipTV_lib::$request['start']) || !isset(ipTV_lib::$request['duration']) || !isset(ipTV_lib::$request['stream'])) {
     die('Missing parameters.');
 }
 if (ipTV_lib::$settings['use_buffer'] == 0) {
     header('X-Accel-Buffering: no');
 }
-$ded15b7e9c47ec5a3dea3c69332153c8 = new geoip(GEOIP2_FILENAME);
+$geoip = new geoip(GEOIP2_FILENAME);
 $activity_id = 0;
 $connection_speed_file = null;
 $container_priority = null;
@@ -21,16 +21,16 @@ $password = empty(ipTV_lib::$request['password']) ? '' : ipTV_lib::$request['pas
 $stream_id = ipTV_lib::$request['stream'];
 $F19b64ffad55876d290cb6f756a2dea5 = 0;
 if (!is_numeric($stream_id) && stristr($stream_id, '_')) {
-    list($stream_id, $Fe917966573bdf0b43ab9723bb50fc6b, $F19b64ffad55876d290cb6f756a2dea5) = explode('_', $stream_id);
+    list($stream_id, $pos, $F19b64ffad55876d290cb6f756a2dea5) = explode('_', $stream_id);
     $stream_id = intval($stream_id);
-    $F919000263e8ad8e2791f92d8919f629 = intval($Fe917966573bdf0b43ab9723bb50fc6b);
+    $F919000263e8ad8e2791f92d8919f629 = intval($pos);
     $F19b64ffad55876d290cb6f756a2dea5 = intval($F19b64ffad55876d290cb6f756a2dea5);
     ipTV_lib::$request['extension'] = 'm3u8';
 }
 $user_ip = ipTV_streaming::getUserIP();
 $user_agent = empty($_SERVER['HTTP_USER_AGENT']) ? '' : htmlentities(trim($_SERVER['HTTP_USER_AGENT']));
-$geoip_country_code = $ded15b7e9c47ec5a3dea3c69332153c8->c6a76952B4CEf18f3c98c0e6A9DD1274($user_ip)['registered_country']['iso_code'];
-$ded15b7e9c47ec5a3dea3c69332153c8->close();
+$geoip_country_code = $geoip->c6a76952B4CEf18f3c98c0e6A9DD1274($user_ip)['registered_country']['iso_code'];
+$geoip->close();
 $play_token = empty(ipTV_lib::$request['play_token']) ? null : ipTV_lib::$request['play_token'];
 if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, false, true, array(), false, $user_ip, $user_agent, array(), $play_token, $stream_id)) {
     if (isset($user_info['mag_invalid_token'])) {
@@ -61,12 +61,12 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         die;
     }
     if (!empty($geoip_country_code)) {
-        $ab59908f6050f752836a953eb8bb8e52 = !empty($user_info['forced_country']) ? true : false;
-        if ($ab59908f6050f752836a953eb8bb8e52 && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
+        $forced_country = !empty($user_info['forced_country']) ? true : false;
+        if ($forced_country && $user_info['forced_country'] != 'ALL' && $geoip_country_code != $user_info['forced_country']) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             die;
         }
-        if (!$ab59908f6050f752836a953eb8bb8e52 && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
+        if (!$forced_country && !in_array('ALL', ipTV_lib::$settings['allow_countries']) && !in_array($geoip_country_code, ipTV_lib::$settings['allow_countries'])) {
             ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'COUNTRY_DISALLOW', $user_ip);
             die;
         }
@@ -75,7 +75,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'USER_AGENT_BAN', $user_ip);
         die;
     }
-    if (ipTV_streaming::C57799E5196664CB99139813250673e2($user_ip)) {
+    if (ipTV_streaming::checkIsCracked($user_ip)) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'CRACKED', $user_ip);
         die;
     }
@@ -83,7 +83,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'USER_ALREADY_CONNECTED', $user_ip);
         die;
     }
-    $f0ac6ad2b40669833242a10c23cad2e0 = false;
+    $streaming_block = false;
     if (!in_array($stream_id, $user_info['channel_ids'])) {
         http_response_code(406);
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'NOT_IN_BOUQUET', $user_ip);
@@ -119,41 +119,41 @@ if (empty($channel_info)) {
     http_response_code(403);
     die;
 }
-$Be553c1662ffa5054ccb6c5ce822974b = ipTV_lib::$request['start'];
-$fd08711a26bab44719872c7fff1f2dfb = intval(ipTV_lib::$request['duration']);
-if (!is_numeric($Be553c1662ffa5054ccb6c5ce822974b)) {
-    if (substr_count($Be553c1662ffa5054ccb6c5ce822974b, '-') == 1) {
-        list($date, $job) = explode('-', $Be553c1662ffa5054ccb6c5ce822974b);
+$start = ipTV_lib::$request['start'];
+$duration = intval(ipTV_lib::$request['duration']);
+if (!is_numeric($start)) {
+    if (substr_count($start, '-') == 1) {
+        list($date, $job) = explode('-', $start);
         $Ee43d9ecc9cbf5787673058445cfac70 = substr($date, 0, 4);
         $Dee598827978959770188b0749ebd8dd = substr($date, 4, 2);
         $b8c55e6036c9c00eccabf835e272cdcb = substr($date, 6, 2);
         $minutes = 0;
         $Ed62709841469f20fe0f7a17a4268692 = $job;
     } else {
-        list($date, $job) = explode(':', $Be553c1662ffa5054ccb6c5ce822974b);
+        list($date, $job) = explode(':', $start);
         list($Ee43d9ecc9cbf5787673058445cfac70, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb) = explode('-', $date);
         list($Ed62709841469f20fe0f7a17a4268692, $minutes) = explode('-', $job);
     }
-    $c4eb261e96f50c6cac5c08c60d657d9c = mktime($Ed62709841469f20fe0f7a17a4268692, $minutes, 0, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb, $Ee43d9ecc9cbf5787673058445cfac70);
+    $start_timestamp = mktime($Ed62709841469f20fe0f7a17a4268692, $minutes, 0, $Dee598827978959770188b0749ebd8dd, $b8c55e6036c9c00eccabf835e272cdcb, $Ee43d9ecc9cbf5787673058445cfac70);
 } else {
-    $fd08711a26bab44719872c7fff1f2dfb *= 24;
+    $duration *= 24;
     $files = array_values(array_filter(explode('
 ', shell_exec('ls -tr ' . TV_ARCHIVE . $stream_id . ' | sed -e \'s/\\s\\+/\\n/g\''))));
-    $f9214002d8ab6575c8e959794518358d = $Be553c1662ffa5054ccb6c5ce822974b * 24;
+    $f9214002d8ab6575c8e959794518358d = $start * 24;
     if (count($files) >= $f9214002d8ab6575c8e959794518358d) {
         $f9214002d8ab6575c8e959794518358d = $files[count($files) - $f9214002d8ab6575c8e959794518358d];
     } else {
         $f9214002d8ab6575c8e959794518358d = $files[0];
     }
-    if (preg_match('/(.*)-(.*)-(.*):(.*)\\./', $f9214002d8ab6575c8e959794518358d, $ae37877cee3bc97c8cfa6ec5843993ed)) {
-        $c4eb261e96f50c6cac5c08c60d657d9c = mktime($ae37877cee3bc97c8cfa6ec5843993ed[4], 0, 0, $ae37877cee3bc97c8cfa6ec5843993ed[2], $ae37877cee3bc97c8cfa6ec5843993ed[3], $ae37877cee3bc97c8cfa6ec5843993ed[1]);
+    if (preg_match('/(.*)-(.*)-(.*):(.*)\\./', $f9214002d8ab6575c8e959794518358d, $matches)) {
+        $start_timestamp = mktime($matches[4], 0, 0, $matches[2], $matches[3], $matches[1]);
     } else {
         die;
     }
 }
-$Df55b74833e9468cafb620fe446225a1 = array();
-$file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c) . '.ts';
-if (empty($stream_id) || empty($c4eb261e96f50c6cac5c08c60d657d9c) || empty($fd08711a26bab44719872c7fff1f2dfb)) {
+$queue = array();
+$file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $start_timestamp) . '.ts';
+if (empty($stream_id) || empty($start_timestamp) || empty($duration)) {
     header('HTTP/1.1 400 Bad Request');
     die;
 }
@@ -161,39 +161,35 @@ if (!file_exists($file) || !is_readable($file)) {
     header('HTTP/1.1 404 Not Found');
     die;
 }
-$Df55b74833e9468cafb620fe446225a1 = array();
+$queue = array();
 $index = 0;
-//D5fcf2a72e99ec35092bea70c6000d54:
-while ($index < $fd08711a26bab44719872c7fff1f2dfb) {
-    $file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $c4eb261e96f50c6cac5c08c60d657d9c + $index * 60) . '.ts';
+while ($index < $duration) {
+    $file = TV_ARCHIVE . $stream_id . '/' . date('Y-m-d:H-i', $start_timestamp + $index * 60) . '.ts';
     if (file_exists($file)) {
-        $Df55b74833e9468cafb620fe446225a1[] = array('filename' => $file, 'filesize' => filesize($file));
+        $queue[] = array('filename' => $file, 'filesize' => filesize($file));
     }
     $index++;
 }
-//cd977541493ad22af6d956e1b361ac01:
-if (!empty($Df55b74833e9468cafb620fe446225a1)) {
+if (!empty($queue)) {
     $date = time();
     $container_priority = 'TV Archive';
     switch (ipTV_lib::$request['extension']) {
         case 'm3u8':
             if (isset($F919000263e8ad8e2791f92d8919f629)) {
-                if (!empty($Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]) && file_exists($Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filename']) && $Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filesize'] == $F19b64ffad55876d290cb6f756a2dea5) {
+                if (!empty($queue[$F919000263e8ad8e2791f92d8919f629]) && file_exists($queue[$F919000263e8ad8e2791f92d8919f629]['filename']) && $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'] == $F19b64ffad55876d290cb6f756a2dea5) {
                     $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
-                    $length = $Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filesize'];
+                    $length = $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'];
                     if ($F919000263e8ad8e2791f92d8919f629 == 0) {
-                        $B3acfaf2dca0db7e9507c5e640b4ba41 = $Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filesize'] * 0.3;
-                        $length = $Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filesize'] - $B3acfaf2dca0db7e9507c5e640b4ba41;
+                        $B3acfaf2dca0db7e9507c5e640b4ba41 = $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'] * 0.3;
+                        $length = $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'] - $B3acfaf2dca0db7e9507c5e640b4ba41;
                     }
                     header('Content-Type: video/mp2t');
                     header('Content-Length: ' . $length);
-                    $fp = fopen($Df55b74833e9468cafb620fe446225a1[$F919000263e8ad8e2791f92d8919f629]['filename'], 'r');
+                    $fp = fopen($queue[$F919000263e8ad8e2791f92d8919f629]['filename'], 'r');
                     fseek($fp, $B3acfaf2dca0db7e9507c5e640b4ba41);
-                    B54b3db2c76fb47060bd112d83e284c6:
                     while (!feof($fp)) {
                         echo stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
                     }
-                    //af61afebb53878a18988940893cd0687:
                     fclose($fp);
                 }
                 die;
@@ -225,10 +221,10 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
 ';
             $output .= '#EXT-X-PLAYLIST-TYPE:VOD
 ';
-            foreach ($Df55b74833e9468cafb620fe446225a1 as $k => $B5d14e09bc25553da9030273f23468aa) {
+            foreach ($queue as $k => $item) {
                 $output .= '#EXTINF:60.0,
 ';
-                $output .= "/timeshift/{$username}/{$password}/{$fd08711a26bab44719872c7fff1f2dfb}/{$Be553c1662ffa5054ccb6c5ce822974b}/{$stream_id}_{$k}_" . $B5d14e09bc25553da9030273f23468aa['filesize'] . '.ts
+                $output .= "/timeshift/{$username}/{$password}/{$duration}/{$start}/{$stream_id}_{$k}_" . $item['filesize'] . '.ts
 ';
             }
             $output .= '#EXT-X-ENDLIST';
@@ -245,8 +241,8 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
                 $connection_speed_file = TMP_DIR . $activity_id . '.con';
                 $ipTV_db->close_mysql();
             }
-            $length = $filename_size = D86041F168a5452E8fDEACFbFd659E19($Df55b74833e9468cafb620fe446225a1);
-            $bitrate = $filename_size * 0.008 / ($fd08711a26bab44719872c7fff1f2dfb * 60);
+            $length = $filename_size = queueSize($queue);
+            $bitrate = $filename_size * 0.008 / ($duration * 60);
             header("Accept-Ranges: 0-{$length}");
             $start = 0;
             $end = $filename_size - 1;
@@ -281,7 +277,7 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
             header('Content-Length: ' . $length);
             $b3fcd87510baa9521882b459861dcb64 = 0;
             if ($start > 0) {
-                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($filename_size / count($Df55b74833e9468cafb620fe446225a1)));
+                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($filename_size / count($queue)));
             }
             $c77e7ff2c5d6b14d931b3344c54e0cc5 = false;
             $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
@@ -299,21 +295,19 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
                 $F6295a8bab3aa6bb5b9c4a70c99ec761 = $filename_size;
             }
             $A8e591a80910b24673b1a94b8219ab96 = false;
-            foreach ($Df55b74833e9468cafb620fe446225a1 as $k => $B5d14e09bc25553da9030273f23468aa) {
-                $F1e7eccb846733c8f188bcdec720f3b7 += $B5d14e09bc25553da9030273f23468aa['filesize'];
+            foreach ($queue as $k => $item) {
+                $F1e7eccb846733c8f188bcdec720f3b7 += $item['filesize'];
                 if (!$c77e7ff2c5d6b14d931b3344c54e0cc5 && $b3fcd87510baa9521882b459861dcb64 > 0) {
                     if ($b3fcd87510baa9521882b459861dcb64 > $k) {
-                        //goto bf705a2f20da4ec4abb5062ccbc64ff2;
                     } else {
                         $c77e7ff2c5d6b14d931b3344c54e0cc5 = true;
                         $B3acfaf2dca0db7e9507c5e640b4ba41 = $start - $F1e7eccb846733c8f188bcdec720f3b7;
                     }
                 }
-                $fp = fopen($B5d14e09bc25553da9030273f23468aa['filename'], 'rb');
+                $fp = fopen($item['filename'], 'rb');
                 fseek($fp, $B3acfaf2dca0db7e9507c5e640b4ba41);
-                dafe2b9523cba3c52c343947c994cdff:
                 while (!feof($fp)) {
-                    $Fe917966573bdf0b43ab9723bb50fc6b = ftell($fp);
+                    $pos = ftell($fp);
                     $response = stream_get_line($fp, $C7558f823ac28009bfd4730a82f1f01b);
                     echo $response;
                     $b1125d7ae8a179e8c8a4c80974755bd7 += strlen($response);
@@ -333,35 +327,32 @@ if (!empty($Df55b74833e9468cafb620fe446225a1)) {
                         $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
                     }
                 }
-                //d01dd0fdc665b83fc4d231b1aff5f5dd:
                 if (is_resource($fp)) {
                     fclose($fp);
                 }
                 $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
-                //bf705a2f20da4ec4abb5062ccbc64ff2:
             }
     }
 }
-function d86041f168a5452e8FDEacfbfD659E19($Df55b74833e9468cafb620fe446225a1)
+function queueSize($queue)
 {
     $length = 0;
-    foreach ($Df55b74833e9468cafb620fe446225a1 as $B5d14e09bc25553da9030273f23468aa) {
-        $length += $B5d14e09bc25553da9030273f23468aa['filesize'];
-        Ca7d41373e0e61846f92a6a9d1e5cf3c:
+    foreach ($queue as $item) {
+        $length += $item['filesize'];
     }
     return $length;
 }
 function shutdown()
 {
-    global $ipTV_db, $f0ac6ad2b40669833242a10c23cad2e0, $activity_id, $connection_speed_file, $user_info, $container_priority, $stream_id, $user_agent, $user_ip, $geoip_country_code, $external_device, $date;
-    if ($f0ac6ad2b40669833242a10c23cad2e0) {
+    global $ipTV_db, $streaming_block, $activity_id, $connection_speed_file, $user_info, $container_priority, $stream_id, $user_agent, $user_ip, $geoip_country_code, $external_device, $date;
+    if ($streaming_block) {
         CheckFlood();
         http_response_code(401);
     }
     $ipTV_db->close_mysql();
     if ($activity_id !== false) {
         ipTV_streaming::CloseAndTransfer($activity_id);
-        ipTV_streaming::A49c2Fb1EBa096c52a352a85C8d09d8D(SERVER_ID, $user_info['id'], $stream_id, $date, $user_agent, $user_ip, $container_priority, $geoip_country_code, $user_info['con_isp_name'], $external_device);
+        ipTV_streaming::SaveClosedConnection(SERVER_ID, $user_info['id'], $stream_id, $date, $user_agent, $user_ip, $container_priority, $geoip_country_code, $user_info['con_isp_name'], $external_device);
         if (file_exists($connection_speed_file)) {
             unlink($connection_speed_file);
         }
