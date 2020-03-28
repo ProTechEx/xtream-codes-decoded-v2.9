@@ -49,11 +49,11 @@ function D6E530a9573198395bDB5822b82478E2()
     $json['cpu_load_average'] = sys_getloadavg()[0];
     return $json;
 }
-function e6A2B39B5861D06ca4034887864A5Fb5()
+function isMobileDevice()
 {
-    $f93d929641c6b747360282c4db5c91dd = array('/iphone/i' => 'iPhone', '/ipod/i' => 'iPod', '/ipad/i' => 'iPad', '/android/i' => 'Android', '/blackberry/i' => 'BlackBerry', '/webos/i' => 'Mobile');
-    foreach ($f93d929641c6b747360282c4db5c91dd as $Ce397562fcf2ed0fca47e4a48152c1ff => $f543392c71508ec7c2555f6fc8d3294d) {
-        if (preg_match($Ce397562fcf2ed0fca47e4a48152c1ff, $_SERVER['HTTP_USER_AGENT'])) {
+    $aMobileUA = array('/iphone/i' => 'iPhone', '/ipod/i' => 'iPod', '/ipad/i' => 'iPad', '/android/i' => 'Android', '/blackberry/i' => 'BlackBerry', '/webos/i' => 'Mobile');
+    foreach ($aMobileUA as $sMobileKey => $sMobileOS) {
+        if (preg_match($sMobileKey, $_SERVER['HTTP_USER_AGENT'])) {
             return true;
         }
     }
