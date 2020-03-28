@@ -4,11 +4,11 @@
 require './init.php';
 class SimpleXMLExtended extends SimpleXMLElement
 {
-    public function addCData($fca317707effbca84f074c293920f0f7)
+    public function addCData($value)
     {
-        $E21561cba90465c4a869c01eb89269bf = dom_import_simplexml($this);
-        $B10ca538b01a4f983cf13350e70508a9 = $E21561cba90465c4a869c01eb89269bf->ownerDocument;
-        $E21561cba90465c4a869c01eb89269bf->appendchild($B10ca538b01a4f983cf13350e70508a9->createCDATASection($fca317707effbca84f074c293920f0f7));
+        $dom = dom_import_simplexml($this);
+        $no = $dom->ownerDocument;
+        $dom->appendchild($no->createCDATASection($value));
     }
 }
 $streaming_block = true;
@@ -18,9 +18,9 @@ if (!isset(ipTV_lib::$request['username']) || !isset(ipTV_lib::$request['passwor
 $username = ipTV_lib::$request['username'];
 $password = ipTV_lib::$request['password'];
 $type = !empty(ipTV_lib::$request['type']) ? ipTV_lib::$request['type'] : null;
-$f409603490270683e24dc87b262cfe7d = !empty(ipTV_lib::$request['cat_id']) ? intval(ipTV_lib::$request['cat_id']) : null;
-$D3a052197c7120cda8c89f487458f986 = !empty(ipTV_lib::$request['scat_id']) ? intval(ipTV_lib::$request['scat_id']) : null;
-$b3671c2f351ad83d82df47bd43ef8768 = !empty(ipTV_lib::$request['series_id']) ? intval(ipTV_lib::$request['series_id']) : null;
+$cat_id = !empty(ipTV_lib::$request['cat_id']) ? intval(ipTV_lib::$request['cat_id']) : null;
+$scat_id = !empty(ipTV_lib::$request['scat_id']) ? intval(ipTV_lib::$request['scat_id']) : null;
+$series_id = !empty(ipTV_lib::$request['series_id']) ? intval(ipTV_lib::$request['series_id']) : null;
 $id = !empty(ipTV_lib::$request['season']) ? intval(ipTV_lib::$request['season']) : null;
 $url = !empty($_SERVER['HTTP_HOST']) ? 'http://' . $_SERVER['HTTP_HOST'] . '/' : ipTV_lib::$StreamingServers[SERVER_ID]['site_url'];
 ini_set('memory_limit', -1);
@@ -117,9 +117,9 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
             echo $a41f6a5b2ce6655f27b7747349ad1f33->asXML();
             break;
         case 'get_series':
-            if (isset($f409603490270683e24dc87b262cfe7d) || is_null($f409603490270683e24dc87b262cfe7d)) {
-                $f409603490270683e24dc87b262cfe7d = is_null($f409603490270683e24dc87b262cfe7d) ? 0 : $f409603490270683e24dc87b262cfe7d;
-                $A27497ef3d4dad3da90c414c89f81615 = !empty($f24472413ed27fc2ffc06adda68c0806[$f409603490270683e24dc87b262cfe7d]) ? $f24472413ed27fc2ffc06adda68c0806[$f409603490270683e24dc87b262cfe7d]['category_name'] : 'ALL';
+            if (isset($cat_id) || is_null($cat_id)) {
+                $cat_id = is_null($cat_id) ? 0 : $cat_id;
+                $A27497ef3d4dad3da90c414c89f81615 = !empty($f24472413ed27fc2ffc06adda68c0806[$cat_id]) ? $f24472413ed27fc2ffc06adda68c0806[$cat_id]['category_name'] : 'ALL';
                 $a41f6a5b2ce6655f27b7747349ad1f33 = new SimpleXMLExtended('<items/>');
                 $a41f6a5b2ce6655f27b7747349ad1f33->addchild('playlist_name', "TV Series [ {$A27497ef3d4dad3da90c414c89f81615} ]");
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
@@ -130,8 +130,8 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     if (!in_array($id, $D321370cfdc22e783dd897e5afed673e['series_ids'])) {
                         continue;
                     }
-                    if ($f409603490270683e24dc87b262cfe7d != 0) {
-                        if ($f409603490270683e24dc87b262cfe7d != $A0766c7ec9b7cbc336d730454514b34f['category_id']) {
+                    if ($cat_id != 0) {
+                        if ($cat_id != $A0766c7ec9b7cbc336d730454514b34f['category_id']) {
                             continue;
                         }
                     }
@@ -141,15 +141,14 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $value->addchild('category_id', $id);
                     $acfcb8efbada54f036f7bf632f1038a9 = $value->addchild('playlist_url');
                     $acfcb8efbada54f036f7bf632f1038a9->addCData($url . "enigma2.php?username={$username}&password={$password}&type=get_seasons&series_id=" . $id);
-                    //Edc907f4ce7d81ffbc13f1b13c4cf06a:
                 }
                 header('Content-Type: application/xml; charset=utf-8');
                 echo $a41f6a5b2ce6655f27b7747349ad1f33->asXML();
             }
             break;
         case 'get_seasons':
-            if (isset($b3671c2f351ad83d82df47bd43ef8768)) {
-                $ipTV_db->query('SELECT * FROM `series` WHERE `id` = \'%d\'', $b3671c2f351ad83d82df47bd43ef8768);
+            if (isset($series_id)) {
+                $ipTV_db->query('SELECT * FROM `series` WHERE `id` = \'%d\'', $series_id);
                 $A0766c7ec9b7cbc336d730454514b34f = $ipTV_db->get_row();
                 $A27497ef3d4dad3da90c414c89f81615 = $A0766c7ec9b7cbc336d730454514b34f['title'];
                 $a41f6a5b2ce6655f27b7747349ad1f33 = new SimpleXMLExtended('<items/>');
@@ -157,11 +156,11 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
                 $category->addchild('category_id', 1);
                 $category->addchild('category_title', "TV Series [ {$A27497ef3d4dad3da90c414c89f81615} ]");
-                $ipTV_db->query('SELECT * FROM `series_episodes` t1 INNER JOIN `streams` t2 ON t2.id=t1.stream_id WHERE t1.series_id = \'%d\' ORDER BY t1.season_num ASC, t1.sort ASC', $b3671c2f351ad83d82df47bd43ef8768);
+                $ipTV_db->query('SELECT * FROM `series_episodes` t1 INNER JOIN `streams` t2 ON t2.id=t1.stream_id WHERE t1.series_id = \'%d\' ORDER BY t1.season_num ASC, t1.sort ASC', $series_id);
                 $rows = $ipTV_db->get_rows(true, 'season_num', false);
                 foreach (array_keys($rows) as $c59070c3eab15fea2abe4546ccf476de) {
-                    if ($f409603490270683e24dc87b262cfe7d != 0) {
-                        if ($f409603490270683e24dc87b262cfe7d != $A0766c7ec9b7cbc336d730454514b34f['category_id']) {
+                    if ($cat_id != 0) {
+                        if ($cat_id != $A0766c7ec9b7cbc336d730454514b34f['category_id']) {
                             continue;
                         }
                     }
@@ -170,16 +169,15 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $value->addchild('description', '');
                     $value->addchild('category_id', $c59070c3eab15fea2abe4546ccf476de);
                     $acfcb8efbada54f036f7bf632f1038a9 = $value->addchild('playlist_url');
-                    $acfcb8efbada54f036f7bf632f1038a9->addCData($url . "enigma2.php?username={$username}&password={$password}&type=get_series_streams&series_id=" . $b3671c2f351ad83d82df47bd43ef8768 . '&season=' . $c59070c3eab15fea2abe4546ccf476de);
-                    //a811c65c2d3a8c282fa33b70d485f93a:
+                    $acfcb8efbada54f036f7bf632f1038a9->addCData($url . "enigma2.php?username={$username}&password={$password}&type=get_series_streams&series_id=" . $series_id . '&season=' . $c59070c3eab15fea2abe4546ccf476de);
                 }
                 header('Content-Type: application/xml; charset=utf-8');
                 echo $a41f6a5b2ce6655f27b7747349ad1f33->asXML();
             }
             break;
         case 'get_series_streams':
-            if (isset($b3671c2f351ad83d82df47bd43ef8768) && isset($id) && in_array($b3671c2f351ad83d82df47bd43ef8768, $D321370cfdc22e783dd897e5afed673e['series_ids'])) {
-                $A0766c7ec9b7cbc336d730454514b34f = ipTV_lib::seriesData()[$b3671c2f351ad83d82df47bd43ef8768];
+            if (isset($series_id) && isset($id) && in_array($series_id, $D321370cfdc22e783dd897e5afed673e['series_ids'])) {
+                $A0766c7ec9b7cbc336d730454514b34f = ipTV_lib::seriesData()[$series_id];
                 $a41f6a5b2ce6655f27b7747349ad1f33 = new SimpleXMLExtended('<items/>');
                 $a41f6a5b2ce6655f27b7747349ad1f33->addchild('playlist_name', "TV Series [ {$A0766c7ec9b7cbc336d730454514b34f['title']} Season {$id} ]");
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
@@ -192,7 +190,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $Ef1890c26c22f7b0ebc5881c7a8f4728 = $value->addchild('desc_image');
                     $Ef1890c26c22f7b0ebc5881c7a8f4728->addCData($A0766c7ec9b7cbc336d730454514b34f['cover']);
                     $value->addchild('description', base64_encode($d4c3c80b508f5d00d05316e7aa0858de));
-                    $value->addchild('category_id', $f409603490270683e24dc87b262cfe7d);
+                    $value->addchild('category_id', $cat_id);
                     $a1ef5a6a798dd2f8725ccec3f544f380 = $value->addchild('stream_url');
                     if (!empty($serie['stream_source'])) {
                         $source = json_decode($serie['stream_source'], true)[0];
@@ -206,16 +204,16 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
             }
             break;
         case 'get_live_streams':
-            if (isset($f409603490270683e24dc87b262cfe7d) || is_null($f409603490270683e24dc87b262cfe7d)) {
-                $f409603490270683e24dc87b262cfe7d = is_null($f409603490270683e24dc87b262cfe7d) ? 0 : $f409603490270683e24dc87b262cfe7d;
+            if (isset($cat_id) || is_null($cat_id)) {
+                $cat_id = is_null($cat_id) ? 0 : $cat_id;
                 $a41f6a5b2ce6655f27b7747349ad1f33 = new SimpleXMLExtended('<items/>');
                 $a41f6a5b2ce6655f27b7747349ad1f33->addchild('playlist_name', 'Live [ ' . ipTV_lib::$settings['bouquet_name'] . ' ]');
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
                 $category->addchild('category_id', 1);
                 $category->addchild('category_title', 'Live [ ' . ipTV_lib::$settings['bouquet_name'] . ' ]');
                 foreach ($aeb2c11d5afc757ad86eb60a666c0eee as $user_info) {
-                    if ($f409603490270683e24dc87b262cfe7d != 0) {
-                        if ($f409603490270683e24dc87b262cfe7d != $user_info['category_id']) {
+                    if ($cat_id != 0) {
+                        if ($cat_id != $user_info['category_id']) {
                             continue;
                         }
                     }
@@ -225,9 +223,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $Ee61f16c515768a2a4ecfa726784a15f = '';
                     $index = 0;
                     foreach ($F8094cb3ced6b4e46ebea7b66bd0e870 as $row) {
-                        $d4c3c80b508f5d00d05316e7aa0858de .= '[' . date('H:i', $row['start_timestamp']) . '] ' . base64_decode($row['title']) . '
-( ' . base64_decode($row['description']) . ')
-';
+                        $d4c3c80b508f5d00d05316e7aa0858de .= '[' . date('H:i', $row['start_timestamp']) . '] ' . base64_decode($row['title']) . '( ' . base64_decode($row['description']) . ')';
                         if ($index == 0) {
                             $Ee61f16c515768a2a4ecfa726784a15f = '[' . date('H:i', $row['start_timestamp']) . ' - ' . date('H:i', $row['stop_timestamp']) . '] + ' . round(($row['stop_timestamp'] - time()) / 60, 1) . ' min   ' . base64_decode($row['title']);
                             $index++;
@@ -238,7 +234,7 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                     $value->addchild('description', base64_encode($d4c3c80b508f5d00d05316e7aa0858de));
                     $Ef1890c26c22f7b0ebc5881c7a8f4728 = $value->addchild('desc_image');
                     $Ef1890c26c22f7b0ebc5881c7a8f4728->addCData($user_info['stream_icon']);
-                    $value->addchild('category_id', $f409603490270683e24dc87b262cfe7d);
+                    $value->addchild('category_id', $cat_id);
                     $acfcb8efbada54f036f7bf632f1038a9 = $value->addchild('stream_url');
                     if (!empty($user_info['stream_source'])) {
                         $source = json_decode($user_info['stream_source'], true)[0];
@@ -246,23 +242,22 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                         $source = $url . "live/{$username}/{$password}/{$user_info['id']}.ts";
                     }
                     $acfcb8efbada54f036f7bf632f1038a9->addCData($source);
-                    //fc9a711637d2e647db1f9963f1e93860:
                 }
                 header('Content-Type: application/xml; charset=utf-8');
                 echo $a41f6a5b2ce6655f27b7747349ad1f33->asXML();
             }
             break;
         case 'get_vod_streams':
-            if (isset($f409603490270683e24dc87b262cfe7d) || is_null($f409603490270683e24dc87b262cfe7d)) {
-                $f409603490270683e24dc87b262cfe7d = is_null($f409603490270683e24dc87b262cfe7d) ? 0 : $f409603490270683e24dc87b262cfe7d;
+            if (isset($cat_id) || is_null($cat_id)) {
+                $cat_id = is_null($cat_id) ? 0 : $cat_id;
                 $a41f6a5b2ce6655f27b7747349ad1f33 = new SimpleXMLExtended('<items/>');
                 $a41f6a5b2ce6655f27b7747349ad1f33->addchild('playlist_name', 'Movie [ ' . ipTV_lib::$settings['bouquet_name'] . ' ]');
                 $category = $a41f6a5b2ce6655f27b7747349ad1f33->addchild('category');
                 $category->addchild('category_id', 1);
                 $category->addchild('category_title', 'Movie [ ' . ipTV_lib::$settings['bouquet_name'] . ' ]');
                 foreach ($e109afabe8e0c1e646e3f9ec3cd2a7c9 as $user_info) {
-                    if ($f409603490270683e24dc87b262cfe7d != 0) {
-                        if ($f409603490270683e24dc87b262cfe7d != $user_info['category_id']) {
+                    if ($cat_id != 0) {
+                        if ($cat_id != $user_info['category_id']) {
                             continue;
                         }
                     }
@@ -275,15 +270,13 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                             if ($key == 'movie_image') {
                                 continue;
                             }
-                            $d4c3c80b508f5d00d05316e7aa0858de .= strtoupper($key) . ': ' . $eb98f53b15ea5d816e72b353cc6c3326 . '
-';
-                            //Ad82bd38f29233cb618b80180dff471f:
+                            $d4c3c80b508f5d00d05316e7aa0858de .= strtoupper($key) . ': ' . $eb98f53b15ea5d816e72b353cc6c3326 . '';
                         }
                     }
                     $Ef1890c26c22f7b0ebc5881c7a8f4728 = $value->addchild('desc_image');
                     $Ef1890c26c22f7b0ebc5881c7a8f4728->addCData($movie_properties['movie_image']);
                     $value->addchild('description', base64_encode($d4c3c80b508f5d00d05316e7aa0858de));
-                    $value->addchild('category_id', $f409603490270683e24dc87b262cfe7d);
+                    $value->addchild('category_id', $cat_id);
                     $a1ef5a6a798dd2f8725ccec3f544f380 = $value->addchild('stream_url');
                     if (!empty($user_info['stream_source'])) {
                         $source = json_decode($user_info['stream_source'], true)[0];
@@ -291,7 +284,6 @@ if ($D321370cfdc22e783dd897e5afed673e = ipTV_streaming::GetUserInfo(null, $usern
                         $source = $url . "movie/{$username}/{$password}/{$user_info['id']}." . GetContainerExtension($user_info['target_container']);
                     }
                     $a1ef5a6a798dd2f8725ccec3f544f380->addCData($source);
-                    //ad1b0d55ff130bfff011d2a9d71d4a15:
                 }
                 header('Content-Type: application/xml; charset=utf-8');
                 echo $a41f6a5b2ce6655f27b7747349ad1f33->asXML();

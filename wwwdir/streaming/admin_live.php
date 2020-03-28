@@ -28,7 +28,7 @@ if ($ipTV_db->num_rows() > 0) {
     $channel_info = $ipTV_db->get_row();
     $ipTV_db->close_mysql();
     $playlist = STREAMS_PATH . $stream_id . '_.m3u8';
-    if (!ipTV_streaming::bCaa9B8A7b46eb36Cd507A218fa64474($channel_info['pid'], $stream_id)) {
+    if (!ipTV_streaming::CheckPidChannelM3U8Exist($channel_info['pid'], $stream_id)) {
         if ($channel_info['on_demand'] == 1) {
             if (!ipTV_streaming::CheckPidExist($channel_info['monitor_pid'], $stream_id)) {
                 ipTV_stream::startStream($stream_id);
@@ -49,48 +49,48 @@ if ($ipTV_db->num_rows() > 0) {
                         echo $source;
                     }
                 } else {
-                    $fe9d0d199fc51f64065055d8bcade279 = STREAMS_PATH . str_replace(array('\\', '/'), '', urldecode(ipTV_lib::$request['segment']));
-                    if (file_exists($fe9d0d199fc51f64065055d8bcade279)) {
-                        $e13ac89e162bcc9913e553b949f755b6 = filesize($fe9d0d199fc51f64065055d8bcade279);
-                        header('Content-Length: ' . $e13ac89e162bcc9913e553b949f755b6);
+                    $segment = STREAMS_PATH . str_replace(array('\\', '/'), '', urldecode(ipTV_lib::$request['segment']));
+                    if (file_exists($segment)) {
+                        $size = filesize($segment);
+                        header('Content-Length: ' . $size);
                         header('Content-Type: video/mp2t');
-                        readfile($fe9d0d199fc51f64065055d8bcade279);
+                        readfile($segment);
                     }
                 }
             }
             break;
         default:
             header('Content-Type: video/mp2t');
-            $C325d28e238c3a646bd7b095aa1ffa85 = ipTV_streaming::GetSegmentsOfPlaylist($playlist, ipTV_lib::$settings['client_prebuffer']);
-            if (empty($C325d28e238c3a646bd7b095aa1ffa85)) {
+            $segmentsOfPlaylist = ipTV_streaming::GetSegmentsOfPlaylist($playlist, ipTV_lib::$settings['client_prebuffer']);
+            if (empty($segmentsOfPlaylist)) {
                 if (!file_exists($playlist)) {
-                    $E76c20c612d64210f5bcc0611992d2f7 = -1;
+                    $current = -1;
                 } else {
                     die;
                     //aec5a54201786b5bbe6573ae6b2aad85:
-                    if (is_array($C325d28e238c3a646bd7b095aa1ffa85)) {
-                        foreach ($C325d28e238c3a646bd7b095aa1ffa85 as $fe9d0d199fc51f64065055d8bcade279) {
-                            readfile(STREAMS_PATH . $fe9d0d199fc51f64065055d8bcade279);
+                    if (is_array($segmentsOfPlaylist)) {
+                        foreach ($segmentsOfPlaylist as $segment) {
+                            readfile(STREAMS_PATH . $segment);
                             A6ef4ccb381ec4a6b0c8c43e66d85825:
                         }
-                        preg_match('/_(.*)\\./', array_pop($C325d28e238c3a646bd7b095aa1ffa85), $pregmatches);
-                        $E76c20c612d64210f5bcc0611992d2f7 = $pregmatches[1];
+                        preg_match('/_(.*)\\./', array_pop($segmentsOfPlaylist), $pregmatches);
+                        $current = $pregmatches[1];
                     } else {
-                        $E76c20c612d64210f5bcc0611992d2f7 = $C325d28e238c3a646bd7b095aa1ffa85;
+                        $current = $segmentsOfPlaylist;
                     }
                     //goto f4dce90a7951c4692e46b0303393f7a4;
                 }
-                $c45cc215a073632a9e20d474ea91f7e3 = 0;
-                $f065eccc0636f7fd92043c7118f7409b = ipTV_lib::$SegmentsSettings['seg_time'] * 2;
+                $fails = 0;
+                $total_failed_tries = ipTV_lib::$SegmentsSettings['seg_time'] * 2;
                 //d9f748ce9f53402f322a8d21a1736957:
                 while (true) {
-                    $segment_file = sprintf('%d_%d.ts', $stream_id, $E76c20c612d64210f5bcc0611992d2f7 + 1);
-                    $Bf3da9b14ae368d39b642b3f83d656fc = sprintf('%d_%d.ts', $stream_id, $E76c20c612d64210f5bcc0611992d2f7 + 2);
-                    $a88c8d86d7956601164a5f156d5df985 = 0;
+                    $segment_file = sprintf('%d_%d.ts', $stream_id, $current + 1);
+                    $nextsegment_file = sprintf('%d_%d.ts', $stream_id, $current + 2);
+                    $totalItems = 0;
                     E2548032ad734253ca2cc2ebbf6269b0:
-                    while (!file_exists(STREAMS_PATH . $segment_file) && $a88c8d86d7956601164a5f156d5df985 <= $f065eccc0636f7fd92043c7118f7409b * 10) {
+                    while (!file_exists(STREAMS_PATH . $segment_file) && $totalItems <= $total_failed_tries * 10) {
                         usleep(100000);
-                        ++$a88c8d86d7956601164a5f156d5df985;
+                        ++$totalItems;
                     }
                     //eeb90bfe4c28dc9b04209fedc32ff5a3:
                     if (!file_exists(STREAMS_PATH . $segment_file)) {
@@ -99,35 +99,35 @@ if ($ipTV_db->num_rows() > 0) {
                     if (empty($channel_info['pid']) && file_exists(STREAMS_PATH . $stream_id . '_.pid')) {
                         $channel_info['pid'] = intval(file_get_contents(STREAMS_PATH . $stream_id . '_.pid'));
                     }
-                    $c45cc215a073632a9e20d474ea91f7e3 = 0;
+                    $fails = 0;
                     $fp = fopen(STREAMS_PATH . $segment_file, 'r');
                     //D2d24958a6f2888a694ed67016b06229:
-                    while ($c45cc215a073632a9e20d474ea91f7e3 <= $f065eccc0636f7fd92043c7118f7409b && !file_exists(STREAMS_PATH . $Bf3da9b14ae368d39b642b3f83d656fc)) {
+                    while ($fails <= $total_failed_tries && !file_exists(STREAMS_PATH . $nextsegment_file)) {
                         $data = stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);
                         if (empty($data)) {
                             sleep(1);
                             if (!is_resource($fp) || !file_exists(STREAMS_PATH . $segment_file)) {
                                 die;
                             }
-                            ++$c45cc215a073632a9e20d474ea91f7e3;
+                            ++$fails;
                             continue;
                         }
                         echo $data;
-                        $c45cc215a073632a9e20d474ea91f7e3 = 0;
+                        $fails = 0;
                     }
                     //ef89f77163837836531e009abed1ed0a:
-                    if (ipTV_streaming::ps_running($channel_info['pid'], FFMPEG_PATH) && $c45cc215a073632a9e20d474ea91f7e3 <= $f065eccc0636f7fd92043c7118f7409b && file_exists(STREAMS_PATH . $segment_file) && is_resource($fp)) {
-                        $F19b64ffad55876d290cb6f756a2dea5 = filesize(STREAMS_PATH . $segment_file);
-                        $C73fe796a6baad7ca2e4251886562ef0 = $F19b64ffad55876d290cb6f756a2dea5 - ftell($fp);
-                        if ($C73fe796a6baad7ca2e4251886562ef0 > 0) {
-                            echo stream_get_line($fp, $C73fe796a6baad7ca2e4251886562ef0);
+                    if (ipTV_streaming::ps_running($channel_info['pid'], FFMPEG_PATH) && $fails <= $total_failed_tries && file_exists(STREAMS_PATH . $segment_file) && is_resource($fp)) {
+                        $size = filesize(STREAMS_PATH . $segment_file);
+                        $line = $size - ftell($fp);
+                        if ($line > 0) {
+                            echo stream_get_line($fp, $line);
                         }
                     } else {
                         die;
                     }
                     fclose($fp);
-                    $c45cc215a073632a9e20d474ea91f7e3 = 0;
-                    $E76c20c612d64210f5bcc0611992d2f7++;
+                    $fails = 0;
+                    $current++;
                 }
                 //a10c19f796b5df61809eb2fe8ea2a035:
             }

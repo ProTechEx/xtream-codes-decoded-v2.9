@@ -89,7 +89,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         die;
     }
     $streaming_block = false;
-    if (!ipTV_streaming::ec7e013CF424bdF03238c1D46aB2a9AE($stream_id, $type == 'movie' ? $user_info['channel_ids'] : $user_info['series_ids'], $type)) {
+    if (!ipTV_streaming::checkStreamExistInBouquet($stream_id, $type == 'movie' ? $user_info['channel_ids'] : $user_info['series_ids'], $type)) {
         http_response_code(406);
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'NOT_IN_BOUQUET', $user_ip);
         die;
@@ -191,7 +191,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
             }
             header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
             header('Content-Length: ' . $length);
-            $c41986ad785eace90882e61c64cabb41 = time();
+            $time_start = time();
             $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
             $C7558f823ac28009bfd4730a82f1f01b = ipTV_lib::$settings['read_buffer_size'];
             $index = 0;
@@ -213,9 +213,9 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                 }
                 echo $response;
                 $b1125d7ae8a179e8c8a4c80974755bd7 += strlen($response);
-                if (time() - $c41986ad785eace90882e61c64cabb41 >= 30) {
+                if (time() - $time_start >= 30) {
                     file_put_contents($connection_speed_file, intval($b1125d7ae8a179e8c8a4c80974755bd7 / 1024 / 30));
-                    $c41986ad785eace90882e61c64cabb41 = time();
+                    $time_start = time();
                     $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
                 }
                 if ($b2ecba26bb0e977abdb88e118b553d51 > 0 && $A8e591a80910b24673b1a94b8219ab96 && $index >= ceil($b2ecba26bb0e977abdb88e118b553d51 / $C7558f823ac28009bfd4730a82f1f01b)) {

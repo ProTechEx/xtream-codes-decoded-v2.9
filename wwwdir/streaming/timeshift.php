@@ -19,12 +19,12 @@ $container_priority = null;
 $username = empty(ipTV_lib::$request['username']) ? '' : ipTV_lib::$request['username'];
 $password = empty(ipTV_lib::$request['password']) ? '' : ipTV_lib::$request['password'];
 $stream_id = ipTV_lib::$request['stream'];
-$F19b64ffad55876d290cb6f756a2dea5 = 0;
+$size = 0;
 if (!is_numeric($stream_id) && stristr($stream_id, '_')) {
-    list($stream_id, $pos, $F19b64ffad55876d290cb6f756a2dea5) = explode('_', $stream_id);
+    list($stream_id, $pos, $size) = explode('_', $stream_id);
     $stream_id = intval($stream_id);
     $F919000263e8ad8e2791f92d8919f629 = intval($pos);
-    $F19b64ffad55876d290cb6f756a2dea5 = intval($F19b64ffad55876d290cb6f756a2dea5);
+    $size = intval($size);
     ipTV_lib::$request['extension'] = 'm3u8';
 }
 $user_ip = ipTV_streaming::getUserIP();
@@ -176,7 +176,7 @@ if (!empty($queue)) {
     switch (ipTV_lib::$request['extension']) {
         case 'm3u8':
             if (isset($F919000263e8ad8e2791f92d8919f629)) {
-                if (!empty($queue[$F919000263e8ad8e2791f92d8919f629]) && file_exists($queue[$F919000263e8ad8e2791f92d8919f629]['filename']) && $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'] == $F19b64ffad55876d290cb6f756a2dea5) {
+                if (!empty($queue[$F919000263e8ad8e2791f92d8919f629]) && file_exists($queue[$F919000263e8ad8e2791f92d8919f629]['filename']) && $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'] == $size) {
                     $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
                     $length = $queue[$F919000263e8ad8e2791f92d8919f629]['filesize'];
                     if ($F919000263e8ad8e2791f92d8919f629 == 0) {
@@ -284,7 +284,7 @@ if (!empty($queue)) {
             $F1e7eccb846733c8f188bcdec720f3b7 = 0;
             $b2ecba26bb0e977abdb88e118b553d51 = $bitrate * 125;
             $b2ecba26bb0e977abdb88e118b553d51 += $b2ecba26bb0e977abdb88e118b553d51 * ipTV_lib::$settings['vod_bitrate_plus'] * 0.01;
-            $c41986ad785eace90882e61c64cabb41 = time();
+            $time_start = time();
             $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
             $C7558f823ac28009bfd4730a82f1f01b = ipTV_lib::$settings['read_buffer_size'];
             $index = 0;
@@ -321,9 +321,9 @@ if (!empty($queue)) {
                         sleep(1);
                         $index = 0;
                     }
-                    if (time() - $c41986ad785eace90882e61c64cabb41 >= 30) {
+                    if (time() - $time_start >= 30) {
                         file_put_contents($connection_speed_file, intval($b1125d7ae8a179e8c8a4c80974755bd7 / 1024 / 30));
-                        $c41986ad785eace90882e61c64cabb41 = time();
+                        $time_start = time();
                         $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
                     }
                 }

@@ -7,7 +7,7 @@ if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1') {
 set_time_limit(0);
 require '../init.php';
 if (ipTV_lib::$request['call'] == 'publish') {
-    if (!in_array(ipTV_lib::$request['addr'], ipTV_streaming::a0218A0e77b606feF8d734AC4510ddB1())) {
+    if (!in_array(ipTV_lib::$request['addr'], ipTV_streaming::RtmpIps())) {
         http_response_code(404);
         die;
     } else {

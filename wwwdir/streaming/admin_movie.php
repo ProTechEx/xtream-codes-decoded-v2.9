@@ -6,7 +6,7 @@ set_time_limit(0);
 require '../init.php';
 $streaming_block = true;
 $E824497a502b6e5dd609c0acb45697c7 = false;
-$e13ac89e162bcc9913e553b949f755b6 = 0;
+$size = 0;
 $activity_id = 0;
 $user_ip = $_SERVER['REMOTE_ADDR'];
 if (!in_array($user_ip, ipTV_streaming::getAllowedIPsAdmin(true))) {

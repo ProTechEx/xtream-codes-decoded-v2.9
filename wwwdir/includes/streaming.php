@@ -5,20 +5,20 @@ class ipTV_streaming
 {
     public static $ipTV_db;
     public static $AllowedIPs = array();
-    public static function a0218A0e77B606FEF8D734AC4510Ddb1()
+    public static function RtmpIps()
     {
         self::$ipTV_db->query('SELECT `ip` FROM `rtmp_ips`');
         return array_merge(array('127.0.0.1'), array_map('gethostbyname', ipTV_lib::array_values_recursive(self::$ipTV_db->get_rows())));
     }
-    public static function e8e54de10433EB446982a4Af8ADea379($d38a1c3d822bdbbd61f649f33212ebde, $segment_file)
+    public static function startFFMPEGSegment($data, $segment_file)
     {
-        if (empty($d38a1c3d822bdbbd61f649f33212ebde['xy_offset'])) {
-            $d43f5adb4da33d3ded5cecc9d0c0b4c7 = rand(150, 380);
-            $Cca4c808b355e55e72f3bfb3c6603659 = rand(110, 250);
+        if (empty($data['xy_offset'])) {
+            $x = rand(150, 380);
+            $y = rand(110, 250);
         } else {
-            list($d43f5adb4da33d3ded5cecc9d0c0b4c7, $Cca4c808b355e55e72f3bfb3c6603659) = explode('x', $d38a1c3d822bdbbd61f649f33212ebde['xy_offset']);
+            list($x, $y) = explode('x', $data['xy_offset']);
         }
-        passthru(FFMPEG_PATH . ' -nofix_dts -fflags +igndts -copyts -vsync 0 -nostats -nostdin -hide_banner -loglevel quiet -y -i "' . STREAMS_PATH . $segment_file . '" -filter_complex "drawtext=fontfile=' . FFMPEG_FONTS_PATH . ":text='{$d38a1c3d822bdbbd61f649f33212ebde['message']}':fontsize={$d38a1c3d822bdbbd61f649f33212ebde['font_size']}:x={$d43f5adb4da33d3ded5cecc9d0c0b4c7}:y={$Cca4c808b355e55e72f3bfb3c6603659}:fontcolor={$d38a1c3d822bdbbd61f649f33212ebde['font_color']}\" -map 0 -vcodec libx264 -preset ultrafast -acodec copy -scodec copy -mpegts_flags +initial_discontinuity -mpegts_copyts 1 -f mpegts -");
+        passthru(FFMPEG_PATH . ' -nofix_dts -fflags +igndts -copyts -vsync 0 -nostats -nostdin -hide_banner -loglevel quiet -y -i "' . STREAMS_PATH . $segment_file . '" -filter_complex "drawtext=fontfile=' . FFMPEG_FONTS_PATH . ":text='{$data['message']}':fontsize={$data['font_size']}:x={$x}:y={$y}:fontcolor={$data['font_color']}\" -map 0 -vcodec libx264 -preset ultrafast -acodec copy -scodec copy -mpegts_flags +initial_discontinuity -mpegts_copyts 1 -f mpegts -");
         return true;
     }
     public static function getAllowedIPsCloudIps()
@@ -46,19 +46,20 @@ class ipTV_streaming
                 $ips = array_merge($ips, json_decode($server['whitelist_ips'], true));
             }
             $ips[] = $server['server_ip'];
+            $ips[] = $server['server_ip'];
         }
         if ($reg_users) {
             if (!empty(ipTV_lib::$settings['allowed_ips_admin'])) {
                 $ips = array_merge($ips, explode(',', ipTV_lib::$settings['allowed_ips_admin']));
             }
             self::$ipTV_db->query('SELECT * FROM `xtream_main` WHERE id = 1');
-            $fdf8df33b9a361067fee2f972282611d = self::$ipTV_db->get_row();
-            if (!empty($fdf8df33b9a361067fee2f972282611d['root_ip'])) {
-                $ips[] = $fdf8df33b9a361067fee2f972282611d['root_ip'];
+            $xtream_main = self::$ipTV_db->get_row();
+            if (!empty($xtream_main['root_ip'])) {
+                $ips[] = $xtream_main['root_ip'];
             }
             self::$ipTV_db->query('SELECT DISTINCT t1.`ip` FROM `reg_users` t1 INNER JOIN `member_groups` t2 ON t2.group_id = t1.member_group_id AND t2.is_admin = 1 AND t1.`last_login` >= \'%d\'', strtotime('-2 hour'));
-            $Cfa6e78e5b50872422c16bab31113ce7 = ipTV_lib::array_values_recursive(self::$ipTV_db->get_rows());
-            $ips = array_merge($ips, $Cfa6e78e5b50872422c16bab31113ce7);
+            $UsersIP = ipTV_lib::array_values_recursive(self::$ipTV_db->get_rows());
+            $ips = array_merge($ips, $UsersIP);
         }
         if (!file_exists(TMP_DIR . 'cloud_ips') || time() - filemtime(TMP_DIR . 'cloud_ips') >= 600) {
             $contents = ipTV_lib::SimpleWebGet('http://xtream-codes.com/cloud_ips');
@@ -84,19 +85,17 @@ class ipTV_streaming
             }
         }
         $output = array();
-        self::$ipTV_db->query('SELECT * FROM `streams` t1
-                                LEFT JOIN `streams_types` t2 ON t2.type_id = t1.type
-                                WHERE t1.`id` = \'%d\'', $stream_id);
+        self::$ipTV_db->query('SELECT * FROM `streams` t1 LEFT JOIN `streams_types` t2 ON t2.type_id = t1.type WHERE t1.`id` = \'%d\'', $stream_id);
         if (self::$ipTV_db->num_rows() > 0) {
-            $Cb08b127bfe426d7f3ccbd3e38f05471 = self::$ipTV_db->get_row();
+            $streamData = self::$ipTV_db->get_row();
             $servers = array();
-            if ($Cb08b127bfe426d7f3ccbd3e38f05471['direct_source'] == 0) {
+            if ($streamData['direct_source'] == 0) {
                 self::$ipTV_db->query('SELECT * FROM `streams_sys` WHERE `stream_id` = \'%d\'', $stream_id);
                 if (self::$ipTV_db->num_rows() > 0) {
                     $servers = self::$ipTV_db->get_rows(true, 'server_id');
                 }
             }
-            $output['info'] = $Cb08b127bfe426d7f3ccbd3e38f05471;
+            $output['info'] = $streamData;
             $output['servers'] = $servers;
             if (CACHE_STREAMS) {
                 file_put_contents(TMP_DIR . $stream_id . '_cacheStream', serialize($output), LOCK_EX);
@@ -104,7 +103,7 @@ class ipTV_streaming
         }
         return !empty($output) ? $output : false;
     }
-    public static function F3c105bCCed491229d4Aed6937F96a8c($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device = '', $Cf735adc0fa7bac523a6d09af79aa459 = '', $type)
+    public static function F3c105bCCed491229d4Aed6937F96a8c($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device = '', $con_isp_name = '', $type)
     {
         if ($type == 'archive') {
             self::$ipTV_db->query('SELECT `tv_archive_server_id`,`tv_archive_duration` FROM `streams` WHERE `id` = \'%d\'', $stream_id);
@@ -114,7 +113,7 @@ class ipTV_streaming
                     if ($row['tv_archive_server_id'] != SERVER_ID) {
                         parse_str($_SERVER['QUERY_STRING'], $Cc31a34e0b1fa157d875f9946912d9fa);
                         $D4a67bbd52a22a102a646011a4bec962 = time() + $Cc31a34e0b1fa157d875f9946912d9fa['duration'] * 60;
-                        $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'external_device' => $external_device, 'isp' => $Cf735adc0fa7bac523a6d09af79aa459, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'external_device' => $external_device, 'isp' => $Cf735adc0fa7bac523a6d09af79aa459, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension']);
+                        $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension']);
                         $Ad100f7d10d8567e78ddc1e86e51e4a9 = substr($_SERVER['REQUEST_URI'], 1);
                         header('Location: ' . ipTV_lib::$StreamingServers[$row['tv_archive_server_id']]['site_url'] . 'streaming/timeshift.php?token=' . base64_encode(decrypt_config(json_encode($e3874676e9103a9996301beac4efcde2), md5(ipTV_lib::$settings['crypt_load_balancing']))));
                         die;
@@ -147,7 +146,6 @@ class ipTV_streaming
                     $e3215fa97db12812ee074d6c110dea4b[] = $createdChannelLocation;
                 }
             }
-            //Be93cd107eaa4cfee6f31c440f905d39:
         }
         if (empty($e3215fa97db12812ee074d6c110dea4b)) {
             return false;
@@ -237,7 +235,7 @@ class ipTV_streaming
                                                     goto D60a6b55cfd678a3cab0a9b2bb62cc0b;
                                                 }
                                                 c3d2f0f5bac224106a3c47723c91674f:
-                                                if (!in_array($Cf735adc0fa7bac523a6d09af79aa459, ipTV_lib::$StreamingServers[$server_id]['isp_names'])) {
+                                                if (!in_array($con_isp_name, ipTV_lib::$StreamingServers[$server_id]['isp_names'])) {
                                                     if (ipTV_lib::$StreamingServers[$server_id]['isp_type'] == 'strict') {
                                                         unset($aab0f9a311e1a69945f2338c5651dd87[$server_id]);
                                                     } else {
@@ -265,10 +263,10 @@ class ipTV_streaming
                                 if ($type == 'live') {
                                     $D4a67bbd52a22a102a646011a4bec962 = $extension == 'm3u8' ? 0 : time() + 6;
                                 } else {
-                                    $Cb08b127bfe426d7f3ccbd3e38f05471 = json_decode($stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['stream_info'], true);
-                                    $D4a67bbd52a22a102a646011a4bec962 = time() + (int) $Cb08b127bfe426d7f3ccbd3e38f05471['of_duration'];
+                                    $streamData = json_decode($stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['stream_info'], true);
+                                    $D4a67bbd52a22a102a646011a4bec962 = time() + (int) $streamData['of_duration'];
                                 }
-                                $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('stream_id' => $stream_id, 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $Cf735adc0fa7bac523a6d09af79aa459, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'stream_id' => $stream_id, 'user_id' => $user_info['id'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $Cf735adc0fa7bac523a6d09af79aa459, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid']);
+                                $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('stream_id' => $stream_id, 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'stream_id' => $stream_id, 'user_id' => $user_info['id'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid']);
                                 $Ad100f7d10d8567e78ddc1e86e51e4a9 = substr($_SERVER['REQUEST_URI'], 1);
                                 $cb8983ea8c2dc44d7be007079a71c336 = substr_count($Ad100f7d10d8567e78ddc1e86e51e4a9, '?') == 0 ? '?' : '&';
                                 header('Location: ' . ipTV_lib::$StreamingServers[$B0e9c71612dc0f9cbfac184b33ec7cae]['site_url'] . $Ad100f7d10d8567e78ddc1e86e51e4a9 . $cb8983ea8c2dc44d7be007079a71c336 . 'token=' . base64_encode(decrypt_config(json_encode($e3874676e9103a9996301beac4efcde2), md5(ipTV_lib::$settings['crypt_load_balancing']))));
@@ -284,7 +282,7 @@ class ipTV_streaming
             }
         }
     }
-    public static function eC7E013cf424bDF03238C1d46AB2a9Ae($stream_id, $connections = array(), $type = 'movie')
+    public static function checkStreamExistInBouquet($stream_id, $connections = array(), $type = 'movie')
     {
         if (!($type == 'movie')) {
             if ($type == 'series') {
@@ -293,9 +291,7 @@ class ipTV_streaming
                     return in_array(self::$ipTV_db->get_col(), $connections);
                 }
             } else {
-                B4255ebb0d13ed6640b6609751c38bf6:
                 return in_array($stream_id, $connections);
-                goto a2519e01e648e11947db8d70937f4195;
             }
             return false;
         }
@@ -337,8 +333,8 @@ class ipTV_streaming
                 if ($user_info['max_connections'] == 1 && ipTV_lib::$settings['disallow_2nd_ip_con'] == 1 && $user_info['active_cons'] > 0 && !empty($user_ip)) {
                     self::$ipTV_db->query('SELECT user_ip FROM `user_activity_now` WHERE `user_id` = \'%d\' LIMIT 1', $user_info['id']);
                     if (self::$ipTV_db->num_rows() > 0) {
-                        $C529401a6487f7fc473dd0ec948c66c8 = self::$ipTV_db->get_col();
-                        if ($C529401a6487f7fc473dd0ec948c66c8 != $user_ip) {
+                        $user_ip_db = self::$ipTV_db->get_col();
+                        if ($user_ip_db != $user_ip) {
                             $user_info['ip_limit_reached'] = 1;
                         }
                     }
@@ -356,10 +352,7 @@ class ipTV_streaming
             if (file_exists(TMP_DIR . 'user_output' . $user_info['id'])) {
                 $user_info['output_formats'] = unserialize(file_get_contents(TMP_DIR . 'user_output' . $user_info['id']));
             } else {
-                self::$ipTV_db->query('SELECT *
-                                    FROM `access_output` t1
-                                    INNER JOIN `user_output` t2 ON t1.access_output_id = t2.access_output_id
-                                    WHERE t2.user_id = \'%d\'', $user_info['id']);
+                self::$ipTV_db->query('SELECT * FROM `access_output` t1 INNER JOIN `user_output` t2 ON t1.access_output_id = t2.access_output_id WHERE t2.user_id = \'%d\'', $user_info['id']);
                 $user_info['output_formats'] = self::$ipTV_db->get_rows(true, 'output_key');
                 file_put_contents(TMP_DIR . 'user_output' . $user_info['id'], serialize($user_info['output_formats']), LOCK_EX);
             }
@@ -370,15 +363,15 @@ class ipTV_streaming
                 if (is_array($isp_lock)) {
                     if (!empty($isp_lock['isp_info']['description'])) {
                         $user_info['con_isp_name'] = $isp_lock['isp_info']['description'];
-                        $de64b4b9800f8407c8499fdc13f8e4f6 = self::A477369ead7aA63E77aD3F4634982a8A($user_info['con_isp_name']);
+                        $IspIsBlocked = self::checkIspIsBlocked($user_info['con_isp_name']);
                         if ($user_info['is_restreamer'] == 0 && ipTV_lib::$settings['block_svp'] == 1 && !empty($isp_lock['isp_info']['is_server'])) {
                             $user_info['isp_is_server'] = $isp_lock['isp_info']['is_server'];
                         }
                         if ($user_info['isp_is_server'] == 1) {
                             $user_info['con_isp_type'] = $isp_lock['isp_info']['type'];
                         }
-                        if ($de64b4b9800f8407c8499fdc13f8e4f6 !== false) {
-                            $user_info['isp_is_server'] = $de64b4b9800f8407c8499fdc13f8e4f6 == 1 ? 1 : 0;
+                        if ($IspIsBlocked !== false) {
+                            $user_info['isp_is_server'] = $IspIsBlocked == 1 ? 1 : 0;
                             $user_info['con_isp_type'] = $user_info['isp_is_server'] == 1 ? 'Custom' : null;
                         }
                     }
@@ -702,7 +695,7 @@ class ipTV_streaming
         file_put_contents($user_ip_file, 0);
         return false;
     }
-    public static function F4a9B20600bb9A41Ed2391b0ea000578($pid, $stream_id)
+    public static function CheckPidStreamExist($pid, $stream_id)
     {
         if (empty($pid)) {
             return false;
@@ -716,7 +709,7 @@ class ipTV_streaming
         }
         return false;
     }
-    public static function BCaA9B8a7B46eb36CD507A218fa64474($pid, $stream_id, $ffmpeg_path = FFMPEG_PATH)
+    public static function CheckPidChannelM3U8Exist($pid, $stream_id, $ffmpeg_path = FFMPEG_PATH)
     {
         if (empty($pid)) {
             return false;
@@ -829,10 +822,10 @@ class ipTV_streaming
         }
         return json_decode($response, true);
     }
-    public static function a477369eaD7aa63E77AD3F4634982a8a($Cf735adc0fa7bac523a6d09af79aa459)
+    public static function checkIspIsBlocked($con_isp_name)
     {
         foreach (ipTV_lib::$customISP as $isp) {
-            if (strtolower($Cf735adc0fa7bac523a6d09af79aa459) == strtolower($isp['isp'])) {
+            if (strtolower($con_isp_name) == strtolower($isp['isp'])) {
                 return $isp['blocked'];
             }
         }
