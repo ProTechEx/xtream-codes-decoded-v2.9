@@ -1,5 +1,4 @@
 <?php
-/*Rev:26.09.18r0*/
 
 set_time_limit(0);
 require 'init.php';
@@ -61,10 +60,7 @@ switch ($action) {
                 echo json_encode($output);
                 break;
             case 'offline':
-                $ipTV_db->query('SELECT t1.stream_status,t1.server_id,t1.stream_id 
-                                  FROM `streams_sys` t1
-                                  INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2
-                                  WHERE t1.stream_status = 1');
+                $ipTV_db->query('SELECT t1.stream_status,t1.server_id,t1.stream_id FROM `streams_sys` t1 INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2 WHERE t1.stream_status = 1');
                 $streamSys = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
                 $output = array();
                 foreach ($streamSys as $stream_id => $server_id) {
@@ -73,10 +69,7 @@ switch ($action) {
                 echo json_encode($output);
                 break;
             case 'online':
-                $ipTV_db->query('SELECT t1.stream_status,t1.server_id,t1.stream_id 
-                                  FROM `streams_sys` t1
-                                  INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2
-                                  WHERE t1.pid > 0 AND t1.stream_status = 0');
+                $ipTV_db->query('SELECT t1.stream_status,t1.server_id,t1.stream_id FROM `streams_sys` t1 INNER JOIN `streams` t2 ON t2.id = t1.stream_id AND t2.type <> 2 WHERE t1.pid > 0 AND t1.stream_status = 0');
                 $streamSys = $ipTV_db->get_rows(true, 'stream_id', false, 'server_id');
                 $output = array();
                 foreach ($streamSys as $stream_id => $server_id) {
@@ -256,29 +249,27 @@ switch ($action) {
     case 'reg_user':
         switch ($sub) {
             case 'list':
-                $ipTV_db->query('SELECT id,username,credits,group_id,group_name,last_login,date_registered,email,ip,status
-                            FROM `reg_users` t1
-                        INNER JOIN `member_groups` t2 ON t1.member_group_id = t2.group_id');
+                $ipTV_db->query('SELECT id,username,credits,group_id,group_name,last_login,date_registered,email,ip,status FROM `reg_users` t1 INNER JOIN `member_groups` t2 ON t1.member_group_id = t2.group_id');
                 $results = $ipTV_db->get_rows();
                 echo json_encode($results);
                 break;
             case 'credits':
                 if (!empty(ipTV_lib::$request['amount']) && (!empty(ipTV_lib::$request['id']) || !empty(ipTV_lib::$request['username']))) {
-                    $Cadd766037a4c84044843f30dd506e37 = sprintf('%.2f', ipTV_lib::$request['amount']);
+                    $amount = sprintf('%.2f', ipTV_lib::$request['amount']);
                     if (!empty(ipTV_lib::$request['id'])) {
                         $ipTV_db->query('SELECT * FROM reg_users WHERE `id` = \'%d\'', ipTV_lib::$request['id']);
                     } else {
                         $ipTV_db->query('SELECT * FROM reg_users WHERE `username` = \'%s\'', ipTV_lib::$request['username']);
                     }
                     if ($ipTV_db->num_rows()) {
-                        $Eb809884ee4b7eb427d7a2ae5a5fb355 = $ipTV_db->get_row();
-                        $A6f4ecc798bcb285eee6efb4467c6708 = $Cadd766037a4c84044843f30dd506e37 + $Eb809884ee4b7eb427d7a2ae5a5fb355['credits'];
-                        if ($A6f4ecc798bcb285eee6efb4467c6708 < 0) {
+                        $RegUser = $ipTV_db->get_row();
+                        $credits = $amount + $RegUser['credits'];
+                        if ($credits < 0) {
                             echo json_encode(array('result' => true, 'error' => 'NOT ENOUGH CREDITS'));
                         } else {
-                            $ipTV_db->query('UPDATE reg_users SET `credits` = \'%.2f\' WHERE `id` = \'%d\'', $A6f4ecc798bcb285eee6efb4467c6708, $Eb809884ee4b7eb427d7a2ae5a5fb355['id']);
+                            $ipTV_db->query('UPDATE reg_users SET `credits` = \'%.2f\' WHERE `id` = \'%d\'', $credits, $RegUser['id']);
                             echo json_encode(array('result' => true));
-                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $user_data['username'], $user_data['password'], time(), "[API->ADD Credits {$Cadd766037a4c84044843f30dd506e37}]");
+                            $ipTV_db->query('INSERT INTO `reg_userlog` ( `owner`, `username`, `password`, `date`, `type` )VALUES( \'%s\', \'%s\', \'%s\', \'%s\', \'%s\' )', "SYSTEM API[{$user_ip}]", $user_data['username'], $user_data['password'], time(), "[API->ADD Credits {$amount}]");
                         }
                     } else {
                         echo json_encode(array('result' => false, 'error' => 'NOT EXISTS'));
@@ -294,15 +285,15 @@ function GetColumnNames($data)
 {
     global $ipTV_db;
     $query = '';
-    foreach ($data as $bca37bc3b9c255b1666da6076ce9aa30 => $value) {
-        $bca37bc3b9c255b1666da6076ce9aa30 = preg_replace('/[^a-zA-Z0-9\\_]+/', '', $bca37bc3b9c255b1666da6076ce9aa30);
+    foreach ($data as $columnName => $value) {
+        $columnName = preg_replace('/[^a-zA-Z0-9\\_]+/', '', $columnName);
         if (is_array($value)) {  
-            $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}` = '" . $ipTV_db->escape(json_encode($value)) . '\',';
+            $query .= "`{$columnName}` = '" . $ipTV_db->escape(json_encode($value)) . '\',';
         }
         else if (is_null($value)) {
-            $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}` = null,";
+            $query .= "`{$columnName}` = null,";
         } else {
-            $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}` = '" . $ipTV_db->escape($value) . '\',';
+            $query .= "`{$columnName}` = '" . $ipTV_db->escape($value) . '\',';
         }
         
     }
@@ -312,9 +303,9 @@ function queryParse($data)
 {
     global $ipTV_db;
     $query = '(';
-    foreach (array_keys($data) as $bca37bc3b9c255b1666da6076ce9aa30) {
-        $bca37bc3b9c255b1666da6076ce9aa30 = preg_replace('/[^a-zA-Z0-9\\_]+/', '', $bca37bc3b9c255b1666da6076ce9aa30);
-        $query .= "`{$bca37bc3b9c255b1666da6076ce9aa30}`,";
+    foreach (array_keys($data) as $columnName) {
+        $columnName = preg_replace('/[^a-zA-Z0-9\\_]+/', '', $columnName);
+        $query .= "`{$columnName}`,";
     }
     $query = rtrim($query, ',') . ') VALUES (';
     foreach (array_values($data) as $value) {

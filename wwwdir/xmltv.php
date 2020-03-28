@@ -36,16 +36,16 @@ if (!empty(ipTV_lib::$request['username']) && !empty(ipTV_lib::$request['passwor
             $query = mysqli_query($ipTV_db->dbh, 'SELECT * FROM `epg_data` WHERE `epg_id` IN(' . implode(',', $Bbb7af082729bf21d97453279778fdee) . ') AND `start` BETWEEN \'' . date('Y-m-d H:i:00', strtotime("-{$cc787cb8dcdf96d84151c7a73aa831bf} day")) . '\' AND \'' . date('Y-m-d H:i:00', strtotime("+{$E9bd18f1acef0191a216cfc27a1fcfce} day")) . '\'', MYSQLI_USE_RESULT);
             //f1bcbc646b7caf73aa5b0b71be389f78:
             while ($row = mysqli_fetch_assoc($query)) {
-                $E4416ae8f96620daee43ac43f9515200 = htmlspecialchars(base64_decode($row['title']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
-                $d4c3c80b508f5d00d05316e7aa0858de = htmlspecialchars(base64_decode($row['description']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
+                $title = htmlspecialchars(base64_decode($row['title']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
+                $desc = htmlspecialchars(base64_decode($row['description']), ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $e818ebc908da0ee69f4f99daba6a1a18 = htmlspecialchars($row['channel_id'], ENT_XML1 | ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
                 $epgStart = new DateTime($row['start']);
                 $epgEnd = new DateTime($row['end']);
                 $start = $epgStart->format('YmdHis O');
                 $end = $epgEnd->format('YmdHis O');
                 echo "<programme start=\"{$start}\" stop=\"{$end}\" channel=\"{$e818ebc908da0ee69f4f99daba6a1a18}\" >";
-                echo '<title>' . $E4416ae8f96620daee43ac43f9515200 . '</title>';
-                echo '<desc>' . $d4c3c80b508f5d00d05316e7aa0858de . '</desc>';
+                echo '<title>' . $title . '</title>';
+                echo '<desc>' . $desc . '</desc>';
                 echo '</programme>';
             }
             //cbb7c0585d6bcc07f8df162c7bd39253:

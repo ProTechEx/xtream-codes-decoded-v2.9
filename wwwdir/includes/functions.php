@@ -154,15 +154,15 @@ function GetTotalCPUsage()
     $cores = intval(shell_exec('grep --count processor /proc/cpuinfo'));
     return intval($total_cpu / $cores);
 }
-function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $mac, $fca2439385f041f384419649ca2471d6, $d8ba920e2a1ba9839322c2bca0a7a741, $be29ac67a4314fc9435deb1462cae967, $device_id, $Ba644b1066f7c673215de30d5ce5e62c, $B71eec623f2edcac610184525828cc2d, $f429d0e47085017e3f1e415952e44cba, $A6dde9bd7afc06231a1481ec56fd5768, $f34a0094f9db3be3b99dd1eb1e9a3b6d, $req_action)
+function portal_auth($sn, $mac, $ver, $stb_type, $image_version, $device_id, $device_id2, $hw_version, $user_ip, $enable_debug_stalker, $req_type, $req_action)
 {
     global $ipTV_db;
     $mac = base64_encode(strtoupper(urldecode($mac)));
     $cfc7b4c8f12f119c2180693d0fa61648 = false;
-    if (!$A6dde9bd7afc06231a1481ec56fd5768 && (!empty($fca2439385f041f384419649ca2471d6) || !empty($d8ba920e2a1ba9839322c2bca0a7a741) || !empty($be29ac67a4314fc9435deb1462cae967) || !empty($device_id) || !empty($Ba644b1066f7c673215de30d5ce5e62c) || !empty($B71eec623f2edcac610184525828cc2d))) {
+    if (!$enable_debug_stalker && (!empty($ver) || !empty($stb_type) || !empty($image_version) || !empty($device_id) || !empty($device_id2) || !empty($hw_version))) {
         $cfc7b4c8f12f119c2180693d0fa61648 = true;
     }
-    if (!$A6dde9bd7afc06231a1481ec56fd5768 && !$cfc7b4c8f12f119c2180693d0fa61648 && $f34a0094f9db3be3b99dd1eb1e9a3b6d != 'stb' && $req_action != 'set_fav' && file_exists(TMP_DIR . 'stalker_' . md5($mac))) {
+    if (!$enable_debug_stalker && !$cfc7b4c8f12f119c2180693d0fa61648 && $req_type != 'stb' && $req_action != 'set_fav' && file_exists(TMP_DIR . 'stalker_' . md5($mac))) {
         $res = json_decode(file_get_contents(TMP_DIR . 'stalker_' . md5($mac)), true);
         return empty($res) ? false : $res;
     }
@@ -179,31 +179,31 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
         if (!empty($E574ed349c1c464172b5a4221afe809e['exp_date']) && time() > $E574ed349c1c464172b5a4221afe809e['exp_date']) {
             return false;
         }
-        if (!empty($E574ed349c1c464172b5a4221afe809e['allowed_ips']) && !in_array($f429d0e47085017e3f1e415952e44cba, array_map('gethostbyname', $E574ed349c1c464172b5a4221afe809e['allowed_ips']))) {
+        if (!empty($E574ed349c1c464172b5a4221afe809e['allowed_ips']) && !in_array($user_ip, array_map('gethostbyname', $E574ed349c1c464172b5a4221afe809e['allowed_ips']))) {
             return false;
         }
         if ($cfc7b4c8f12f119c2180693d0fa61648) {
-            $ipTV_db->query('UPDATE `mag_devices` SET `ver` = \'%s\' WHERE `mag_id` = \'%d\'', $fca2439385f041f384419649ca2471d6, $E574ed349c1c464172b5a4221afe809e['mag_id']);
-            if (!empty(ipTV_lib::$settings['allowed_stb_types']) && !in_array(strtolower($d8ba920e2a1ba9839322c2bca0a7a741), ipTV_lib::$settings['allowed_stb_types'])) {
+            $ipTV_db->query('UPDATE `mag_devices` SET `ver` = \'%s\' WHERE `mag_id` = \'%d\'', $ver, $E574ed349c1c464172b5a4221afe809e['mag_id']);
+            if (!empty(ipTV_lib::$settings['allowed_stb_types']) && !in_array(strtolower($stb_type), ipTV_lib::$settings['allowed_stb_types'])) {
                 return false;
             }
-            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['sn']) && $E574ed349c1c464172b5a4221afe809e['sn'] !== $b25b89525a979cf56e2fd295b28327b8) {
+            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['sn']) && $E574ed349c1c464172b5a4221afe809e['sn'] !== $sn) {
                 return false;
             }
             if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id']) && $E574ed349c1c464172b5a4221afe809e['device_id'] !== $device_id) {
                 return false;
             }
-            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id2']) && $E574ed349c1c464172b5a4221afe809e['device_id2'] !== $Ba644b1066f7c673215de30d5ce5e62c) {
+            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['device_id2']) && $E574ed349c1c464172b5a4221afe809e['device_id2'] !== $device_id2) {
                 return false;
             }
-            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['hw_version']) && $E574ed349c1c464172b5a4221afe809e['hw_version'] !== $B71eec623f2edcac610184525828cc2d) {
+            if ($E574ed349c1c464172b5a4221afe809e['lock_device'] == 1 && !empty($E574ed349c1c464172b5a4221afe809e['hw_version']) && $E574ed349c1c464172b5a4221afe809e['hw_version'] !== $hw_version) {
                 return false;
             }
-            if (!empty(ipTV_lib::$settings['stalker_lock_images']) && !in_array($fca2439385f041f384419649ca2471d6, ipTV_lib::$settings['stalker_lock_images'])) {
+            if (!empty(ipTV_lib::$settings['stalker_lock_images']) && !in_array($ver, ipTV_lib::$settings['stalker_lock_images'])) {
                 return false;
             }
             $geoip = new geoip(GEOIP2_FILENAME);
-            $geoip_country_code = $geoip->c6A76952b4cef18F3C98C0E6A9Dd1274($f429d0e47085017e3f1e415952e44cba)['registered_country']['iso_code'];
+            $geoip_country_code = $geoip->c6A76952b4cef18F3C98C0E6A9Dd1274($user_ip)['registered_country']['iso_code'];
             $geoip->close();
             if (!empty($geoip_country_code)) {
                 $forced_country = !empty($E574ed349c1c464172b5a4221afe809e['forced_country']) ? true : false;
@@ -211,7 +211,7 @@ function B9361CDF8F8f200F06F546758512060c($b25b89525a979cf56e2fd295b28327b8, $ma
                     return false;
                 }
             }
-            $ipTV_db->query('UPDATE `mag_devices` SET `ip` = \'%s\',`stb_type` = \'%s\',`sn` = \'%s\',`ver` = \'%s\',`image_version` = \'%s\',`device_id` = \'%s\',`device_id2` = \'%s\',`hw_version` = \'%s\' WHERE `mag_id` = \'%d\'', $f429d0e47085017e3f1e415952e44cba, htmlentities($d8ba920e2a1ba9839322c2bca0a7a741), htmlentities($b25b89525a979cf56e2fd295b28327b8), htmlentities($fca2439385f041f384419649ca2471d6), htmlentities($be29ac67a4314fc9435deb1462cae967), htmlentities($device_id), htmlentities($Ba644b1066f7c673215de30d5ce5e62c), htmlentities($B71eec623f2edcac610184525828cc2d), $E574ed349c1c464172b5a4221afe809e['mag_id']);
+            $ipTV_db->query('UPDATE `mag_devices` SET `ip` = \'%s\',`stb_type` = \'%s\',`sn` = \'%s\',`ver` = \'%s\',`image_version` = \'%s\',`device_id` = \'%s\',`device_id2` = \'%s\',`hw_version` = \'%s\' WHERE `mag_id` = \'%d\'', $user_ip, htmlentities($stb_type), htmlentities($sn), htmlentities($ver), htmlentities($image_version), htmlentities($device_id), htmlentities($device_id2), htmlentities($hw_version), $E574ed349c1c464172b5a4221afe809e['mag_id']);
         }
         $E574ed349c1c464172b5a4221afe809e['fav_channels'] = !empty($E574ed349c1c464172b5a4221afe809e['fav_channels']) ? json_decode($E574ed349c1c464172b5a4221afe809e['fav_channels'], true) : array();
         if (empty($E574ed349c1c464172b5a4221afe809e['fav_channels']['live'])) {
@@ -302,23 +302,23 @@ function GenerateList($user_id, $device_key, $output_key = 'ts', $force_download
         $data = '';
         if (!empty($user_info['series_ids'])) {
             $series = ipTV_lib::seriesData();
-            foreach ($series as $id => $A0766c7ec9b7cbc336d730454514b34f) {
+            foreach ($series as $id => $serie) {
                 if (!in_array($id, $user_info['series_ids'])) {
                     continue;
                 }
-                foreach ($A0766c7ec9b7cbc336d730454514b34f['series_data'] as $c59070c3eab15fea2abe4546ccf476de => $series) {
-                    $e831c6d2f20288c01902323cccc3733a = 0;
+                foreach ($serie['series_data'] as $category_id => $series) {
+                    $epNumber = 0;
                     foreach ($series as $stream_id => $serie) {
                         $movie_properties = ipTV_lib::movieProperties($stream_id);
                         $serie['live'] = 0;
                         if (ipTV_lib::$settings['series_custom_name'] == 0) {
-                            $serie['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . ' E' . sprintf('%02d', ++$e831c6d2f20288c01902323cccc3733a);
+                            $serie['stream_display_name'] = $serie['title'] . ' S' . sprintf('%02d', $category_id) . ' E' . sprintf('%02d', ++$epNumber);
                         } else {
-                            $serie['stream_display_name'] = $A0766c7ec9b7cbc336d730454514b34f['title'] . ' S' . sprintf('%02d', $c59070c3eab15fea2abe4546ccf476de) . " {$serie['stream_display_name']}";
+                            $serie['stream_display_name'] = $serie['title'] . ' S' . sprintf('%02d', $category_id) . " {$serie['stream_display_name']}";
                         }
-                        $serie['movie_propeties'] = array('movie_image' => !empty($movie_properties['movie_image']) ? $movie_properties['movie_image'] : $A0766c7ec9b7cbc336d730454514b34f['cover']);
+                        $serie['movie_propeties'] = array('movie_image' => !empty($movie_properties['movie_image']) ? $movie_properties['movie_image'] : $serie['cover']);
                         $serie['type_output'] = 'series';
-                        $serie['category_name'] = $A0766c7ec9b7cbc336d730454514b34f['category_name'];
+                        $serie['category_name'] = $serie['category_name'];
                         $serie['id'] = $stream_id;
                         $user_info['channels'][$stream_id] = $serie;
                     }
