@@ -20,7 +20,6 @@ class ipTV_servers
             } else {
                 $output[$server_id] = false;
             }
-            //daeabfc5cea23f69ac49df5a3b95d48f:
         }
         return $output;
     }
