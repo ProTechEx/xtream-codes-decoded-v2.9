@@ -589,7 +589,7 @@ class ipTV_streaming
             return;
         }
         $activity_id = array('user_id' => intval($user_id), 'stream_id' => intval($stream_id), 'server_id' => intval($server_id), 'date_start' => intval($start), 'user_agent' => $user_agent, 'user_ip' => htmlentities($user_ip), 'date_end' => time(), 'container' => $extension, 'geoip_country_code' => $geoip_country_code, 'isp' => $isp, 'external_device' => htmlentities($external_device));
-        file_put_contents(TMP_DIR . 'offline_cons', base64_encode(json_encode($activity_id)) . '', FILE_APPEND | LOCK_EX);
+        file_put_contents(TMP_DIR . 'connections', base64_encode(json_encode($activity_id)) . '', FILE_APPEND | LOCK_EX);
     }
     public static function ClientLog($stream_id, $user_id, $action, $user_ip, $data = '', $clientLogsSave = false)
     {

@@ -1,42 +1,40 @@
 <?php
-/*Rev:26.09.18r0*/
 
-/*Rev:21.09.19r0-goto Php7.2.4 L:10.2*/
-function C91B44Fb481658FAC7ea786479A0BFE2($Ca434bcc380e9dbd2a3a588f6c32d84f, &$b0f1eb357ed72245e03dfe6268912497)
+function userActivityQueryData($connections, &$query)
 {
-    global $f566700a43ee8e1f0412fe10fbdf03df;
-    if (file_exists($Ca434bcc380e9dbd2a3a588f6c32d84f)) {
-        $Ab9f45b38498c3a010f3c4276ad5767c = fopen($Ca434bcc380e9dbd2a3a588f6c32d84f, 'r');
-        while (!feof($Ab9f45b38498c3a010f3c4276ad5767c)) {
-            $bb85be39ea05b75c9bffeff236bd9355 = trim(fgets($Ab9f45b38498c3a010f3c4276ad5767c));
-            if (empty($bb85be39ea05b75c9bffeff236bd9355)) {
+    global $ipTV_db;
+    if (file_exists($connections)) {
+        $fp = fopen($connections, 'r');
+        while (!feof($fp)) {
+            $data = trim(fgets($fp));
+            if (empty($data)) {
                 break;
             }
-            $bb85be39ea05b75c9bffeff236bd9355 = json_decode(base64_decode($bb85be39ea05b75c9bffeff236bd9355), true);
-            $bb85be39ea05b75c9bffeff236bd9355 = array_map(array($f566700a43ee8e1f0412fe10fbdf03df, 'escape'), $bb85be39ea05b75c9bffeff236bd9355);
-            $b0f1eb357ed72245e03dfe6268912497 .= '(' . SERVER_ID . (',\'' . $bb85be39ea05b75c9bffeff236bd9355['user_id'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['isp'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['external_device'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['stream_id'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['date_start'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['user_agent'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['user_ip'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['date_end'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['container'] . '\',\'' . $bb85be39ea05b75c9bffeff236bd9355['geoip_country_code'] . '\'),');
+            $data = json_decode(base64_decode($data), true);
+            $data = array_map(array($ipTV_db, 'escape'), $data);
+            $query .= '(' . SERVER_ID . (',\'' . $data['user_id'] . '\',\'' . $data['isp'] . '\',\'' . $data['external_device'] . '\',\'' . $data['stream_id'] . '\',\'' . $data['date_start'] . '\',\'' . $data['user_agent'] . '\',\'' . $data['user_ip'] . '\',\'' . $data['date_end'] . '\',\'' . $data['container'] . '\',\'' . $data['geoip_country_code'] . '\'),');
         }
-        fclose($Ab9f45b38498c3a010f3c4276ad5767c);
+        fclose($fp);
     }
-    return $b0f1eb357ed72245e03dfe6268912497;
+    return $query;
 }
-if (file_exists($Fa6c74185d06efd37c067417bb9f8c59)) {
-    if (empty($b0f1eb357ed72245e03dfe6268912497)) {
-        $b0f1eb357ed72245e03dfe6268912497 = rtrim($b0f1eb357ed72245e03dfe6268912497, ',');
+if (file_exists($connections)) {
+    if (empty($query)) {
+        $query = rtrim($query, ',');
         die(0);
-        unlink($Fa6c74185d06efd37c067417bb9f8c59);
+        unlink($connections);
     } else {
         require str_replace('\\', '/', dirname($argv[0])) . '/../wwwdir/init.php';
         set_time_limit(0);
     }
-    $f566700a43ee8e1f0412fe10fbdf03df->fC53e22AE7EE3bb881Cd95Fb606914f0('INSERT INTO `user_activity` (`server_id`,`user_id`,`isp`,`external_device`,`stream_id`,`date_start`,`user_agent`,`user_ip`,`date_end`,`container`,`geoip_country_code`) VALUES ' . $b0f1eb357ed72245e03dfe6268912497);
+    $ipTV_db->simple_query('INSERT INTO `user_activity` (`server_id`,`user_id`,`isp`,`external_device`,`stream_id`,`date_start`,`user_agent`,`user_ip`,`date_end`,`container`,`geoip_country_code`) VALUES ' . $query);
     if (!@$argc) {
-        BBd9E78AC32626E138e758E840305a7c($Ed756578679cd59095dfa81f228e8b38);
+        KillProcessCmd($unique_id);
     }
-    $b0f1eb357ed72245e03dfe6268912497 = '';
-    $Fa6c74185d06efd37c067417bb9f8c59 = TMP_DIR . 'offline_cons';
-    c91b44fb481658fac7ea786479a0bfe2($Fa6c74185d06efd37c067417bb9f8c59, $b0f1eb357ed72245e03dfe6268912497);
+    $query = '';
+    $connections = TMP_DIR . 'offline_cons';
+    userActivityQueryData($connections, $query);
     cli_set_process_title('XtreamCodes[Offline Cons Parser]');
-    $Ed756578679cd59095dfa81f228e8b38 = TMP_DIR . md5(afFB052CCa396818D81004fF99Db49aA() . __FILE__);
+    $unique_id = TMP_DIR . md5(UniqueID() . __FILE__);
 }
 ?>

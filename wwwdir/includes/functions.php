@@ -19,8 +19,8 @@ function D6E530a9573198395bDB5822b82478E2()
     if ($json['cpu_avg'] > 100) {
         $json['cpu_avg'] = 100;
     }
-    $b05334022f117f99e07e10e7120b3707 = (int) trim(shell_exec('free | grep -c available'));
-    if ($b05334022f117f99e07e10e7120b3707 == 0) {
+    $available = (int) trim(shell_exec('free | grep -c available'));
+    if ($available == 0) {
         $json['total_mem'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $2}\''));
         $json['total_mem_free'] = intval(shell_exec('/usr/bin/free -tk | grep -i Mem: | awk \'{print $4+$6+$7}\''));
     } else {

@@ -1,6 +1,4 @@
 <?php
-/*Rev:26.09.18r0*/
-
 class ipTV_lib
 {
     public static $request = array();

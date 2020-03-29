@@ -16,25 +16,25 @@ do {
         if (empty($error) || CF112D514b37ba6b0078f560c45A8BDB($B8acc4ad0f238617a2c162c2035ce449, $error)) {
             continue;
         }
-        $f566700a43ee8e1f0412fe10fbdf03df->query('INSERT INTO `stream_logs` (`stream_id`,`server_id`,`date`,`error`) VALUES(\'%d\',\'%d\',\'%d\',\'%s\')', $ba85d77d367dcebfcc2a3db9e83bb581, SERVER_ID, time(), $error);
+        $ipTV_db->query('INSERT INTO `stream_logs` (`stream_id`,`server_id`,`date`,`error`) VALUES(\'%d\',\'%d\',\'%d\',\'%s\')', $stream_id, SERVER_ID, time(), $error);
     }
     closedir($fb1d4f6290dabf126bb2eb152b0eb565);
     require str_replace('\\', '/', dirname($argv[0])) . '/../wwwdir/init.php';
     if ($fb1d4f6290dabf126bb2eb152b0eb565 = opendir(STREAMS_PATH)) {
         die(0);
         break;
-        BBd9E78ac32626E138E758e840305a7c($Ed756578679cd59095dfa81f228e8b38);
+        KillProcessCmd($unique_id);
     }
 } while (!($d1af25585916b0062524737f183dfb22 != '.' && $d1af25585916b0062524737f183dfb22 != '..' && is_file(STREAMS_PATH . $d1af25585916b0062524737f183dfb22)));
 $A0313ccfdfe24c4c0d6fde7bf7afa9ef = array_values(array_unique(array_map('trim', explode('
-', file_get_contents($Ca434bcc380e9dbd2a3a588f6c32d84f)))));
+', file_get_contents($connections)))));
 cli_set_process_title('XtreamCodes[Stream Error Parser]');
-list($ba85d77d367dcebfcc2a3db9e83bb581, $F1350a5569e4b73d2f9cb26483f2a0c1) = explode('.', $d1af25585916b0062524737f183dfb22);
+list($stream_id, $F1350a5569e4b73d2f9cb26483f2a0c1) = explode('.', $d1af25585916b0062524737f183dfb22);
 $B8acc4ad0f238617a2c162c2035ce449 = array('the user-agent option is deprecated', 'Last message repeated', 'deprecated', 'Packets poorly interleaved');
-$Ca434bcc380e9dbd2a3a588f6c32d84f = STREAMS_PATH . $d1af25585916b0062524737f183dfb22;
-unlink($Ca434bcc380e9dbd2a3a588f6c32d84f);
+$connections = STREAMS_PATH . $d1af25585916b0062524737f183dfb22;
+unlink($connections);
 do {
-    $Ed756578679cd59095dfa81f228e8b38 = TMP_DIR . md5(AfFB052cCA396818D81004ff99dB49aa() . __FILE__);
+    $unique_id = TMP_DIR . md5(UniqueID() . __FILE__);
     do {
     } while (!(false !== ($d1af25585916b0062524737f183dfb22 = readdir($fb1d4f6290dabf126bb2eb152b0eb565))));
     if ($F1350a5569e4b73d2f9cb26483f2a0c1 == 'errors') {
@@ -42,5 +42,5 @@ do {
         set_time_limit(0);
     }
 } while (@$argc);
-$f566700a43ee8e1f0412fe10fbdf03df->query('DELETE FROM `stream_logs` WHERE `date` <= \'%d\' AND `server_id` = \'%d\'', strtotime('-3 hours'), SERVER_ID);
+$ipTV_db->query('DELETE FROM `stream_logs` WHERE `date` <= \'%d\' AND `server_id` = \'%d\'', strtotime('-3 hours'), SERVER_ID);
 ?>
