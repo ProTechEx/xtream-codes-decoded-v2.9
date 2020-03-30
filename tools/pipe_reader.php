@@ -1,5 +1,4 @@
 <?php
-/*Rev:26.09.18r0*/
 
 set_time_limit(0);
 if (!@$argc) {
@@ -11,6 +10,6 @@ if (!is_dir(CLOSE_OPEN_CONS_PATH)) {
     mkdir(CLOSE_OPEN_CONS_PATH);
 }
 if (!false) {
-    $Bcf87c9b8f60adb6d7364a2c5c48f8d8 = scandir(CLOSE_OPEN_CONS_PATH);
+    $cdir = scandir(CLOSE_OPEN_CONS_PATH);
 }
 ?>

@@ -10,7 +10,7 @@ function decrypt_config($data, $key)
     }
     return $output;
 }
-function D6E530a9573198395bDB5822b82478E2()
+function watchdogData()
 {
     $json = array();
     $json['cpu'] = intval(GetTotalCPUsage());

@@ -45,8 +45,8 @@ if (0 < $ipTV_db->num_rows()) {
                 $data['target_container'] = $data['target_container'][0];
                 $ed147a39fb35be93248b6f1c206a8023 = MOVIES_PATH . $data['stream_id'] . '.' . $data['target_container'];
                 if ($Ec610f8d82d35339f680a3ec9bbc078c = ipTV_stream::e0a1164567005185e0818F081674e240($ed147a39fb35be93248b6f1c206a8023, $data['server_id'])) {
-                    $fd08711a26bab44719872c7fff1f2dfb = isset($Ec610f8d82d35339f680a3ec9bbc078c['duration']) ? $Ec610f8d82d35339f680a3ec9bbc078c['duration'] : 0;
-                    sscanf($fd08711a26bab44719872c7fff1f2dfb, '%d:%d:%d', $fd8f2c4ad459c3f2b875636e5d3ac6a7, $Bc1d36e0762a7ca0e7cbaddd76686790, $Ba3faa92a82fb2d1bb6bb866cb272fee);
+                    $duration = isset($Ec610f8d82d35339f680a3ec9bbc078c['duration']) ? $Ec610f8d82d35339f680a3ec9bbc078c['duration'] : 0;
+                    sscanf($duration, '%d:%d:%d', $fd8f2c4ad459c3f2b875636e5d3ac6a7, $Bc1d36e0762a7ca0e7cbaddd76686790, $Ba3faa92a82fb2d1bb6bb866cb272fee);
                     $Bed5705166e68002911f53d0e71685f5 = isset($Ba3faa92a82fb2d1bb6bb866cb272fee) ? $fd8f2c4ad459c3f2b875636e5d3ac6a7 * 3600 + $Bc1d36e0762a7ca0e7cbaddd76686790 * 60 + $Ba3faa92a82fb2d1bb6bb866cb272fee : $fd8f2c4ad459c3f2b875636e5d3ac6a7 * 60 + $Bc1d36e0762a7ca0e7cbaddd76686790;
                     $Ff876e96994aa5b09ce92e771efe2038 = a7785208d901bEa02b65446067CfD0b3::F320b6a3920944D8a18d7949C8aBaCe4($data['server_id'], 'wc -c < ' . $ed147a39fb35be93248b6f1c206a8023, 'raw');
                     $D2f61e797d44efa20d9d559b2fc2c039 = round($Ff876e96994aa5b09ce92e771efe2038[$data['server_id']] * 0.008 / $Bed5705166e68002911f53d0e71685f5);
@@ -56,7 +56,7 @@ if (0 < $ipTV_db->num_rows()) {
                     }
                     if (!isset($f3f2a9f7d64ad754f9f888f441df853a['duration_secs']) || $Bed5705166e68002911f53d0e71685f5 != $f3f2a9f7d64ad754f9f888f441df853a['duration_secs']) {
                         $f3f2a9f7d64ad754f9f888f441df853a['duration_secs'] = $Bed5705166e68002911f53d0e71685f5;
-                        $f3f2a9f7d64ad754f9f888f441df853a['duration'] = $fd08711a26bab44719872c7fff1f2dfb;
+                        $f3f2a9f7d64ad754f9f888f441df853a['duration'] = $duration;
                     }
                     if (!isset($f3f2a9f7d64ad754f9f888f441df853a['video']) || $Ec610f8d82d35339f680a3ec9bbc078c['codecs']['video']['codec_name'] != $f3f2a9f7d64ad754f9f888f441df853a['video']) {
                         $f3f2a9f7d64ad754f9f888f441df853a['video'] = $Ec610f8d82d35339f680a3ec9bbc078c['codecs']['video'];

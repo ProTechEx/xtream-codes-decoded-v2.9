@@ -3,12 +3,12 @@
 class ipTV_stream
 {
     public static $ipTV_db;
-    static function ($A733a5416ffab6ff47547550f3f9f641)
+    static function ($sources)
     {
-        if (empty($A733a5416ffab6ff47547550f3f9f641)) {
+        if (empty($sources)) {
             return;
         }
-        foreach ($A733a5416ffab6ff47547550f3f9f641 as $source) {
+        foreach ($sources as $source) {
             if (file_exists(STREAMS_PATH . md5($source))) {
                 unlink(STREAMS_PATH . md5($source));
             }
@@ -299,34 +299,34 @@ class ipTV_stream
         $Fa28e3498375fc4da68f3f818d774249 = "/usr/bin/timeout {$d1c5b35a94aa4152ee37c6cfedfb2ec3}s " . FFPROBE_PATH . " {FETCH_OPTIONS} -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} {CONCAT} -i \"{STREAM_SOURCE}\" -v quiet -print_format json -show_streams -show_format";
         $be9f906faa527985765b1d8c897fb13a = array();
         if ($stream['server_info']['parent_id'] == 0) {
-            $A733a5416ffab6ff47547550f3f9f641 = $stream['stream_info']['type_key'] == 'created_live' ? array(CREATED_CHANNELS . $stream_id . '_.list') : json_decode($stream['stream_info']['stream_source'], true);
+            $sources = $stream['stream_info']['type_key'] == 'created_live' ? array(CREATED_CHANNELS . $stream_id . '_.list') : json_decode($stream['stream_info']['stream_source'], true);
         } else {
-            $A733a5416ffab6ff47547550f3f9f641 = array(ipTV_lib::$StreamingServers[$stream['server_info']['parent_id']]['site_url_ip'] . 'streaming/admin_live.php?stream=' . $stream_id . '&password=' . ipTV_lib::$settings['live_streaming_pass'] . '&extension=ts');
+            $sources = array(ipTV_lib::$StreamingServers[$stream['server_info']['parent_id']]['site_url_ip'] . 'streaming/admin_live.php?stream=' . $stream_id . '&password=' . ipTV_lib::$settings['live_streaming_pass'] . '&extension=ts');
         }
-        if (count($A733a5416ffab6ff47547550f3f9f641) > 0) {
+        if (count($sources) > 0) {
             if (empty($B71703fbd9f237149967f9ac3c41dc19)) {
                 if (ipTV_lib::$settings['priority_backup'] != 1) {
-                     $A733a5416ffab6ff47547550f3f9f641 = array($B71703fbd9f237149967f9ac3c41dc19);
+                     $sources = array($B71703fbd9f237149967f9ac3c41dc19);
                 }
                 else if (!empty($stream['server_info']['current_source'])) {
-                    $k = array_search($stream['server_info']['current_source'], $A733a5416ffab6ff47547550f3f9f641);
+                    $k = array_search($stream['server_info']['current_source'], $sources);
                     if ($k !== false) {
                         $index = 0;
                         while ($index <= $k) {
-                            $Ad110d626a9e62f0778a8f19383a0613 = $A733a5416ffab6ff47547550f3f9f641[$index];
-                            unset($A733a5416ffab6ff47547550f3f9f641[$index]);
-                            array_push($A733a5416ffab6ff47547550f3f9f641, $Ad110d626a9e62f0778a8f19383a0613);
+                            $Ad110d626a9e62f0778a8f19383a0613 = $sources[$index];
+                            unset($sources[$index]);
+                            array_push($sources, $Ad110d626a9e62f0778a8f19383a0613);
                             $index++;
                         }
-                        $A733a5416ffab6ff47547550f3f9f641 = array_values($A733a5416ffab6ff47547550f3f9f641);
+                        $sources = array_values($sources);
                     }
                 }
 
                 $F7b03a1f7467c01c6ea18452d9a5202f = $bb1b9dfc97454460e165348212675779 <= RESTART_TAKE_CACHE ? true : false;
                 if (!$F7b03a1f7467c01c6ea18452d9a5202f) {
-                    self::($A733a5416ffab6ff47547550f3f9f641);
+                    self::($sources);
                 }
-                foreach ($A733a5416ffab6ff47547550f3f9f641 as $source) {
+                foreach ($sources as $source) {
                     $stream_source = self::ParseStreamURL($source);
                     $server_protocol = strtolower(substr($stream_source, 0, strpos($stream_source, '://')));
                     $be9f906faa527985765b1d8c897fb13a = implode(' ', self::Ea860c1d3851C46D06E64911E3602768($stream['stream_arguments'], $server_protocol, 'fetch'));
@@ -442,7 +442,7 @@ class ipTV_stream
                     $af428179032a83d9ec1df565934b1c89 .= ' >/dev/null 2>>' . STREAMS_PATH . $stream_id . '.errors & echo $! > ' . STREAMS_PATH . $stream_id . '_.pid';
                     $af428179032a83d9ec1df565934b1c89 = str_replace(array('{INPUT}', '{FETCH_OPTIONS}', '{GEN_PTS}', '{STREAM_SOURCE}', '{MAP}', '{READ_NATIVE}', '{CONCAT}', '{AAC_FILTER}'), array("\"{$stream_source}\"", empty($stream['stream_info']['custom_ffmpeg']) ? $be9f906faa527985765b1d8c897fb13a : '', empty($stream['stream_info']['custom_ffmpeg']) ? $e9652f3db39531a69b91900690d5d064 : '', $stream_source, empty($stream['stream_info']['custom_ffmpeg']) ? $fd85ae68a4de5cc6cec54942d82e8f80 : '', empty($stream['stream_info']['custom_ffmpeg']) ? $feb3f2070e6ccf961f6265281e875b1a : '', $stream['stream_info']['type_key'] == 'created_live' && $stream['server_info']['parent_id'] == 0 ? '-safe 0 -f concat' : '', !stristr($e49460014c491accfafaa768ea84cd9c['container'], 'flv') && $e49460014c491accfafaa768ea84cd9c['codecs']['audio']['codec_name'] == 'aac' && $stream['stream_info']['transcode_attributes']['-acodec'] == 'copy' ? '-bsf:a aac_adtstoasc' : ''), $af428179032a83d9ec1df565934b1c89);
                     shell_exec($af428179032a83d9ec1df565934b1c89);
-                    $pid = $D90a38f0f1d7f1bcd1b2eee088e76aca = intval(file_get_contents(STREAMS_PATH . $stream_id . '_.pid'));
+                    $pid = $pid = intval(file_get_contents(STREAMS_PATH . $stream_id . '_.pid'));
                     if (SERVER_ID == $stream['stream_info']['tv_archive_server_id']) {
                         shell_exec(PHP_BIN . ' ' . TOOLS_PATH . 'archive.php ' . $stream_id . ' >/dev/null 2>/dev/null & echo $!');
                     }

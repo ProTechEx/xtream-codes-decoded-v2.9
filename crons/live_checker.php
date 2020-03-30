@@ -39,7 +39,7 @@ if (0 < $ipTV_db->num_rows()) {
         if (ipTV_streaming::CheckPidExist($stream['monitor_pid'], $stream['stream_id'])) {
             if (!($stream['on_demand'] == 1 && $stream['online_clients'] == 0)) {
                 $playlist = STREAMS_PATH . $stream['stream_id'] . '_.m3u8';
-                if (ipTV_streaming::bcAa9B8a7B46Eb36cd507a218FA64474($stream['pid'], $stream['stream_id']) && file_exists($playlist)) {
+                if (ipTV_streaming::CheckPidChannelM3U8Exist($stream['pid'], $stream['stream_id']) && file_exists($playlist)) {
                     $bitrate = ipTV_streaming::GetStreamBitrate('live', STREAMS_PATH . $stream['stream_id'] . '_.m3u8');
                     $progressFile = file_exists(STREAMS_PATH . $stream['stream_id'] . '_.progress') ? json_decode(file_get_contents(STREAMS_PATH . $stream['stream_id'] . '_.progress'), true) : array();
                     if (file_exists(STREAMS_PATH . $stream['stream_id'] . '_.pid')) {
