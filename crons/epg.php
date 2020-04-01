@@ -96,14 +96,14 @@ class E3223A8ad822526d8F69418863b6E8B5
     }
     public function ece97c9FE9a866e5B522E80e43b30997($result, $F7b03a1f7467c01c6ea18452d9a5202f)
     {
-        $F1350a5569e4b73d2f9cb26483f2a0c1 = pathinfo($result, PATHINFO_EXTENSION);
-        if (($F1350a5569e4b73d2f9cb26483f2a0c1 == 'gz')) {
+        $errors = pathinfo($result, PATHINFO_EXTENSION);
+        if (($errors == 'gz')) {
             $d31de515789f8101b06d8ca646ef5e24 = file_get_contents($result);
             $a41f6a5b2ce6655f27b7747349ad1f33 = simplexml_load_string($d31de515789f8101b06d8ca646ef5e24, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_PARSEHUGE);
             $d31de515789f8101b06d8ca646ef5e24 = gzdecode(file_get_contents($result));
             $a41f6a5b2ce6655f27b7747349ad1f33 = simplexml_load_string($d31de515789f8101b06d8ca646ef5e24, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_PARSEHUGE);
         }
-        else if ($F1350a5569e4b73d2f9cb26483f2a0c1 == 'xz') {
+        else if ($errors == 'xz') {
             $d31de515789f8101b06d8ca646ef5e24 = shell_exec("wget -qO- \"{$result}\" | unxz -c");
             $a41f6a5b2ce6655f27b7747349ad1f33 = simplexml_load_string($d31de515789f8101b06d8ca646ef5e24, 'SimpleXMLElement', LIBXML_COMPACT | LIBXML_PARSEHUGE);
         } 

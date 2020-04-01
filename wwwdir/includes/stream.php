@@ -350,9 +350,9 @@ class ipTV_stream
                 }
                 $e49460014c491accfafaa768ea84cd9c = self::Ccbd051c8A19a02dC5B6db256Ae31C07($e49460014c491accfafaa768ea84cd9c);
                 $Ee11a0d09ece7de916fbc0b2ca0136a3 = json_decode($stream['stream_info']['external_push'], true);
-                $e1dc30615033011f7166d1950e7036ee = 'http://127.0.0.1:' . ipTV_lib::$StreamingServers[SERVER_ID]['http_broadcast_port'] . "/progress.php?stream_id={$stream_id}";
+                $progress = 'http://127.0.0.1:' . ipTV_lib::$StreamingServers[SERVER_ID]['http_broadcast_port'] . "/progress.php?stream_id={$stream_id}";
                 if (empty($stream['stream_info']['custom_ffmpeg'])) {
-                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel warning -err_detect ignore_err {FETCH_OPTIONS} {GEN_PTS} {READ_NATIVE} -probesize {$probesize} -analyzeduration {$stream_max_analyze} -progress \"{$e1dc30615033011f7166d1950e7036ee}\" {CONCAT} -i \"{STREAM_SOURCE}\" ";
+                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel warning -err_detect ignore_err {FETCH_OPTIONS} {GEN_PTS} {READ_NATIVE} -probesize {$probesize} -analyzeduration {$stream_max_analyze} -progress \"{$progress}\" {CONCAT} -i \"{STREAM_SOURCE}\" ";
                     if (($stream['stream_info']['stream_all'] == 1)) {
                         $fd85ae68a4de5cc6cec54942d82e8f80 = '-map 0 -copy_unknown ';
                     }
@@ -410,16 +410,16 @@ class ipTV_stream
                             }
                         }
                     } else {
-                        $ccac9556cf5f7f83df650c022d673042 = 0;
+                        $segment_start_number = 0;
                         if (file_exists(DELAY_STREAM . $stream_id . '_.m3u8')) {
                             $file = file(DELAY_STREAM . $stream_id . '_.m3u8');
                             if (stristr($file[count($file) - 1], $stream_id . '_')) {
                                 if (preg_match('/\\_(.*?)\\.ts/', $file[count($file) - 1], $matches)) {
-                                    $ccac9556cf5f7f83df650c022d673042 = intval($matches[1]) + 1;
+                                    $segment_start_number = intval($matches[1]) + 1;
                                 }
                             } else {
                                 if (preg_match('/\\_(.*?)\\.ts/', $file[count($file) - 2], $matches)) {
-                                    $ccac9556cf5f7f83df650c022d673042 = intval($matches[1]) + 1;
+                                    $segment_start_number = intval($matches[1]) + 1;
                                 }
                             }
                             if (file_exists(DELAY_STREAM . $stream_id . '_.m3u8_old')) {
@@ -430,12 +430,12 @@ class ipTV_stream
                             }
                         }
                         $af428179032a83d9ec1df565934b1c89 .= implode(' ', self::f6664C80BDe3E9bbe2c12ceB906D5A11($stream['stream_info']['transcode_attributes'])) . ' ';
-                        $af428179032a83d9ec1df565934b1c89 .= '{MAP} -individual_header_trailer 0 -f segment -segment_format mpegts -segment_time ' . ipTV_lib::$SegmentsSettings['seg_time'] . ' -segment_list_size ' . $stream['stream_info']['delay_minutes'] * 6 . " -segment_start_number {$ccac9556cf5f7f83df650c022d673042} -segment_format_options \"mpegts_flags=+initial_discontinuity:mpegts_copyts=1\" -segment_list_type m3u8 -segment_list_flags +live+delete -segment_list \"" . DELAY_STREAM . $stream_id . '_.m3u8" "' . DELAY_STREAM . $stream_id . '_%d.ts" ';
-                        $Dedb93a1e8822879d8790c1f2fc7d6f1 = $stream['stream_info']['delay_minutes'] * 60;
-                        if ($ccac9556cf5f7f83df650c022d673042 > 0) {
-                            $Dedb93a1e8822879d8790c1f2fc7d6f1 -= ($ccac9556cf5f7f83df650c022d673042 - 1) * 10;
-                            if ($Dedb93a1e8822879d8790c1f2fc7d6f1 <= 0) {
-                                $Dedb93a1e8822879d8790c1f2fc7d6f1 = 0;
+                        $af428179032a83d9ec1df565934b1c89 .= '{MAP} -individual_header_trailer 0 -f segment -segment_format mpegts -segment_time ' . ipTV_lib::$SegmentsSettings['seg_time'] . ' -segment_list_size ' . $stream['stream_info']['delay_minutes'] * 6 . " -segment_start_number {$segment_start_number} -segment_format_options \"mpegts_flags=+initial_discontinuity:mpegts_copyts=1\" -segment_list_type m3u8 -segment_list_flags +live+delete -segment_list \"" . DELAY_STREAM . $stream_id . '_.m3u8" "' . DELAY_STREAM . $stream_id . '_%d.ts" ';
+                        $delay_minutes = $stream['stream_info']['delay_minutes'] * 60;
+                        if ($segment_start_number > 0) {
+                            $delay_minutes -= ($segment_start_number - 1) * 10;
+                            if ($delay_minutes <= 0) {
+                                $delay_minutes = 0;
                             }
                         }
                     }
@@ -447,7 +447,7 @@ class ipTV_stream
                         shell_exec(PHP_BIN . ' ' . TOOLS_PATH . 'archive.php ' . $stream_id . ' >/dev/null 2>/dev/null & echo $!');
                     }
                     $Dac1208baefb5d684938829a3a0e0bc6 = $stream['stream_info']['delay_minutes'] > 0 && $stream['server_info']['parent_id'] == 0 ? true : false;
-                    $f32785b2a16d0d92cda0b44ed436f505 = $Dac1208baefb5d684938829a3a0e0bc6 ? time() + $Dedb93a1e8822879d8790c1f2fc7d6f1 : 0;
+                    $f32785b2a16d0d92cda0b44ed436f505 = $Dac1208baefb5d684938829a3a0e0bc6 ? time() + $delay_minutes : 0;
                     self::$ipTV_db->query('UPDATE `streams_sys` SET `delay_available_at` = \'%d\',`to_analyze` = 0,`stream_started` = \'%d\',`stream_info` = \'%s\',`stream_status` = 0,`pid` = \'%d\',`progress_info` = \'%s\',`current_source` = \'%s\' WHERE `stream_id` = \'%d\' AND `server_id` = \'%d\'', $f32785b2a16d0d92cda0b44ed436f505, time(), json_encode($e49460014c491accfafaa768ea84cd9c), $pid, json_encode(array()), $source, $stream_id, SERVER_ID);
                     $playlist = !$Dac1208baefb5d684938829a3a0e0bc6 ? STREAMS_PATH . $stream_id . '_.m3u8' : DELAY_STREAM . $stream_id . '_.m3u8';
                     return array('main_pid' => $pid, 'stream_source' => $stream_source, 'delay_enabled' => $Dac1208baefb5d684938829a3a0e0bc6, 'parent_id' => $stream['server_info']['parent_id'], 'delay_start_at' => $f32785b2a16d0d92cda0b44ed436f505, 'playlist' => $playlist);
@@ -455,7 +455,7 @@ class ipTV_stream
                     
                 } else {
                     $stream['stream_info']['transcode_attributes'] = array();
-                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel quiet {$d1006c7cc041221972025137b5112b7d} -progress \"{$e1dc30615033011f7166d1950e7036ee}\" " . $stream['stream_info']['custom_ffmpeg'];
+                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel quiet {$d1006c7cc041221972025137b5112b7d} -progress \"{$progress}\" " . $stream['stream_info']['custom_ffmpeg'];
                 }
             }
         }
