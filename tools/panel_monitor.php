@@ -15,7 +15,7 @@ if (ipTV_lib::$settings['firewall'] == 0) {
 }
 file_put_contents(TMP_DIR . '5a9ccab64e61d9af12baa7d4011acc1a', 1);
 unlink(TMP_DIR . 'd52d7d1df4f329bda8b2d9f67fa5d846');
-$c41986ad785eace90882e61c64cabb41 = time();
+$time = time();
 while (!false) {
     if (!$ipTV_db->query('SELECT `firewall` FROM settings')) {
         break;
@@ -38,9 +38,9 @@ while (!false) {
             file_put_contents(TMP_DIR . md5(strtolower($row['username'] . $row['password'])), 1);
         }
     }
-    if (600 <= time() - $c41986ad785eace90882e61c64cabb41) {
+    if (600 <= time() - $time) {
         unlink(IPTV_PANEL_DIR . 'tmp/blacklist');
-        $c41986ad785eace90882e61c64cabb41 = time();
+        $time = time();
     }
     sleep(3);
 }

@@ -1,7 +1,5 @@
 <?php
-/*Rev:26.09.18r0*/
 
-/*Rev:21.09.19r0-goto Php7.2.4 L:10.2*/
 function B59f12aD3c67D06C7d816CCE0857A9c0($ec0af356ee19bf81bc8dd6124c92ce80)
 {
     global $E24f60f7b980e94775d1c9804fa34f3c;
@@ -17,11 +15,11 @@ function B59f12aD3c67D06C7d816CCE0857A9c0($ec0af356ee19bf81bc8dd6124c92ce80)
         unlink($E24f60f7b980e94775d1c9804fa34f3c);
     }
 }
-function e4A17039c7e2bF3AEf24682E95596200($B518c504726504931b60668a64bb6f72)
+function e4A17039c7e2bF3AEf24682E95596200($timestamp)
 {
     global $stream_id;
-    if (file_exists(STREAMS_PATH . $stream_id . '_' . $B518c504726504931b60668a64bb6f72 . '.ts')) {
-        unlink(STREAMS_PATH . $stream_id . '_' . $B518c504726504931b60668a64bb6f72 . '.ts');
+    if (file_exists(STREAMS_PATH . $stream_id . '_' . $timestamp . '.ts')) {
+        unlink(STREAMS_PATH . $stream_id . '_' . $timestamp . '.ts');
     }
 }
 function a004966a0490316174410F9d02e551Cc($stream_id)
@@ -86,20 +84,20 @@ function C2C6381b9cB137Fe8E0c902B6580806B($playlist, $A029b77634bf5f67a52c7d5b31
     return $C325d28e238c3a646bd7b095aa1ffa85;
 }
 if (!@$argc) {
-    if (!empty($E32190558705873b39f90bdb17221fd6['segments'])) {
+    if (!empty($m3u['segments'])) {
         $ec0af356ee19bf81bc8dd6124c92ce80 = C2C6381B9cB137fe8e0C902B6580806b($E24f60f7b980e94775d1c9804fa34f3c, -1);
         $streamsSys = $ipTV_db->get_row();
         if (!($argc <= 2)) {
             usleep(5000);
-            foreach ($E32190558705873b39f90bdb17221fd6['vars'] as $Baee0c34e5755f1cfaa4159ea7e8702e => $F825e5509b5b7d124881b85978e1cd5b) {
+            foreach ($m3u['vars'] as $Baee0c34e5755f1cfaa4159ea7e8702e => $F825e5509b5b7d124881b85978e1cd5b) {
                 $d76067cf9572f7a6691c85c12faf2a29 .= !empty($F825e5509b5b7d124881b85978e1cd5b) ? $Baee0c34e5755f1cfaa4159ea7e8702e . ':' . $F825e5509b5b7d124881b85978e1cd5b . '
 ' : $Baee0c34e5755f1cfaa4159ea7e8702e . '
 ';
             }
             $ipTV_db->query('UPDATE `streams_sys` SET delay_pid = \'%d\' WHERE stream_id = \'%d\' AND server_id = \'%d\'', getmypid(), $stream_id, SERVER_ID);
             $Bdc1c8e2b3e276254f5bac32b7c43966 = md5(file_get_contents($Afc586234254c12273d2fecf9c81d7de));
-            $E32190558705873b39f90bdb17221fd6 = array('vars' => array('#EXTM3U' => '', '#EXT-X-VERSION' => 3, '#EXT-X-MEDIA-SEQUENCE' => '0', '#EXT-X-ALLOW-CACHE' => 'YES', '#EXT-X-TARGETDURATION' => ipTV_lib::$SegmentsSettings['seg_time']), 'segments' => array());
-            foreach ($E32190558705873b39f90bdb17221fd6['segments'] as $fe9d0d199fc51f64065055d8bcade279) {
+            $m3u = array('vars' => array('#EXTM3U' => '', '#EXT-X-VERSION' => 3, '#EXT-X-MEDIA-SEQUENCE' => '0', '#EXT-X-ALLOW-CACHE' => 'YES', '#EXT-X-TARGETDURATION' => ipTV_lib::$SegmentsSettings['seg_time']), 'segments' => array());
+            foreach ($m3u['segments'] as $fe9d0d199fc51f64065055d8bcade279) {
                 copy(DELAY_STREAM . $fe9d0d199fc51f64065055d8bcade279['file'], STREAMS_PATH . $fe9d0d199fc51f64065055d8bcade279['file']);
                 $d76067cf9572f7a6691c85c12faf2a29 .= '#EXTINF:' . $fe9d0d199fc51f64065055d8bcade279['seconds'] . ',
 ' . $fe9d0d199fc51f64065055d8bcade279['file'] . '
@@ -113,7 +111,7 @@ if (!@$argc) {
             $total_segments = intval(ipTV_lib::$SegmentsSettings['seg_list_size']);
             A004966a0490316174410F9D02E551CC($stream_id);
             $f4cb2e0f4f9d3070cea6104f839ddf0c = md5(file_get_contents($Afc586234254c12273d2fecf9c81d7de));
-            $E32190558705873b39f90bdb17221fd6['vars']['#EXT-X-MEDIA-SEQUENCE'] = $dc74996ad998dff0c7193a827d43d36f;
+            $m3u['vars']['#EXT-X-MEDIA-SEQUENCE'] = $dc74996ad998dff0c7193a827d43d36f;
             $ec0af356ee19bf81bc8dd6124c92ce80 = array();
             define('FETCH_BOUQUETS', false);
             $b1f097c3b9a5a23f95acaf353ae812eb = STREAMS_PATH . $stream_id . '_.m3u8';
@@ -132,9 +130,9 @@ if (!@$argc) {
                             set_time_limit(0);
                             $f4cb2e0f4f9d3070cea6104f839ddf0c = $Bdc1c8e2b3e276254f5bac32b7c43966;
                             $d76067cf9572f7a6691c85c12faf2a29 = '';
-                        } while (!preg_match('/.*\\_(.*?)\\.ts/', $E32190558705873b39f90bdb17221fd6['segments'][0]['file'], $ae37877cee3bc97c8cfa6ec5843993ed));
+                        } while (!preg_match('/.*\\_(.*?)\\.ts/', $m3u['segments'][0]['file'], $ae37877cee3bc97c8cfa6ec5843993ed));
                         $E24f60f7b980e94775d1c9804fa34f3c = DELAY_STREAM . $stream_id . '_.m3u8_old';
-                        $E32190558705873b39f90bdb17221fd6 = array();
+                        $m3u = array();
                         do {
                             die;
                             echo '[*] Correct Usage: php ' . __FILE__ . ' <stream_id> [minutes]
@@ -150,7 +148,7 @@ if (!@$argc) {
                 $Bc1d36e0762a7ca0e7cbaddd76686790 = intval(abs($argv[2]));
                 $pid = $streamsSys['delay_pid'];
                 require str_replace('\\', '/', dirname($argv[0])) . '/../wwwdir/init.php';
-                $E32190558705873b39f90bdb17221fd6['segments'] = A6906a8e4d8A1101eea6A7BBa589E3C1($Afc586234254c12273d2fecf9c81d7de, $ec0af356ee19bf81bc8dd6124c92ce80, $total_segments);
+                $m3u['segments'] = A6906a8e4d8A1101eea6A7BBa589E3C1($Afc586234254c12273d2fecf9c81d7de, $ec0af356ee19bf81bc8dd6124c92ce80, $total_segments);
                 die;
                 $Bdc1c8e2b3e276254f5bac32b7c43966 = 0;
             } while (!($f4cb2e0f4f9d3070cea6104f839ddf0c != $Bdc1c8e2b3e276254f5bac32b7c43966));

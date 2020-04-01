@@ -62,10 +62,10 @@ class ipTV_stream
     }
     static function E0A1164567005185e0818F081674E240($C0379dd6700deb6b1021ed6026f648b9, $Aa894918d6f628c53ace2682189e44d5, $f84c1c6145bb73410b3ea7c0f8b4a9f3 = array(), $A7da0ef4553f5ea253d3907a7c9ef7f0 = '')
     {
-        $C359d5e5ab36c7a88fca0754166e7996 = abs(intval(ipTV_lib::$settings['stream_max_analyze']));
-        $E1be7e0ba659254273dc1475ae9679e0 = abs(intval(ipTV_lib::$settings['probesize']));
-        $timeout = intval($C359d5e5ab36c7a88fca0754166e7996 / 1000000) + 5;
-        $command = "{$A7da0ef4553f5ea253d3907a7c9ef7f0}/usr/bin/timeout {$timeout}s " . FFPROBE_PATH . " -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} " . implode(' ', $f84c1c6145bb73410b3ea7c0f8b4a9f3) . " -i \"{$C0379dd6700deb6b1021ed6026f648b9}\" -v quiet -print_format json -show_streams -show_format";
+        $stream_max_analyze = abs(intval(ipTV_lib::$settings['stream_max_analyze']));
+        $probesize = abs(intval(ipTV_lib::$settings['probesize']));
+        $timeout = intval($stream_max_analyze / 1000000) + 5;
+        $command = "{$A7da0ef4553f5ea253d3907a7c9ef7f0}/usr/bin/timeout {$timeout}s " . FFPROBE_PATH . " -probesize {$probesize} -analyzeduration {$stream_max_analyze} " . implode(' ', $f84c1c6145bb73410b3ea7c0f8b4a9f3) . " -i \"{$C0379dd6700deb6b1021ed6026f648b9}\" -v quiet -print_format json -show_streams -show_format";
         $result = ipTV_servers::RunCommandServer($Aa894918d6f628c53ace2682189e44d5, $command, 'raw', $timeout * 2, $timeout * 2);
         return self::cCBD051C8a19a02Dc5B6dB256Ae31c07(json_decode($result[$Aa894918d6f628c53ace2682189e44d5], true));
     }
@@ -289,14 +289,14 @@ class ipTV_stream
         self::$ipTV_db->query('SELECT t1.*, t2.* FROM `streams_options` t1, `streams_arguments` t2 WHERE t1.stream_id = \'%d\' AND t1.argument_id = t2.id', $stream_id);
         $stream['stream_arguments'] = self::$ipTV_db->get_rows();
         if ($stream['server_info']['on_demand'] == 1) {
-            $E1be7e0ba659254273dc1475ae9679e0 = $stream['stream_info']['probesize_ondemand'];
-            $C359d5e5ab36c7a88fca0754166e7996 = '10000000';
+            $probesize = $stream['stream_info']['probesize_ondemand'];
+            $stream_max_analyze = '10000000';
         } else {
-            $C359d5e5ab36c7a88fca0754166e7996 = abs(intval(ipTV_lib::$settings['stream_max_analyze']));
-            $E1be7e0ba659254273dc1475ae9679e0 = abs(intval(ipTV_lib::$settings['probesize']));
+            $stream_max_analyze = abs(intval(ipTV_lib::$settings['stream_max_analyze']));
+            $probesize = abs(intval(ipTV_lib::$settings['probesize']));
         }
-        $d1c5b35a94aa4152ee37c6cfedfb2ec3 = intval($C359d5e5ab36c7a88fca0754166e7996 / 1000000) + 7;
-        $Fa28e3498375fc4da68f3f818d774249 = "/usr/bin/timeout {$d1c5b35a94aa4152ee37c6cfedfb2ec3}s " . FFPROBE_PATH . " {FETCH_OPTIONS} -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} {CONCAT} -i \"{STREAM_SOURCE}\" -v quiet -print_format json -show_streams -show_format";
+        $d1c5b35a94aa4152ee37c6cfedfb2ec3 = intval($stream_max_analyze / 1000000) + 7;
+        $Fa28e3498375fc4da68f3f818d774249 = "/usr/bin/timeout {$d1c5b35a94aa4152ee37c6cfedfb2ec3}s " . FFPROBE_PATH . " {FETCH_OPTIONS} -probesize {$probesize} -analyzeduration {$stream_max_analyze} {CONCAT} -i \"{STREAM_SOURCE}\" -v quiet -print_format json -show_streams -show_format";
         $be9f906faa527985765b1d8c897fb13a = array();
         if ($stream['server_info']['parent_id'] == 0) {
             $sources = $stream['stream_info']['type_key'] == 'created_live' ? array(CREATED_CHANNELS . $stream_id . '_.list') : json_decode($stream['stream_info']['stream_source'], true);
@@ -352,7 +352,7 @@ class ipTV_stream
                 $Ee11a0d09ece7de916fbc0b2ca0136a3 = json_decode($stream['stream_info']['external_push'], true);
                 $e1dc30615033011f7166d1950e7036ee = 'http://127.0.0.1:' . ipTV_lib::$StreamingServers[SERVER_ID]['http_broadcast_port'] . "/progress.php?stream_id={$stream_id}";
                 if (empty($stream['stream_info']['custom_ffmpeg'])) {
-                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel warning -err_detect ignore_err {FETCH_OPTIONS} {GEN_PTS} {READ_NATIVE} -probesize {$E1be7e0ba659254273dc1475ae9679e0} -analyzeduration {$C359d5e5ab36c7a88fca0754166e7996} -progress \"{$e1dc30615033011f7166d1950e7036ee}\" {CONCAT} -i \"{STREAM_SOURCE}\" ";
+                    $af428179032a83d9ec1df565934b1c89 = FFMPEG_PATH . " -y -nostdin -hide_banner -loglevel warning -err_detect ignore_err {FETCH_OPTIONS} {GEN_PTS} {READ_NATIVE} -probesize {$probesize} -analyzeduration {$stream_max_analyze} -progress \"{$e1dc30615033011f7166d1950e7036ee}\" {CONCAT} -i \"{STREAM_SOURCE}\" ";
                     if (($stream['stream_info']['stream_all'] == 1)) {
                         $fd85ae68a4de5cc6cec54942d82e8f80 = '-map 0 -copy_unknown ';
                     }
