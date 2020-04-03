@@ -114,7 +114,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
 } else {
     die;
 }
-$channel_info = ipTV_streaming::F3c105BCCEd491229D4Aed6937F96A8C($stream_id, 'ts', $user_info, $user_ip, $geoip_country_code, '', $user_info['con_isp_name'], 'archive');
+$channel_info = ipTV_streaming::ChannelInfo($stream_id, 'ts', $user_info, $user_ip, $geoip_country_code, '', $user_info['con_isp_name'], 'archive');
 if (empty($channel_info)) {
     http_response_code(403);
     die;

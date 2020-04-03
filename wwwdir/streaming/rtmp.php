@@ -112,7 +112,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         http_response_code(401);
         die;
     }
-    if ($channel_info = ipTV_streaming::F3c105BccEd491229D4Aed6937F96A8C($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device, $user_info['con_isp_name'], 'live')) {
+    if ($channel_info = ipTV_streaming::ChannelInfo($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device, $user_info['con_isp_name'], 'live')) {
         $playlist = STREAMS_PATH . $stream_id . '_.m3u8';
         if (!ipTV_streaming::ps_running($channel_info['pid'], FFMPEG_PATH) && $channel_info['on_demand'] == 1) {
             ipTV_stream::startStream($stream_id);

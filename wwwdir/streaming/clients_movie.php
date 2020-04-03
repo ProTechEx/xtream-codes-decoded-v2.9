@@ -116,7 +116,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'CON_SVP', $user_ip, json_encode(array('user_agent' => $user_agent, 'isp' => $user_info['con_isp_name'], 'type' => $user_info['con_isp_type'])), true);
         die;
     }
-    if ($channel_info = ipTV_streaming::f3C105bcCed491229d4AEd6937f96A8c($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, '', $user_info['con_isp_name'], 'movie')) {
+    if ($channel_info = ipTV_streaming::ChannelInfo($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, '', $user_info['con_isp_name'], 'movie')) {
         $date = time();
         $container_priority = 'VOD';
         $ipTV_db->query('INSERT INTO `user_activity_now` (`user_id`,`stream_id`,`server_id`,`user_agent`,`user_ip`,`container`,`pid`,`date_start`,`geoip_country_code`,`isp`) VALUES(\'%d\',\'%d\',\'%d\',\'%s\',\'%s\',\'%s\',\'%d\',\'%d\',\'%s\',\'%s\')', $user_info['id'], $stream_id, SERVER_ID, $user_agent, $user_ip, $container_priority, getmypid(), $date, $geoip_country_code, $user_info['con_isp_name']);

@@ -77,7 +77,7 @@ class ipTV_streaming
     {
         file_put_contents(CLOSE_OPEN_CONS_PATH . $activity_id, 1);
     }
-    public static function C1B5A5e17240E1fbe7502CCDb57EA2EF($stream_id)
+    public static function GetStreamData($stream_id)
     {
         if (CACHE_STREAMS) {
             if (file_exists(TMP_DIR . $stream_id . '_cacheStream') && time() - filemtime(TMP_DIR . $stream_id . '_cacheStream') <= CACHE_STREAMS_TIME) {
@@ -103,7 +103,7 @@ class ipTV_streaming
         }
         return !empty($output) ? $output : false;
     }
-    public static function F3c105bCCed491229d4Aed6937F96a8c($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device = '', $con_isp_name = '', $type)
+    public static function ChannelInfo($stream_id, $extension, $user_info, $user_ip, $geoip_country_code, $external_device = '', $con_isp_name = '', $type)
     {
         if ($type == 'archive') {
             self::$ipTV_db->query('SELECT `tv_archive_server_id`,`tv_archive_duration` FROM `streams` WHERE `id` = \'%d\'', $stream_id);
@@ -111,11 +111,11 @@ class ipTV_streaming
                 $row = self::$ipTV_db->get_row();
                 if ($row['tv_archive_duration'] > 0 && $row['tv_archive_server_id'] > 0 && array_key_exists($row['tv_archive_server_id'], ipTV_lib::$StreamingServers)) {
                     if ($row['tv_archive_server_id'] != SERVER_ID) {
-                        parse_str($_SERVER['QUERY_STRING'], $Cc31a34e0b1fa157d875f9946912d9fa);
-                        $D4a67bbd52a22a102a646011a4bec962 = time() + $Cc31a34e0b1fa157d875f9946912d9fa['duration'] * 60;
-                        $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $Cc31a34e0b1fa157d875f9946912d9fa['start'], 'duration' => $Cc31a34e0b1fa157d875f9946912d9fa['duration'], 'extension' => $Cc31a34e0b1fa157d875f9946912d9fa['extension']);
-                        $Ad100f7d10d8567e78ddc1e86e51e4a9 = substr($_SERVER['REQUEST_URI'], 1);
-                        header('Location: ' . ipTV_lib::$StreamingServers[$row['tv_archive_server_id']]['site_url'] . 'streaming/timeshift.php?token=' . base64_encode(decrypt_config(json_encode($e3874676e9103a9996301beac4efcde2), md5(ipTV_lib::$settings['crypt_load_balancing']))));
+                        parse_str($_SERVER['QUERY_STRING'], $output);
+                        $time = time() + $output['duration'] * 60;
+                        $data = array('hash' => md5(json_encode(array('user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $output['start'], 'duration' => $output['duration'], 'extension' => $output['extension'], 'time' => $time))), 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'time' => $time, 'external_device' => $external_device, 'isp' => $con_isp_name, 'country' => $geoip_country_code, 'stream_id' => $stream_id, 'start' => $output['start'], 'duration' => $output['duration'], 'extension' => $output['extension']);
+                        $uri = substr($_SERVER['REQUEST_URI'], 1);
+                        header('Location: ' . ipTV_lib::$StreamingServers[$row['tv_archive_server_id']]['site_url'] . 'streaming/timeshift.php?token=' . base64_encode(decrypt_config(json_encode($data), md5(ipTV_lib::$settings['crypt_load_balancing']))));
                         die;
                     } else {
                         return true;
@@ -124,7 +124,7 @@ class ipTV_streaming
             }
             return false;
         }
-        $stream = self::C1b5A5E17240e1fbE7502ccdb57eA2Ef($stream_id);
+        $stream = self::GetStreamData($stream_id);
         if (empty($stream)) {
             return false;
         }
@@ -261,20 +261,19 @@ class ipTV_streaming
                             }
                             if ($B0e9c71612dc0f9cbfac184b33ec7cae != SERVER_ID) {
                                 if ($type == 'live') {
-                                    $D4a67bbd52a22a102a646011a4bec962 = $extension == 'm3u8' ? 0 : time() + 6;
+                                    $time = $extension == 'm3u8' ? 0 : time() + 6;
                                 } else {
                                     $streamData = json_decode($stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['stream_info'], true);
-                                    $D4a67bbd52a22a102a646011a4bec962 = time() + (int) $streamData['of_duration'];
+                                    $time = time() + (int) $streamData['of_duration'];
                                 }
-                                $e3874676e9103a9996301beac4efcde2 = array('hash' => md5(json_encode(array('stream_id' => $stream_id, 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid'], 'time' => $D4a67bbd52a22a102a646011a4bec962))), 'stream_id' => $stream_id, 'user_id' => $user_info['id'], 'time' => $D4a67bbd52a22a102a646011a4bec962, 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid']);
-                                $Ad100f7d10d8567e78ddc1e86e51e4a9 = substr($_SERVER['REQUEST_URI'], 1);
-                                $cb8983ea8c2dc44d7be007079a71c336 = substr_count($Ad100f7d10d8567e78ddc1e86e51e4a9, '?') == 0 ? '?' : '&';
-                                header('Location: ' . ipTV_lib::$StreamingServers[$B0e9c71612dc0f9cbfac184b33ec7cae]['site_url'] . $Ad100f7d10d8567e78ddc1e86e51e4a9 . $cb8983ea8c2dc44d7be007079a71c336 . 'token=' . base64_encode(decrypt_config(json_encode($e3874676e9103a9996301beac4efcde2), md5(ipTV_lib::$settings['crypt_load_balancing']))));
+                                $data = array('hash' => md5(json_encode(array('stream_id' => $stream_id, 'user_id' => $user_info['id'], 'username' => $user_info['username'], 'password' => $user_info['password'], 'user_ip' => $user_ip, 'live_streaming_pass' => ipTV_lib::$settings['live_streaming_pass'], 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid'], 'time' => $time))), 'stream_id' => $stream_id, 'user_id' => $user_info['id'], 'time' => $time, 'pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['pid'], 'external_device' => $external_device, 'on_demand' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['on_demand'], 'isp' => $con_isp_name, 'bitrate' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['bitrate'], 'country' => $geoip_country_code, 'extension' => $extension, 'is_restreamer' => $user_info['is_restreamer'], 'max_connections' => $user_info['max_connections'], 'monitor_pid' => $stream['servers'][$B0e9c71612dc0f9cbfac184b33ec7cae]['monitor_pid']);
+                                $uri = substr($_SERVER['REQUEST_URI'], 1);
+                                $type = substr_count($uri, '?') == 0 ? '?' : '&';
+                                header('Location: ' . ipTV_lib::$StreamingServers[$B0e9c71612dc0f9cbfac184b33ec7cae]['site_url'] . $uri . $type . 'token=' . base64_encode(decrypt_config(json_encode($data), md5(ipTV_lib::$settings['crypt_load_balancing']))));
                                 die;
                             } else {
                                 return array_merge($stream['info'], $stream['servers'][SERVER_ID]);
                             }
-                            d70ed864d6326141a170ff65fdc47989:
                             return false;
                         }
                     }
