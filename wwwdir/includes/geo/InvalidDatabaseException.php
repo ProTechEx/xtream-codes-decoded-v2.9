@@ -1,8 +1,9 @@
 <?php
-/*Rev:26.09.18r0*/
 
-namespace A5182b802F62B842DAaB96095e825470\c3f93b919c2c302f8f010b40aeb3139F\e5Ab5DeeFFbD227296ACB28096E5070c;
+namespace MaxMind\Db\Reader;
 
-class e5fEa4BB1753b166E279e9172AD7B28D extends \Exception
+use Exception;
+
+class InvalidDatabaseException extends \Exception
 {
 }

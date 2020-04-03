@@ -64,10 +64,10 @@ if ($ipTV_db->num_rows() > 0) {
                 header('Content-Type: application/octet-stream');
         }
         $fp = @fopen($E6dd23f358d554b9a74e3ae676bc8c9b, 'rb');
-        $filename_size = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
-        $length = $filename_size;
+        $size = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
+        $length = $size;
         $start = 0;
-        $end = $filename_size - 1;
+        $end = $size - 1;
         header("Accept-Ranges: 0-{$length}");
         if (isset($_SERVER['HTTP_RANGE'])) {
             $c_start = $start;
@@ -75,20 +75,20 @@ if ($ipTV_db->num_rows() > 0) {
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
             if (strpos($range, ',') !== false) {
                 header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                header("Content-Range: bytes {$start}-{$end}/{$size}");
                 die;
             }
             if ($range == '-') {
-                $c_start = $filename_size - substr($range, 1);
+                $c_start = $size - substr($range, 1);
             } else {
                 $range = explode('-', $range);
                 $c_start = $range[0];
-                $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
+                $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $size;
             }
             $c_end = $c_end > $end ? $end : $c_end;
-            if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
+            if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
                 header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                header("Content-Range: bytes {$start}-{$end}/{$size}");
                 die;
             }
             $start = $c_start;
@@ -97,12 +97,12 @@ if ($ipTV_db->num_rows() > 0) {
             fseek($fp, $start);
             header('HTTP/1.1 206 Partial Content');
         }
-        header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+        header("Content-Range: bytes {$start}-{$end}/{$size}");
         header('Content-Length: ' . $length);
-        $C7558f823ac28009bfd4730a82f1f01b = 1024 * 8;
+        $buffer = 1024 * 8;
         //a28124da1815e0b87ed638f4cd963820:
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
-            $response = stream_get_line($fp, $C7558f823ac28009bfd4730a82f1f01b);
+            $response = stream_get_line($fp, $buffer);
             echo $response;
         }
         //d851a70aee5237a74fe51c01ffb880e3:

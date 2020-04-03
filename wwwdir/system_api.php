@@ -192,10 +192,10 @@ switch ($action) {
             if (file_exists($filename) && is_readable($filename)) {
                 header('Content-Type: application/octet-stream');
                 $fp = @fopen($filename, 'rb');
-                $filename_size = filesize($filename);
-                $length = $filename_size;
+                $size = filesize($filename);
+                $length = $size;
                 $start = 0;
-                $end = $filename_size - 1;
+                $end = $size - 1;
                 header("Accept-Ranges: 0-{$length}");
                 if (isset($_SERVER['HTTP_RANGE'])) {
                     $c_start = $start;
@@ -203,20 +203,20 @@ switch ($action) {
                     list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                     if (strpos($range, ',') !== false) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                        header("Content-Range: bytes {$start}-{$end}/{$size}");
                         die;
                     }
                     if ($range == '-') {
-                        $c_start = $filename_size - substr($range, 1);
+                        $c_start = $size - substr($range, 1);
                     } else {
                         $range = explode('-', $range);
                         $c_start = $range[0];
-                        $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
+                        $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $size;
                     }
                     $c_end = $c_end > $end ? $end : $c_end;
-                    if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
+                    if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                        header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                        header("Content-Range: bytes {$start}-{$end}/{$size}");
                         die;
                     }
                     $start = $c_start;
@@ -225,7 +225,7 @@ switch ($action) {
                     fseek($fp, $start);
                     header('HTTP/1.1 206 Partial Content');
                 }
-                header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                header("Content-Range: bytes {$start}-{$end}/{$size}");
                 header('Content-Length: ' . $length);
                 while (!feof($fp) && ($p = ftell($fp)) <= $end) {
                     echo stream_get_line($fp, ipTV_lib::$settings['read_buffer_size']);

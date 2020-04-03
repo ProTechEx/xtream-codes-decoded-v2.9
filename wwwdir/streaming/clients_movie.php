@@ -156,10 +156,10 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         $E6dd23f358d554b9a74e3ae676bc8c9b = MOVIES_PATH . $stream_id . '.' . $extension;
         if (file_exists($E6dd23f358d554b9a74e3ae676bc8c9b)) {
             $fp = @fopen($E6dd23f358d554b9a74e3ae676bc8c9b, 'rb');
-            $filename_size = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
-            $length = $filename_size;
+            $size = filesize($E6dd23f358d554b9a74e3ae676bc8c9b);
+            $length = $size;
             $start = 0;
-            $end = $filename_size - 1;
+            $end = $size - 1;
             header("Accept-Ranges: 0-{$length}");
             if (isset($_SERVER['HTTP_RANGE'])) {
                 $c_start = $start;
@@ -167,20 +167,20 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                 list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                 if (strpos($range, ',') !== false) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                    header("Content-Range: bytes {$start}-{$end}/{$size}");
                     die;
                 }
                 if ($range == '-') {
-                    $c_start = $filename_size - substr($range, 1);
+                    $c_start = $size - substr($range, 1);
                 } else {
                     $range = explode('-', $range);
                     $c_start = $range[0];
-                    $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
+                    $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $size;
                 }
                 $c_end = $c_end > $end ? $end : $c_end;
-                if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
+                if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                    header("Content-Range: bytes {$start}-{$end}/{$size}");
                     die;
                 }
                 $start = $c_start;
@@ -189,11 +189,11 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                 fseek($fp, $start);
                 header('HTTP/1.1 206 Partial Content');
             }
-            header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+            header("Content-Range: bytes {$start}-{$end}/{$size}");
             header('Content-Length: ' . $length);
             $time_start = time();
             $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
-            $C7558f823ac28009bfd4730a82f1f01b = ipTV_lib::$settings['read_buffer_size'];
+            $buffer = ipTV_lib::$settings['read_buffer_size'];
             $index = 0;
             $b0cd8de619914d3df89e9fc24acad4e6 = 0;
             if (ipTV_lib::$settings['vod_limit_at'] > 0) {
@@ -204,9 +204,9 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
             $A8e591a80910b24673b1a94b8219ab96 = false;
             //D7b3f9d60519ce61242d1941a0c77b14:
             while (!feof($fp) && ($p = ftell($fp)) <= $end) {
-                $response = stream_get_line($fp, $C7558f823ac28009bfd4730a82f1f01b);
+                $response = stream_get_line($fp, $buffer);
                 ++$index;
-                if (!$A8e591a80910b24673b1a94b8219ab96 && $b0cd8de619914d3df89e9fc24acad4e6 * $C7558f823ac28009bfd4730a82f1f01b >= $F6295a8bab3aa6bb5b9c4a70c99ec761) {
+                if (!$A8e591a80910b24673b1a94b8219ab96 && $b0cd8de619914d3df89e9fc24acad4e6 * $buffer >= $F6295a8bab3aa6bb5b9c4a70c99ec761) {
                     $A8e591a80910b24673b1a94b8219ab96 = true;
                 } else {
                     ++$b0cd8de619914d3df89e9fc24acad4e6;
@@ -218,7 +218,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
                     $time_start = time();
                     $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
                 }
-                if ($b2ecba26bb0e977abdb88e118b553d51 > 0 && $A8e591a80910b24673b1a94b8219ab96 && $index >= ceil($b2ecba26bb0e977abdb88e118b553d51 / $C7558f823ac28009bfd4730a82f1f01b)) {
+                if ($b2ecba26bb0e977abdb88e118b553d51 > 0 && $A8e591a80910b24673b1a94b8219ab96 && $index >= ceil($b2ecba26bb0e977abdb88e118b553d51 / $buffer)) {
                     sleep(1);
                     $index = 0;
                 }

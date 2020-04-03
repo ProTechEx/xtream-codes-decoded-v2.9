@@ -241,31 +241,31 @@ if (!empty($queue)) {
                 $connection_speed_file = TMP_DIR . $activity_id . '.con';
                 $ipTV_db->close_mysql();
             }
-            $length = $filename_size = queueSize($queue);
-            $bitrate = $filename_size * 0.008 / ($duration * 60);
+            $length = $size = queueSize($queue);
+            $bitrate = $size * 0.008 / ($duration * 60);
             header("Accept-Ranges: 0-{$length}");
             $start = 0;
-            $end = $filename_size - 1;
+            $end = $size - 1;
             if (isset($_SERVER['HTTP_RANGE'])) {
                 $c_start = $start;
                 $c_end = $end;
                 list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                 if (strpos($range, ',') !== false) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                    header("Content-Range: bytes {$start}-{$end}/{$size}");
                     die;
                 }
                 if ($range == '-') {
-                    $c_start = $filename_size - substr($range, 1);
+                    $c_start = $size - substr($range, 1);
                 } else {
                     $range = explode('-', $range);
                     $c_start = $range[0];
-                    $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $filename_size;
+                    $c_end = isset($range[1]) && is_numeric($range[1]) ? $range[1] : $size;
                 }
                 $c_end = $c_end > $end ? $end : $c_end;
-                if ($c_start > $c_end || $c_start > $filename_size - 1 || $c_end >= $filename_size) {
+                if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
                     header('HTTP/1.1 416 Requested Range Not Satisfiable');
-                    header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+                    header("Content-Range: bytes {$start}-{$end}/{$size}");
                     die;
                 }
                 $start = $c_start;
@@ -273,11 +273,11 @@ if (!empty($queue)) {
                 $length = $end - $start + 1;
                 header('HTTP/1.1 206 Partial Content');
             }
-            header("Content-Range: bytes {$start}-{$end}/{$filename_size}");
+            header("Content-Range: bytes {$start}-{$end}/{$size}");
             header('Content-Length: ' . $length);
             $b3fcd87510baa9521882b459861dcb64 = 0;
             if ($start > 0) {
-                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($filename_size / count($queue)));
+                $b3fcd87510baa9521882b459861dcb64 = floor($start / ($size / count($queue)));
             }
             $c77e7ff2c5d6b14d931b3344c54e0cc5 = false;
             $B3acfaf2dca0db7e9507c5e640b4ba41 = 0;
@@ -286,13 +286,13 @@ if (!empty($queue)) {
             $b2ecba26bb0e977abdb88e118b553d51 += $b2ecba26bb0e977abdb88e118b553d51 * ipTV_lib::$settings['vod_bitrate_plus'] * 0.01;
             $time_start = time();
             $b1125d7ae8a179e8c8a4c80974755bd7 = 0;
-            $C7558f823ac28009bfd4730a82f1f01b = ipTV_lib::$settings['read_buffer_size'];
+            $buffer = ipTV_lib::$settings['read_buffer_size'];
             $index = 0;
             $b0cd8de619914d3df89e9fc24acad4e6 = 0;
             if (ipTV_lib::$settings['vod_limit_at'] > 0) {
-                $F6295a8bab3aa6bb5b9c4a70c99ec761 = intval($filename_size * ipTV_lib::$settings['vod_limit_at'] / 100);
+                $F6295a8bab3aa6bb5b9c4a70c99ec761 = intval($size * ipTV_lib::$settings['vod_limit_at'] / 100);
             } else {
-                $F6295a8bab3aa6bb5b9c4a70c99ec761 = $filename_size;
+                $F6295a8bab3aa6bb5b9c4a70c99ec761 = $size;
             }
             $A8e591a80910b24673b1a94b8219ab96 = false;
             foreach ($queue as $k => $item) {
@@ -308,16 +308,16 @@ if (!empty($queue)) {
                 fseek($fp, $B3acfaf2dca0db7e9507c5e640b4ba41);
                 while (!feof($fp)) {
                     $pos = ftell($fp);
-                    $response = stream_get_line($fp, $C7558f823ac28009bfd4730a82f1f01b);
+                    $response = stream_get_line($fp, $buffer);
                     echo $response;
                     $b1125d7ae8a179e8c8a4c80974755bd7 += strlen($response);
                     ++$index;
-                    if (!$A8e591a80910b24673b1a94b8219ab96 && $b0cd8de619914d3df89e9fc24acad4e6 * $C7558f823ac28009bfd4730a82f1f01b >= $F6295a8bab3aa6bb5b9c4a70c99ec761) {
+                    if (!$A8e591a80910b24673b1a94b8219ab96 && $b0cd8de619914d3df89e9fc24acad4e6 * $buffer >= $F6295a8bab3aa6bb5b9c4a70c99ec761) {
                         $A8e591a80910b24673b1a94b8219ab96 = true;
                     } else {
                         ++$b0cd8de619914d3df89e9fc24acad4e6;
                     }
-                    if ($b2ecba26bb0e977abdb88e118b553d51 > 0 && $A8e591a80910b24673b1a94b8219ab96 && $index >= ceil($b2ecba26bb0e977abdb88e118b553d51 / $C7558f823ac28009bfd4730a82f1f01b)) {
+                    if ($b2ecba26bb0e977abdb88e118b553d51 > 0 && $A8e591a80910b24673b1a94b8219ab96 && $index >= ceil($b2ecba26bb0e977abdb88e118b553d51 / $buffer)) {
                         sleep(1);
                         $index = 0;
                     }
