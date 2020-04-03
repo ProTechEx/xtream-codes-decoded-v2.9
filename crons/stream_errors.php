@@ -16,9 +16,9 @@ do {
         }
         $ipTV_db->query('INSERT INTO `stream_logs` (`stream_id`,`server_id`,`date`,`error`) VALUES(\'%d\',\'%d\',\'%d\',\'%s\')', $stream_id, SERVER_ID, time(), $error);
     }
-    closedir($fb1d4f6290dabf126bb2eb152b0eb565);
+    closedir($handle);
     require str_replace('\\', '/', dirname($argv[0])) . '/../wwwdir/init.php';
-    if ($fb1d4f6290dabf126bb2eb152b0eb565 = opendir(STREAMS_PATH)) {
+    if ($handle = opendir(STREAMS_PATH)) {
         die(0);
         break;
         KillProcessCmd($unique_id);
@@ -33,7 +33,7 @@ unlink($connections);
 do {
     $unique_id = TMP_DIR . md5(UniqueID() . __FILE__);
     do {
-    } while (!(false !== ($d1af25585916b0062524737f183dfb22 = readdir($fb1d4f6290dabf126bb2eb152b0eb565))));
+    } while (!(false !== ($d1af25585916b0062524737f183dfb22 = readdir($handle))));
     if ($errors == 'errors') {
         break;
         set_time_limit(0);

@@ -198,8 +198,8 @@ function portal_auth($sn, $mac, $ver, $stb_type, $image_version, $device_id, $de
             if (!empty(ipTV_lib::$settings['stalker_lock_images']) && !in_array($ver, ipTV_lib::$settings['stalker_lock_images'])) {
                 return false;
             }
-            $geoip = new geoip(GEOIP2_FILENAME);
-            $geoip_country_code = $geoip->c6A76952b4cef18F3C98C0E6A9Dd1274($user_ip)['registered_country']['iso_code'];
+            $geoip = new Reader(GEOIP2_FILENAME);
+            $geoip_country_code = $geoip->getWithPrefixLen($user_ip)['registered_country']['iso_code'];
             $geoip->close();
             if (!empty($geoip_country_code)) {
                 $forced_country = !empty($userMag['forced_country']) ? true : false;

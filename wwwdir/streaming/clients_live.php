@@ -15,7 +15,7 @@ if (isset(ipTV_lib::$request['qs'])) {
 if (!isset(ipTV_lib::$request['extension']) || !isset(ipTV_lib::$request['username']) || !isset(ipTV_lib::$request['password']) || !isset(ipTV_lib::$request['stream'])) {
     die;
 }
-$geoip = new geoip(GEOIP2_FILENAME);
+$geoip = new Reader(GEOIP2_FILENAME);
 $activity_id = 0;
 $close_connection = true;
 $connection_speed_file = null;
@@ -84,7 +84,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'EMPTY_UA', $user_ip);
         die;
     }
-    $geoip_country_code = $geoip->C6a76952B4CeF18F3C98c0e6a9Dd1274($user_ip)['registered_country']['iso_code'];
+    $geoip_country_code = $geoip->getWithPrefixLen($user_ip)['registered_country']['iso_code'];
     $geoip->close();
     if (!empty($user_info['allowed_ips']) && !in_array($user_ip, array_map('gethostbyname', $user_info['allowed_ips']))) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'IP_BAN', $user_ip);

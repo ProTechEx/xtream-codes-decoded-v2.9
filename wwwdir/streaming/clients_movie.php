@@ -8,7 +8,7 @@ $streaming_block = true;
 if (!isset(ipTV_lib::$request['username']) || !isset(ipTV_lib::$request['password']) || !isset(ipTV_lib::$request['stream'])) {
     die('Missing parameters.');
 }
-$geoip = new geoip(GEOIP2_FILENAME);
+$geoip = new Reader(GEOIP2_FILENAME);
 $activity_id = 0;
 $container_priority = null;
 $connection_speed_file = null;
@@ -60,7 +60,7 @@ if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, f
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'EMPTY_UA', $user_ip);
         die;
     }
-    $geoip_country_code = $geoip->C6A76952B4ceF18f3C98C0E6a9dd1274($user_ip)['registered_country']['iso_code'];
+    $geoip_country_code = $geoip->getWithPrefixLen($user_ip)['registered_country']['iso_code'];
     if (!empty($user_info['allowed_ips']) && !in_array($user_ip, array_map('gethostbyname', $user_info['allowed_ips']))) {
         ipTV_streaming::ClientLog($stream_id, $user_info['id'], 'IP_BAN', $user_ip);
         die;

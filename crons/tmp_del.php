@@ -12,15 +12,15 @@ $A0b0908a4d165ad72360bf4f9917b6bc = array('cloud_ips', 'cache_x', 'new_rewrite',
 foreach (STREAM_TYPE as $connections) {
     $A0b0908a4d165ad72360bf4f9917b6bc[] = $connections . '_main.php';
 }
-if ($fb1d4f6290dabf126bb2eb152b0eb565 = opendir(TMP_DIR)) {
-    while (false !== ($d1af25585916b0062524737f183dfb22 = readdir($fb1d4f6290dabf126bb2eb152b0eb565))) {
+if ($handle = opendir(TMP_DIR)) {
+    while (false !== ($d1af25585916b0062524737f183dfb22 = readdir($handle))) {
         if ($d1af25585916b0062524737f183dfb22 != '.' && $d1af25585916b0062524737f183dfb22 != '..' && is_file(TMP_DIR . $d1af25585916b0062524737f183dfb22) && !in_array($d1af25585916b0062524737f183dfb22, $A0b0908a4d165ad72360bf4f9917b6bc)) {
             if (800 <= time() - filemtime(TMP_DIR . $d1af25585916b0062524737f183dfb22)) {
                 unlink(TMP_DIR . $d1af25585916b0062524737f183dfb22);
             }
         }
     }
-    closedir($fb1d4f6290dabf126bb2eb152b0eb565);
+    closedir($handle);
 }
 clearstatcache();
 ?>

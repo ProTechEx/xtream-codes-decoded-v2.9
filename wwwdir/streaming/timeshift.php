@@ -12,7 +12,7 @@ if (!isset(ipTV_lib::$request['start']) || !isset(ipTV_lib::$request['duration']
 if (ipTV_lib::$settings['use_buffer'] == 0) {
     header('X-Accel-Buffering: no');
 }
-$geoip = new geoip(GEOIP2_FILENAME);
+$geoip = new Reader(GEOIP2_FILENAME);
 $activity_id = 0;
 $connection_speed_file = null;
 $container_priority = null;
@@ -29,7 +29,7 @@ if (!is_numeric($stream_id) && stristr($stream_id, '_')) {
 }
 $user_ip = ipTV_streaming::getUserIP();
 $user_agent = empty($_SERVER['HTTP_USER_AGENT']) ? '' : htmlentities(trim($_SERVER['HTTP_USER_AGENT']));
-$geoip_country_code = $geoip->c6a76952B4CEf18f3c98c0e6A9DD1274($user_ip)['registered_country']['iso_code'];
+$geoip_country_code = $geoip->getWithPrefixLen($user_ip)['registered_country']['iso_code'];
 $geoip->close();
 $play_token = empty(ipTV_lib::$request['play_token']) ? null : ipTV_lib::$request['play_token'];
 if ($user_info = ipTV_streaming::GetUserInfo(null, $username, $password, true, false, true, array(), false, $user_ip, $user_agent, array(), $play_token, $stream_id)) {
