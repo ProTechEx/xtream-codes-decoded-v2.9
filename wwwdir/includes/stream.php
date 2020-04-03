@@ -35,22 +35,22 @@ class ipTV_stream
         $bf1324315496910e8d570f42b29cf7bb .= implode(' ', self::F6664C80BDe3e9BbE2C12ceB906D5A11($a5fd23cf4a741b0e9eb35bb60849c401['transcode_attributes'])) . ' ';
         $bf1324315496910e8d570f42b29cf7bb .= '-strict -2 -mpegts_flags +initial_discontinuity -f mpegts "' . CREATED_CHANNELS . $E62a309a7fc72c8c292c032fe0fd23ab . '_{INPUT_MD5}.ts" >/dev/null 2>/dev/null & jobs -p';
         $Ff86147ddc7b314b8090bc97616612a7 = array_diff($a5fd23cf4a741b0e9eb35bb60849c401['stream_source'], $a5fd23cf4a741b0e9eb35bb60849c401['cchannel_rsources']);
-        $F7385aab8f8489bee4d3920b1e33eac7 = '';
+        $json_string_data = '';
         foreach ($a5fd23cf4a741b0e9eb35bb60849c401['stream_source'] as $b593cd195ca5474bf633cc7331d67088) {
-            $F7385aab8f8489bee4d3920b1e33eac7 .= 'file \'' . CREATED_CHANNELS . $E62a309a7fc72c8c292c032fe0fd23ab . '_' . md5($b593cd195ca5474bf633cc7331d67088) . '.ts\'';
+            $json_string_data .= 'file \'' . CREATED_CHANNELS . $E62a309a7fc72c8c292c032fe0fd23ab . '_' . md5($b593cd195ca5474bf633cc7331d67088) . '.ts\'';
         }
-        $F7385aab8f8489bee4d3920b1e33eac7 = base64_encode($F7385aab8f8489bee4d3920b1e33eac7);
+        $json_string_data = base64_encode($json_string_data);
         if ((!empty($Ff86147ddc7b314b8090bc97616612a7) || $a5fd23cf4a741b0e9eb35bb60849c401['stream_source'] !== $a5fd23cf4a741b0e9eb35bb60849c401['cchannel_rsources'])) {
             foreach ($Ff86147ddc7b314b8090bc97616612a7 as $b593cd195ca5474bf633cc7331d67088) {
                 $a5fd23cf4a741b0e9eb35bb60849c401['pids_create_channel'][] = ipTV_servers::RunCommandServer($a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location'], str_ireplace(array('{INPUT}', '{INPUT_MD5}'), array($b593cd195ca5474bf633cc7331d67088, md5($b593cd195ca5474bf633cc7331d67088)), $bf1324315496910e8d570f42b29cf7bb), 'raw')[$a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location']];
             }
             self::$ipTV_db->query('UPDATE `streams` SET pids_create_channel = \'%s\',`cchannel_rsources` = \'%s\' WHERE `id` = \'%d\'', json_encode($a5fd23cf4a741b0e9eb35bb60849c401['pids_create_channel']), json_encode($a5fd23cf4a741b0e9eb35bb60849c401['stream_source']), $E62a309a7fc72c8c292c032fe0fd23ab);
-            ipTV_servers::RunCommandServer($a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location'], "echo {$F7385aab8f8489bee4d3920b1e33eac7} | base64 --decode > \"" . CREATED_CHANNELS . $E62a309a7fc72c8c292c032fe0fd23ab . '_.list"', 'raw');
+            ipTV_servers::RunCommandServer($a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location'], "echo {$json_string_data} | base64 --decode > \"" . CREATED_CHANNELS . $E62a309a7fc72c8c292c032fe0fd23ab . '_.list"', 'raw');
             return 1;
         }
         else if (!empty($a5fd23cf4a741b0e9eb35bb60849c401['pids_create_channel'])) {
             foreach ($a5fd23cf4a741b0e9eb35bb60849c401['pids_create_channel'] as $key => $pid) {
-                if (!ipTV_servers::eD79a31441202a0d242A25777F316FaC($a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location'], $pid, FFMPEG_PATH)) {
+                if (!ipTV_servers::PidsChannels($a5fd23cf4a741b0e9eb35bb60849c401['created_channel_location'], $pid, FFMPEG_PATH)) {
                     unset($a5fd23cf4a741b0e9eb35bb60849c401['pids_create_channel'][$key]);
                 }
             }

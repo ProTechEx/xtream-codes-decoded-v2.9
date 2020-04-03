@@ -1,16 +1,15 @@
 <?php
-/*Rev:26.09.18r0*/
 
 class Util
 {
-    public static function read($stream, $offset, $b8c80c9b7b88905703868c2a2f945074)
+    public static function read($stream, $offset, $numberOfBytes)
     {
-        if ($b8c80c9b7b88905703868c2a2f945074 === 0) {
+        if ($numberOfBytes === 0) {
             return '';
         }
         if (fseek($stream, $offset) === 0) {
-            $value = fread($stream, $b8c80c9b7b88905703868c2a2f945074);
-            if (ftell($stream) - $offset === $b8c80c9b7b88905703868c2a2f945074) {
+            $value = fread($stream, $numberOfBytes);
+            if (ftell($stream) - $offset === $numberOfBytes) {
                 return $value;
             }
         }

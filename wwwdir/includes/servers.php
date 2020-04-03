@@ -1,9 +1,8 @@
 <?php
-/*Rev:26.09.18r0*/
 
 class ipTV_servers
 {
-    static function dEfD75fAA43Cb772D0e9A6D9506178B6($serverIDS, $pids = array(), $ffmpeg_path)
+    static function OutPutServerData($serverIDS, $pids = array(), $ffmpeg_path)
     {
         if (!is_array($serverIDS)) {
             $serverIDS = array(intval($serverIDS));
@@ -23,12 +22,12 @@ class ipTV_servers
         }
         return $output;
     }
-    static function eD79A31441202a0d242a25777F316FaC($createdChannelLocation, $pid, $ffmpeg_path)
+    static function PidsChannels($createdChannelLocation, $pid, $ffmpeg_path)
     {
         if (is_null($pid) || !is_numeric($pid) || !array_key_exists($createdChannelLocation, ipTV_lib::$StreamingServers)) {
             return false;
         }
-        if ($output = self::dEfD75FAA43cB772d0e9a6D9506178B6($createdChannelLocation, array($pid), $ffmpeg_path)) {
+        if ($output = self::OutPutServerData($createdChannelLocation, array($pid), $ffmpeg_path)) {
             return $output[$createdChannelLocation][$pid];
         }
         return false;

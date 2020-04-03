@@ -1,12 +1,11 @@
 <?php
-/*Rev:26.09.18r0*/
 
-class geoip
+class Reader
 {
     private static $DATA_SECTION_SEPARATOR_SIZE = 16;
-    private static $METADATA_START_MARKER = '«ÍïMaxMind.com';
+    private static $METADATA_START_MARKER = '\xAB\xCD\xEFMaxMind.com';
     private static $METADATA_START_MARKER_LENGTH = 14;
-    private static $METADATA_MAX_SIZE = 131072;
+    private static $METADATA_MAX_SIZE = 131072; // 128 * 1024 = 128KB
     private $decoder;
     private $fileHandle;
     private $fileSize;
@@ -58,7 +57,7 @@ class geoip
     {
         $rawAddress = array_merge(unpack('C*', inet_pton($ipAddress)));
         $bitCount = count($rawAddress) * 8;
-        $node = $this->E1644cfFB8f7835A8173DF9d028211f0($bitCount);
+        $node = $this->nodeStart($bitCount);
         $index = 0;
         while ($index < $bitCount) {
             if ($node >= $this->metadata->nodeCount) {
@@ -77,7 +76,7 @@ class geoip
         } 
         throw new InvalidDatabaseException('Something bad happened');
     }
-    private function E1644Cffb8f7835a8173Df9d028211F0($length)
+    private function nodeStart($length)
     {
         if ($this->metadata->ipVersion === 6 && $length === 32) {
             return $this->ipV4Start();
