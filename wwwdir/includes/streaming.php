@@ -150,7 +150,7 @@ class ipTV_streaming
         if (empty($StreamSysIds)) {
             return false;
         }
-        $aab0f9a311e1a69945f2338c5651dd87 = array();
+        $servers = array();
         if (!(ipTV_lib::$settings['online_capacity_interval'] != 0 && file_exists(TMP_DIR . 'servers_capacity') && time() - filemtime(TMP_DIR . 'servers_capacity') <= ipTV_lib::$settings['online_capacity_interval'])) {
             self::$ipTV_db->query('SELECT server_id, COUNT(*) AS online_clients FROM `user_activity_now` GROUP BY server_id');
             $rows = self::$ipTV_db->get_rows(true, 'server_id');
@@ -189,36 +189,36 @@ class ipTV_streaming
                         if ($online_clients == 0) {
                             $rows[$server_id]['capacity'] = 0;
                         }
-                        $aab0f9a311e1a69945f2338c5651dd87[$server_id] = ipTV_lib::$StreamingServers[$server_id]['total_clients'] > 0 && ipTV_lib::$StreamingServers[$server_id]['total_clients'] > $online_clients ? $rows[$server_id]['capacity'] : false;
+                        $servers[$server_id] = ipTV_lib::$StreamingServers[$server_id]['total_clients'] > 0 && ipTV_lib::$StreamingServers[$server_id]['total_clients'] > $online_clients ? $rows[$server_id]['capacity'] : false;
                     }
-                    $aab0f9a311e1a69945f2338c5651dd87 = array_filter($aab0f9a311e1a69945f2338c5651dd87, 'is_numeric');
-                    if (!empty($aab0f9a311e1a69945f2338c5651dd87)) {
-                        $aeab45b2c8e6c4f72bec66f6f1a380c0 = array_keys($aab0f9a311e1a69945f2338c5651dd87);
-                        $C3a0e56f71bc74a3da1fc67955fac9a6 = array_values($aab0f9a311e1a69945f2338c5651dd87);
-                        array_multisort($C3a0e56f71bc74a3da1fc67955fac9a6, SORT_ASC, $aeab45b2c8e6c4f72bec66f6f1a380c0, SORT_ASC);
-                        $aab0f9a311e1a69945f2338c5651dd87 = array_combine($aeab45b2c8e6c4f72bec66f6f1a380c0, $C3a0e56f71bc74a3da1fc67955fac9a6);
-                        if (!($extension == 'rtmp' && array_key_exists(SERVER_ID, $aab0f9a311e1a69945f2338c5651dd87))) {
-                            if ($user_info['force_server_id'] != 0 and array_key_exists($user_info['force_server_id'], $aab0f9a311e1a69945f2338c5651dd87)) {
+                    $servers = array_filter($servers, 'is_numeric');
+                    if (!empty($servers)) {
+                        $serverKeys = array_keys($servers);
+                        $serverValues = array_values($servers);
+                        array_multisort($serverValues, SORT_ASC, $serverKeys, SORT_ASC);
+                        $servers = array_combine($serverKeys, $serverValues);
+                        if (!($extension == 'rtmp' && array_key_exists(SERVER_ID, $servers))) {
+                            if ($user_info['force_server_id'] != 0 and array_key_exists($user_info['force_server_id'], $servers)) {
                                 $force_server_id = $user_info['force_server_id'];
                             } else {
-                                $C8a559944c9ad8d120b437a065024840 = array();
-                                foreach (array_keys($aab0f9a311e1a69945f2338c5651dd87) as $server_id) {
+                                $serverIds = array();
+                                foreach (array_keys($servers) as $server_id) {
                                     if (!(ipTV_lib::$StreamingServers[$server_id]['enable_geoip'] == 1)) {
                                         if (!(ipTV_lib::$StreamingServers[$server_id]['enable_isp'] == 1)) {
-                                            $C8a559944c9ad8d120b437a065024840[$server_id] = 1;
+                                            $serverIds[$server_id] = 1;
                                             if (!in_array($geoip_country_code, ipTV_lib::$StreamingServers[$server_id]['geoip_countries'])) {
                                                 if (ipTV_lib::$StreamingServers[$server_id]['geoip_type'] == 'strict') {
-                                                    unset($aab0f9a311e1a69945f2338c5651dd87[$server_id]);
+                                                    unset($servers[$server_id]);
                                                 } else {
-                                                    $C8a559944c9ad8d120b437a065024840[$server_id] = ipTV_lib::$StreamingServers[$server_id]['geoip_type'] == 'low_priority' ? 1 : 2;
+                                                    $serverIds[$server_id] = ipTV_lib::$StreamingServers[$server_id]['geoip_type'] == 'low_priority' ? 1 : 2;
                                                     $force_server_id = $server_id;
                                                     break;
                                                 }
                                                 if (!in_array($con_isp_name, ipTV_lib::$StreamingServers[$server_id]['isp_names'])) {
                                                     if (ipTV_lib::$StreamingServers[$server_id]['isp_type'] == 'strict') {
-                                                        unset($aab0f9a311e1a69945f2338c5651dd87[$server_id]);
+                                                        unset($servers[$server_id]);
                                                     } else {
-                                                        $C8a559944c9ad8d120b437a065024840[$server_id] = ipTV_lib::$StreamingServers[$server_id]['isp_type'] == 'low_priority' ? 1 : 2;
+                                                        $serverIds[$server_id] = ipTV_lib::$StreamingServers[$server_id]['isp_type'] == 'low_priority' ? 1 : 2;
                                                         $force_server_id = $server_id;
                                                         break;
                                                     }
@@ -227,10 +227,10 @@ class ipTV_streaming
                                         }
                                     }
                                 }
-                                if (empty($C8a559944c9ad8d120b437a065024840) && empty($force_server_id)) {
+                                if (empty($serverIds) && empty($force_server_id)) {
                                     return false;
                                 }
-                                $force_server_id = empty($force_server_id) ? array_search(min($C8a559944c9ad8d120b437a065024840), $C8a559944c9ad8d120b437a065024840) : $force_server_id;
+                                $force_server_id = empty($force_server_id) ? array_search(min($serverIds), $serverIds) : $force_server_id;
                                 $force_server_id = SERVER_ID;
                             }
                             if ($force_server_id != SERVER_ID) {
